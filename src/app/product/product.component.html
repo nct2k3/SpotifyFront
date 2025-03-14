@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Hits Playlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<header class="fixed top-0 z-50 flex items-center w-full bg-gradient-to-r from-black to-gray-800 p-4">
+    <div class=" w-4/5 flex items-center gap-9">
+        <img src="https://img.icons8.com/?size=100&id=11116&format=png&color=ffffff" alt="Logo" class=" h-10">
+        <button class="text-white hover:text-gray-300 mx-2">
+            <img src="https://img.icons8.com/?size=100&id=1iF9PyJ2Thzo&format=png&color=ffffff" alt="Logo" class="h-10">
+        </button>
+        <div class="relative flex items-center w-2/4 ">
+            <span class="absolute left-0 text-gray-400 ml-1  ">
+                <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" alt="Search" class=" p-1 h-10 rounded-l-full  hover:bg-gray-500">
+            </span>
+            <input 
+                type="text" 
+                placeholder="Bạn muốn phát nội dung gì?" 
+                class=" font-bold hover:cursor-pointer h-12  bg-black text-gray-300 rounded-full pl-12 pr-10 py-2 focus:outline-none w-full">
+            <span class="absolute right-2 text-gray-400 ml-2">
+                <img src=" https://img.icons8.com/?size=100&id=82870&format=png&color=ffffff" alt="Search" class=" border-l  px-2 h-10 rounded-r-full  hover:bg-gray-500">
+            </span>
+        </div>
+    </div>
+    <div class=" w-1/5 flex items-center gap-4">
+       <img src="https://img.icons8.com/?size=100&id=68376&format=png&color=ffffff" alt="Logo" class="w-8 h-10 rounded-full hover:bg-gray-700">
+    
+        <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full">
+            T
+        </div>
+    </div>
+</header>
+<body class="bg-black text-white font-sans pt-20">
+    <div class="flex lg:flex-row h-auto">
+
+        <aside class="fixed top-20 z-40 w-1/4  h-full bg-black px-6 py-2 flex flex-col gap-4 rounded-2xl mt-1 ">
+            <nav class="space-y-4 flex justify-between">
+                <a href="#" onclick="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
+                   <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-5 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
+                    Your Library
+                </a>
+                <div>
+                    <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class="h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
+                </div>
+            </nav>
+            
+            <div>
+                <span class="flex justify-between">
+                    <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" alt="Search" class="h-6 rounded-full hover:bg-gray-500 transition-colors duration-200">
+                    <div class="flex font-bold hover:cursor-pointer hover:bg-gray-700 rounded transition-colors duration-200">
+                        <div class="px-2">Play list</div>
+                        <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=ffffff" alt="Search" class="h-5 mt-1">
+                    </div>
+                </span>
+            </div>
+
+            <!-- play list -->
+             <div class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
+                <img src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/7/a/7/57a7501a8ba849b71e68bd3e5e41cc58.jpg"
+                 alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
+                 <div class="text-white text-sm px-3">
+                    <div class="font-bold hover:underline"> My play list #1</div>
+                    <div class="text-gray-400 hover:text-white transition-colors">Play list - Tran Cong Nguyen</div>
+                 </div>
+             </div>
+             <div class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200"></div>
+        </aside>
+        <div class="w-1/4 h-full" id="asideBehind"></div>
+
+        <!-- sidebar mini -->
+        <div id="sidebarMini" class=" rounded fixed top-20 z-40 w-24 h-full bg-black px-4 py-2 flex flex-col gap-4 hidden transition-all duration-300">
+            <nav class="space-y-4 flex justify-center">
+                <a href="#" onclick="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
+                   <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-8 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
+                </a>
+            </nav>
+            <!-- play list -->
+            <div class="hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
+                <img src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/7/a/7/57a7501a8ba849b71e68bd3e5e41cc58.jpg"
+                 alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
+            </div>
+        </div>
+        <div class="w-24 h-full hidden" id="sidebarMiniBehind"></div>
+
+        <main class="flex-1  bg-gradient-to-b from-amber-900 to-black rounded-xl m-1">
+            <div class="max-full ">
+                <div class="flex w-full items-center space-x-4 p-6  bg-gradient-to-r from-amber-800 to-black rounded-t-2xl">
+                    <img src="../../assets/Img/image1.png" alt="Playlist Cover" class="w-42 h-42 rounded-lg">
+                    <div>
+                        <h1 class="text-6xl font-bold">Happy Hits!</h1>
+                        <p class="text-gray-300 m-2">Hits to boost your mood and fill you with happiness!</p>
+                        <p class="text-gray-400 m-2">Spotify • 5,868,565 likes • 34 songs, 2hr 01min</p>
+                    </div>
+                </div>
+                <div class=" flex items-center justify-between  p-4">
+                    <div class="flex items-center space-x-4">
+                        <img src="https://img.icons8.com/?size=100&id=59862&format=png&color=000000" 
+                            alt="Play" 
+                            class="h-12 w-12 p-3 bg-green-500 rounded-full hover:scale-110 cursor-pointer">
+                            <div>
+                                <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class=" border-2 h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
+                            </div>
+                        <button class="text-white font-bold text-2xl mb-3">. . .</button>
+                    </div>
+                    <div class="text-white flex items-center space-x-2">
+                        <span>Danh sách</span>
+                        <span class="text-xl">☰</span>
+                    </div>
+                </div>
+                <div class=" p-6">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b ">
+                                <th class="py-2">#</th>
+                                <th class="py-2">Title</th>
+                                <th class="py-2">Album</th>
+                                <th class="py-2">Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-black">
+                                <td class="py-2 rounded-l-xl p-2">1</td>
+                                <td class="flex items-center  p-2"><img src="../../assets/Img/image1.png" class="h-12 w-12 rounded mr-2 my-2"> Play It Safe</td>
+                                <td class="  p-2">Julia Wolf</td>
+                                <td class="  p-2">2:12</td>
+                            </tr>
+                            <tr class="hover:bg-black">
+                                <td class="py-2 rounded-l-xl p-2">2</td>
+                                <td class="flex items-center  p-2"><img src="../../assets/Img/image1.png" class="h-12 w-12 rounded mr-2 my-2"> Play It Safe</td>
+                                <td class="  p-2">Julia Wolf</td>
+                                <td class="  p-2">2:12</td>
+                            </tr>
+                            <tr class="hover:bg-black">
+                                <td class="py-2 rounded-l-xl p-2">3</td>
+                                <td class="flex items-center  p-2"><img src="../../assets/Img/image1.png" class="h-12 w-12 rounded mr-2 my-2"> Play It Safe</td>
+                                <td class="  p-2">Julia Wolf</td>
+                                <td class="  p-2">2:12</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+<script>
+    function toggleSidebar() {
+        const sidebar = document.querySelector('aside');
+        const sidebarMini = document.getElementById('sidebarMini');
+        const sidebarMiniBehind = document.getElementById('sidebarMiniBehind');
+        const asideBehind = document.getElementById('asideBehind');
+        asideBehind.classList.toggle('hidden');
+        sidebar.classList.toggle('hidden');
+        sidebarMiniBehind.classList.toggle('hidden');
+        sidebarMini.classList.toggle('hidden');
+    }
+</script>
+</html>
