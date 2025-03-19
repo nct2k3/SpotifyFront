@@ -11,6 +11,7 @@ import { ProductComponent } from './product/product.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
+import { TimeFormatPipe } from './footer/time-format.pipe';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { HomeComponent } from './home/home.component';
     ProductComponent,
     HeaderComponent,
     FooterComponent,
-    HomeComponent
+    HomeComponent,
+    TimeFormatPipe
   ],
   imports: [
     BrowserModule,
