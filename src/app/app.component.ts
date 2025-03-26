@@ -17,7 +17,7 @@ export class AppComponent {
     ).subscribe(() => {
       const currentUrl = this.router.url;
       this.showHeaderFooter = !currentUrl.includes('/login')
-        
+      this.showHeaderFooter = !currentUrl.includes('/admin');
       ;
     });
   }

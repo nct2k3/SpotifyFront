@@ -1,0 +1,15 @@
+<div class="admin-layout">
+  <app-admin-header></app-admin-header>
+  
+  <div class="admin-navbar">
+    <app-admin-navbar (activeComponentChange)="onActiveComponentChange($event)"></app-admin-navbar>
+  </div>
+  
+  <div class="admin-content">
+    <!-- Hiển thị phần "User Management" -->
+    <app-admin-user-management *ngIf="activeComponent === 'users'"></app-admin-user-management>
+    
+    <!-- Hiển thị phần "Songs Management" -->
+    <app-admin-songs-management *ngIf="activeComponent === 'songs'"></app-admin-songs-management>
+  </div>
+</div>
