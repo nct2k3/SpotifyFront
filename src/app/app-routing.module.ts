@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { MyPlayListComponent } from './my-play-list/my-play-list.component';
 import { ProductComponent } from './product/product.component';
+import { AdminComponent } from './admin/admin.component';
 import { AlbumComponent } from './album/album.component';
 import { DetailComponent } from './detail/detail.component';
 import { VideoComponent } from './video/video.component';
@@ -14,11 +15,12 @@ const routes: Routes = [
   {path:'home',component:HomeComponent},
   {path:'myplaylist',component:MyPlayListComponent},
   {path:'product',component:ProductComponent},
+  { path: 'admin', component:AdminComponent},
   {path:'album',component:AlbumComponent},
   {path:'detail',component:DetailComponent},
   {path:'video',component:VideoComponent},
   {path:'search',component:SearchComponent},
-  { path: '**', redirectTo: 'home' }, 
+  { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({

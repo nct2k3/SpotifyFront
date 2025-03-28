@@ -1,0 +1,16 @@
+/* Cấu trúc layout chính của trang */
+.admin-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
+  }
+  
+  .admin-content {
+    display: flex;
+    margin-left: 200px; /* Đảm bảo nội dung không bị che khuất bởi navbar bên trái */
+    padding: 20px;
+    margin-top: 80px;
+    height: calc(100vh-100px);
+    background-color: #070000;
+    flex-grow: 1; /* Nội dung sẽ chiếm toàn bộ không gian còn lại */
+  }

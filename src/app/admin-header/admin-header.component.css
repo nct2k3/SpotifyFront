@@ -1,0 +1,55 @@
+/* Chỉnh style cho thanh header */
+.admin-header {
+    /* background-color: #070000; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 80px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; 
+  }
+  
+  .logo-container img {
+    height: 40px;
+  }
+  
+  .search-container {
+    flex-grow: 1;
+    max-width: 400px;
+    margin: 0 20px;
+  }
+  
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+  }
+  
+  .notifications {
+    margin-right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .profile {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .user-name {
+    font-size: 14px;
+  }
+  

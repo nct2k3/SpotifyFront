@@ -1,0 +1,62 @@
+<div class="p-5 rounded-lg w-full">
+    <!-- Tiêu đề và thanh tìm kiếm -->
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-white font-bold text-lg">Manage Songs</h2>
+  
+      <!-- Thanh tìm kiếm -->
+      <div class="relative flex items-center">
+        <span class="absolute left-3 text-gray-400">
+          <img 
+            src="https://img.icons8.com/?size=100&id=7695&format=png&color=000000" 
+            alt="Search" 
+            class="h-7 rounded-l-full hover:bg-gray-500"
+          />
+        </span>
+  
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          placeholder="Search users..." 
+          class="font-bold h-12 bg-white text-black rounded-full pl-12 pr-10 py-2 focus:outline-none w-full"
+        />
+      </div>
+    </div>
+  
+    <!-- Bảng danh sách người dùng -->
+    <table class="w-full table-fixed border-collapse mt-4">
+      <thead>
+        <tr class="bg-gray-800 text-white">
+          <th class="p-2 border break-words">Title</th>
+          <th class="p-2 border break-words">Artists</th>
+          <th class="p-2 border break-words">Genre</th>
+          <th class="p-2 border break-words">File location</th>
+          <th class="p-2 border break-words">Image location</th>
+          <th class="p-2 border break-words">Duration</th>
+          <th class="p-2 border break-words">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let song of filteredSongs()">
+          <td class="p-2 border bg-white text-black break-words">{{ song.title }}</td>
+          <td class="p-2 border bg-white text-black break-words">{{ song.artists }}</td>
+          <td class="p-2 border bg-white text-black break-words">{{ song.genre }}</td>
+          <td class="p-2 border bg-white text-black break-words">{{ song.file_location }}</td>
+          <td class="p-2 border bg-white text-black break-words">{{ song.image_location }}</td>
+          <td class="p-2 border bg-white text-black break-words">{{ song.duration }}</td>
+          <td class="p-2 border bg-white break-words">
+            <button 
+              class="bg-green-500 text-white rounded items-center hover:bg-green-700 p-1 ml-2" 
+              (click)="editSong(song.title)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button 
+              class="bg-red-500 text-white rounded items-center hover:bg-red-700 p-1 ml-3" 
+              (click)="deleteSong(song.title)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
