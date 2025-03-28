@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="fixed bottom-0 z-50 flex items-center w-full bg-gradient-to-r from-black to-gray-800 p-4">
+<footer class="fixed bottom-0 z-50 flex items-center w-full bg-gradient-to-r from-black to-gray-800 px-4 py-1">
     <!-- Audio Player -->
     <audio
       #audioPlayer
@@ -14,11 +14,13 @@
         class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200 mr-2"
         (click)="togglePlay()"
       >
+      
         <img
-          [src]="currentTrack?.albumArt || 'assets/default-album-art.jpg'"
-          [alt]="currentTrack?.name || 'No track playing'"
-          class="rounded h-12 w-12 hover:scale-105 transition-transform"
-        />
+        [src]="currentTrack?.albumArt || 'assets/default-album-art.jpg'"
+        [alt]="currentTrack?.name || 'No track playing'"
+        [class]="isPlaying ? 'rounded-full h-14 w-14 hover:scale-105 transition-transform animate-spin-slow' : 'rounded-full h-14 w-14 hover:scale-105 transition-transform'"
+      />
+        
         <div class="text-white text-sm px-3">
           <div class="font-bold hover:underline">
             {{ currentTrack?.name || 'No track selected' }}
@@ -43,7 +45,7 @@
   
         <!-- Play/Pause Button -->
         <img
-          src="https://img.icons8.com/?size=100&id=9978&format=png&color=000000"
+          [src]="isPlaying ? 'https://img.icons8.com/?size=100&id=9978&format=png&color=000000' : 'https://img.icons8.com/?size=100&id=byJkZbWndgQ9&format=png&color=000000'"
           [alt]="isPlaying ? 'Pause' : 'Play'"
           (click)="togglePlay()"
           class="h-10 w-10 p-2 bg-white rounded-full hover:scale-110 cursor-pointer"
@@ -99,7 +101,7 @@
       <img
         src="https://img.icons8.com/?size=100&id=38034&format=png&color=ffffff"
         alt="Queue"
-        (click)="toggleQueue()"
+        (click)="goToVideo(currentTrack?.name, currentTrack?.albumArt,currentTrack?.artist,currentTrack?.url)"
         class="h-5 hover:scale-110 cursor-pointer"
       />
     </div>

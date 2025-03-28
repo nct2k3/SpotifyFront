@@ -12,6 +12,10 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
 import { TimeFormatPipe } from './footer/time-format.pipe';
+import { AlbumComponent } from './album/album.component';
+import { DetailComponent } from './detail/detail.component';
+import { VideoComponent } from './video/video.component';
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +26,12 @@ import { TimeFormatPipe } from './footer/time-format.pipe';
     HeaderComponent,
     FooterComponent,
     HomeComponent,
-    TimeFormatPipe
+    TimeFormatPipe,
+    AlbumComponent,
+    DetailComponent,
+    VideoComponent,
+    SearchComponent
+
   ],
   imports: [
     BrowserModule,

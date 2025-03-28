@@ -1,47 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Hits Playlist</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<header class="fixed top-0 z-50 flex items-center w-full bg-gradient-to-r from-black to-gray-800 p-4">
-    <div class=" w-4/5 flex items-center gap-9">
-        <img src="https://img.icons8.com/?size=100&id=11116&format=png&color=ffffff" alt="Logo" class=" h-10">
-        <button class="text-white hover:text-gray-300 mx-2">
-            <img src="https://img.icons8.com/?size=100&id=1iF9PyJ2Thzo&format=png&color=ffffff" alt="Logo" class="h-10">
-        </button>
-        <div class="relative flex items-center w-2/4 ">
-            <span class="absolute left-0 text-gray-400 ml-1  ">
-                <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" alt="Search" class=" p-1 h-10 rounded-l-full  hover:bg-gray-500">
-            </span>
-            <input 
-                type="text" 
-                placeholder="Bạn muốn phát nội dung gì?" 
-                class=" font-bold hover:cursor-pointer h-12  bg-black text-gray-300 rounded-full pl-12 pr-10 py-2 focus:outline-none w-full">
-            <span class="absolute right-2 text-gray-400 ml-2">
-                <img src=" https://img.icons8.com/?size=100&id=82870&format=png&color=ffffff" alt="Search" class=" border-l  px-2 h-10 rounded-r-full  hover:bg-gray-500">
-            </span>
-        </div>
-    </div>
-    <div class=" w-1/5 flex items-center gap-4">
-       <img src="https://img.icons8.com/?size=100&id=68376&format=png&color=ffffff" alt="Logo" class="w-8 h-10 rounded-full hover:bg-gray-700">
-    
-        <div class="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-full">
-            T
-        </div>
-    </div>
-</header>
+<app-header></app-header>
+
 <body class="bg-black text-white font-sans pt-20">
     <div class="flex lg:flex-row h-auto">
-
-        <aside class="fixed top-20 z-40 w-1/4  h-full bg-black px-6 py-2 flex flex-col gap-4 rounded-2xl mt-1 ">
+      
+        <aside *ngIf="sidebarVisible" class="fixed top-20 z-40 w-1/4  h-full bg-black px-6 py-2 flex flex-col gap-4 rounded-2xl mt-1 ">
             <nav class="space-y-4 flex justify-between">
-                <a href="#" onclick="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
-                   <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-5 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
-                    Your Library
-                </a>
+                <div class="flex items-center justify-start">
+                    <a (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer transition-colors duration-200">
+                        <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-5 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
+                    </a>
+                    <div [routerLink]="'/myplaylist'"  class="font-bold ml-2 hover:text-xl transition-all duration-300 ease-in-out hover:underline">Your Library</div>
+                </div>
                 <div>
                     <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class="h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
                 </div>
@@ -68,12 +37,12 @@
              </div>
              <div class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200"></div>
         </aside>
-        <div class="w-1/4 h-full" id="asideBehind"></div>
+        <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
 
         <!-- sidebar mini -->
-        <div id="sidebarMini" class=" rounded fixed top-20 z-40 w-24 h-full bg-black px-4 py-2 flex flex-col gap-4 hidden transition-all duration-300">
+        <div *ngIf="!sidebarVisible" id="sidebarMini" class=" rounded fixed top-20 z-40 w-24 h-full bg-black px-4 py-2 flex flex-col gap-4  transition-all duration-300">
             <nav class="space-y-4 flex justify-center">
-                <a href="#" onclick="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
+                <a  (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
                    <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-8 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
                 </a>
             </nav>
@@ -83,7 +52,7 @@
                  alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
             </div>
         </div>
-        <div class="w-24 h-full hidden" id="sidebarMiniBehind"></div>
+        <div  *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
 
         <main class="flex-1  bg-gradient-to-b from-amber-900 to-black rounded-xl m-1">
             <div class="max-full ">
@@ -146,16 +115,3 @@
         </main>
     </div>
 </body>
-<script>
-    function toggleSidebar() {
-        const sidebar = document.querySelector('aside');
-        const sidebarMini = document.getElementById('sidebarMini');
-        const sidebarMiniBehind = document.getElementById('sidebarMiniBehind');
-        const asideBehind = document.getElementById('asideBehind');
-        asideBehind.classList.toggle('hidden');
-        sidebar.classList.toggle('hidden');
-        sidebarMiniBehind.classList.toggle('hidden');
-        sidebarMini.classList.toggle('hidden');
-    }
-</script>
-</html>

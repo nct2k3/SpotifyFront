@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./product.component.css']
 })
 export class ProductComponent {
+  sidebarVisible = true; 
 
+  toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible; 
+    console.log('Sidebar visibility:', this.sidebarVisible);
+  }
 }
