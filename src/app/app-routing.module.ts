@@ -4,12 +4,16 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { MyPlayListComponent } from './my-play-list/my-play-list.component';
 import { ProductComponent } from './product/product.component';
+import { RegisterComponent } from './register/register.component';
+import { VerifyComponent } from './verify/verify.component';
 
 const routes: Routes = [
   { path: 'login', component:LoginComponent  },
+  { path: 'register', component: RegisterComponent },
   {path:'home',component:HomeComponent},
   {path:'myplaylist',component:MyPlayListComponent},
   {path:'product',component:ProductComponent},
+  { path: 'verify', component: VerifyComponent },
   { path: '**', redirectTo: 'home' }, 
 ];
 
