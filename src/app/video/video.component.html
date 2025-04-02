@@ -1,0 +1,96 @@
+<!-- <app-header></app-header> -->
+
+<body class="bg-black text-white font-sans pt-20">
+    <div class="flex lg:flex-row h-auto">
+      
+        <aside *ngIf="sidebarVisible" class="fixed top-20 z-40 w-1/4  h-full bg-black px-6 py-2 flex flex-col gap-4 rounded-2xl mt-1 ">
+            <nav class="space-y-4 flex justify-between">
+                <div class="flex items-center justify-start">
+                    <a (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer transition-colors duration-200">
+                        <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-5 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
+                    </a>
+                    <!-- <div [routerLink]="'/myplaylist'"  class="font-bold ml-2 hover:text-xl transition-all duration-300 ease-in-out hover:underline">Your Library</div> -->
+                </div>
+                <div>
+                    <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class="h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
+                </div>
+            </nav>
+            
+            <div>
+                <span class="flex justify-between">
+                    <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" alt="Search" class="h-6 rounded-full hover:bg-gray-500 transition-colors duration-200">
+                    <div class="flex font-bold hover:cursor-pointer hover:bg-gray-700 rounded transition-colors duration-200">
+                        <div class="px-2">Play list</div>
+                        <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=ffffff" alt="Search" class="h-5 mt-1">
+                    </div>
+                </span>
+            </div>
+
+            <!-- play list -->
+                <div *ngFor="let item of myplaylist; let i = index">
+                    <div  (click)="nextTrack(item)"  class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
+                        <a class="text-xl p-2 font-bold ">#{{i + 1}}</a>
+                        <img [src]="item.albumArt"
+                        alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
+                        <div class="text-white text-sm px-3">
+                            <div class="font-bold text-green-600 hover:underline">{{item.title}} </div>
+                            <div class="text-gray-400 hover:text-white transition-colors">Play list - Tran Cong Nguyen</div>
+                        </div>
+                    </div>
+                </div>
+             <div class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200"></div>
+        </aside>
+        <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
+
+        <!-- sidebar mini -->
+        <div *ngIf="!sidebarVisible" id="sidebarMini" class=" rounded fixed top-20 z-40 w-24 h-full bg-black px-4 py-2 flex flex-col gap-4  transition-all duration-300">
+            <nav class="space-y-4 flex justify-center">
+                <a  (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
+                   <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-8 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
+                </a>
+            </nav>
+            <!-- play list -->
+            <div class="hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
+                <img src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/7/a/7/57a7501a8ba849b71e68bd3e5e41cc58.jpg"
+                 alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
+            </div>
+        </div>
+        <div  *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
+
+
+        <!-- Main Content -->
+
+
+        <!-- Main Content -->
+
+        <main class="flex-1 p-6 bg-gradient-to-r from-amber-900 to-black rounded-xl m-1 min-h-screen">
+            <div class="w-full h-full">
+                <!-- Video Player Container -->
+                <div class="relative w-full max-w-5xl mx-auto shadow-2xl">
+                    <video 
+                        src="{{link}}" 
+                        controls 
+                        class="w-full rounded-xl hover:shadow-lg transition-shadow duration-300">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <!-- Video Information Section -->
+                <div class="mt-8 flex justify-between items-center max-w-5xl mx-auto p-4 bg-black bg-opacity-30 rounded-xl backdrop-blur-sm">
+                    <div class="flex-1">
+                        <h1 class="text-3xl font-bold text-white hover:text-amber-400 transition-colors duration-300">{{name}}</h1>
+                        <p class="text-gray-300 mt-2">Vietnamese Concert Edition</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img 
+                            class="h-24 w-24 rounded-full object-cover object-center border-2 border-amber-500 hover:border-amber-400 transition-all duration-300 hover:scale-105" 
+                            [src]="image" 
+                            alt="Artist Image">
+                        <p class="text-sm text-gray-300 mt-2 font-medium">{{NameArtiest}}</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</body>

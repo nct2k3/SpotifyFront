@@ -17,6 +17,11 @@ import { AdminNavbarComponent } from './admin-navbar/admin-navbar.component';
 import { AdminHeaderComponent } from './admin-header/admin-header.component';
 import { AdminUserManagementComponent } from './admin-user-management/admin-user-management.component';
 import { AdminSongsManagementComponent } from './admin-songs-management/admin-songs-management.component';
+<<<<<<< Updated upstream
+=======
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+>>>>>>> Stashed changes
 
 @NgModule({
   declarations: [
@@ -38,7 +43,9 @@ import { AdminSongsManagementComponent } from './admin-songs-management/admin-so
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MatSnackBarModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
