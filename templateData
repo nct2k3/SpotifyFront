@@ -1,0 +1,31 @@
+{
+  "albums": [
+    {
+      "album_id": 1,
+      "title": " Son tung Album",
+      "release_date": "2020-01-01",
+      "artist": {
+        id: "67d635e07f87f7f6ac109002",
+        name: "Sơn Tùng M-TP",
+        bio: "This is a test artist",
+        debut_year: 2025,
+        artist_photo:"../../assets/Img/ImgArt/SonTung.png"
+      }
+    },
+    {
+      "album_id": 2,
+      "title": "Subin Album",
+      "release_date": "2022-06-15",
+      "artist": {
+        id: "67d635e07f87f7f6ac109004",
+        name: "Subin Hoàng Sơn",
+        bio: "This is a test artist",
+        debut_year: 2024,
+        artist_photo:"../../assets/Img/ImgArt/Subin.png"
+      }
+    }
+  ]
+}
+
+
+songsArtiest/67d635e07f87f7f6ac109002

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { SongsService } from '../services/Songs/songs.service';
 import { SharedService } from '../services/shared/shared.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-footer',
@@ -17,10 +18,11 @@ export class FooterComponent implements OnInit {
   duration: number = 0; 
   progress: number = 0; 
   volume: number = 50; 
-
   sharedData: any[] = [];
-  constructor(private songsService: SongsService , private  sharedService: SharedService) {}
+  
+  constructor(private songsService: SongsService , private  sharedService: SharedService ,  private router: Router) {}
 
+  
   data = {
     title: "Chạy Ngay Đi",
     artists: [
@@ -49,6 +51,11 @@ export class FooterComponent implements OnInit {
       if (this.sharedData.length === 0) {
         console.log('No data available in sharedData');
       }
+    });
+  }
+  goToVideo( Name:any, Image: any, NameArtiest: any,link :any ) {
+    this.router.navigate(['/video'], {
+      queryParams: { Name, Image, NameArtiest,link }
     });
   }
   
@@ -153,6 +160,8 @@ previousTrack(): void {
     console.log('Toggle queue');
     // Logic xử lý hàng đợi bài hát (nếu cần)
   }
+
+  
 }
 
 
