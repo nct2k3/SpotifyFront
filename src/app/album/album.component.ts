@@ -24,7 +24,7 @@ export class AlbumComponent {
     this.sidebarVisible = !this.sidebarVisible;
   }
    ngOnInit() {
-    this.songs.getMyplayList().subscribe((data: any) => {
+    this.songs.getMyplayList("2").subscribe((data: any) => {
       this.myplaylist = data;
     });
     this.route.queryParams.subscribe((params) => {

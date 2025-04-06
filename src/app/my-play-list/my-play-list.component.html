@@ -30,7 +30,7 @@
                 <div *ngFor="let item of myplaylist; let i = index">
                     <div  (click)="nextTrack(item)"  class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
                         <a class="text-xl p-2 font-bold ">#{{i + 1}}</a>
-                        <img [src]="item.albumArt"
+                        <img [src]="item.image_location"
                         alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
                         <div class="text-white text-sm px-3">
                             <div class="font-bold text-green-600 hover:underline">{{item.title}} </div>
@@ -60,7 +60,7 @@
         <main class="flex-1 bg-gradient-to-l from-gray-900 to-gray-700 rounded-xl m-1">
             <div class="max-full ">
                 <div class="flex w-full items-center space-x-4 p-6  bg-gradient-to-l  from-gray-800 to-gray-900  rounded-t-2xl">
-                    <img [src]="songs[0].albumArt" alt="Playlist Cover" class="w-42 h-42 rounded-full">
+                    <img [src]="songs[0].image_location" alt="Playlist Cover" class="w-42 h-42 rounded-full">
                     <div>
                         <h1 class="text-gray-400 m-2">Playlist</h1>
                         <h1 class="text-5xl font-bold">My Playlist! #1</h1>
@@ -96,7 +96,7 @@
                         <tbody *ngFor="let item of songs" >
                             <tr  (click)="nextTrack(item)" class="hover:bg-black">
                                 <td class="py-2 rounded-l-xl p-2">1</td>
-                                <td class="flex items-center  p-2"><img [src]="item.albumArt" class="h-12 w-12 rounded mr-2 my-2"> Play It Safe</td>
+                                <td class="flex items-center  p-2"><img [src]="item.image_location" class="h-12 w-12 rounded mr-2 my-2"> Play It Safe</td>
                                 <td class="  p-2">{{item.title}}</td>
                                 <td class="  p-2">2:12</td>
                             </tr>

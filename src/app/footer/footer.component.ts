@@ -34,7 +34,7 @@ export class FooterComponent implements OnInit {
       }
     ],
     genre: "Nhạc Trẻ",
-    albumArt: "../../assets/Img/image5.png",
+    image_location: "../../assets/Img/image5.png",
     file_location: "../../assets/Songs/ChayNgayDi-SonTungMTP-5468704.mp3",
     duration: 3.14
   };
@@ -70,7 +70,7 @@ export class FooterComponent implements OnInit {
     this.currentTrack = {
       name: data.title,
       artist: data.artists[0]?.name || 'Unknown Artist',
-      albumArt: data.albumArt || 'default-album-art.jpg',
+      image_location: data.image_location || 'default-album-art.jpg',
       url: data.file_location,
       duration: data.duration
     };

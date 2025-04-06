@@ -17,6 +17,11 @@ import { AdminNavbarComponent } from './admin-navbar/admin-navbar.component';
 import { AdminHeaderComponent } from './admin-header/admin-header.component';
 import { AdminUserManagementComponent } from './admin-user-management/admin-user-management.component';
 import { AdminSongsManagementComponent } from './admin-songs-management/admin-songs-management.component';
+import { AlbumComponent } from './album/album.component';
+import { DetailComponent } from './detail/detail.component';
+import { SearchComponent } from './search/search.component';
+import { VideoComponent } from './video/video.component';
+import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
 
 
 @NgModule({
@@ -33,7 +38,14 @@ import { AdminSongsManagementComponent } from './admin-songs-management/admin-so
     AdminNavbarComponent,
     AdminHeaderComponent,
     AdminUserManagementComponent,
-    AdminSongsManagementComponent
+    AdminSongsManagementComponent,
+    AlbumComponent,
+    DetailComponent,
+    SearchComponent,
+    VideoComponent,
+    GeminiChatComponent,
+    
+   
   ],
   imports: [
     BrowserModule,

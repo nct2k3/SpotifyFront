@@ -1,25 +1,29 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SongsService {
-  private apiUrl = 'https://9e279ba3-83b0-4fdb-b1a2-4c891154f83a.mock.pstmn.io/songs';
+  private apiUrl = 'http://127.0.0.1:8000/api/songs/';
   private apiUrlArtist = 'https://f14c4be8-2a85-4630-a08b-e8cde023ae41.mock.pstmn.io/songsArtiest';  
-  private apiUrlMyplaylist = 'https://d2768f67-ebb0-4044-b0de-ee96da3d416c.mock.pstmn.io/myplaylist';
+  private apiUrlMyplaylist = 'http://127.0.0.1:8000/api/playlists/?mine=1';
 
   constructor(private http: HttpClient) {}
 
-  getTrack(): Observable<any> {
+  getTrack(): Observable<any[]> {
     return this.http.get<any>(this.apiUrl).pipe(
-      tap(data => console.log('Songs data:', data))
+      map(data => data.results)
     );
   }
-  getMyplayList(): Observable<any> {
+  getMyplayList(userId: string): Observable<any[]> {
     return this.http.get<any>(this.apiUrlMyplaylist).pipe(
-      tap(data => console.log('Songs my data:', data))
+      map(data => {
+        const playlists = data.results.filter((item: any) => item.user === userId); 
+        return playlists.flatMap((playlist: any) => playlist.songs); 
+      }),
+      tap(songs => console.log('Songs from playlists:', songs))
     );
   }
   getAlbum(id: string): Observable<any> {

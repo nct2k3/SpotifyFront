@@ -15,7 +15,7 @@ export class DetailComponent {
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible; 
     console.log('Sidebar visibility:', this.sidebarVisible);
-    this.songsService.getMyplayList().subscribe((data: any) => {
+    this.songsService.getMyplayList("2").subscribe((data: any) => {
       this.myplaylist = data;
     });
   }
