@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { MyPlayListComponent } from './my-play-list/my-play-list.component';
 import { ProductComponent } from './product/product.component';
 import { HeaderComponent } from './header/header.component';
@@ -22,12 +24,8 @@ import { DetailComponent } from './detail/detail.component';
 import { SearchComponent } from './search/search.component';
 import { VideoComponent } from './video/video.component';
 import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
-<<<<<<< Updated upstream
-=======
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
->>>>>>> Stashed changes
-
+import { RegisterComponent } from './register/register.component';
+import { SidebarComponent } from './sidebar/sidebar.component'; // Thêm import này
 
 @NgModule({
   declarations: [
@@ -38,7 +36,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HeaderComponent,
     FooterComponent,
     HomeComponent,
-    TimeFormatPipe,
+    TimeFormatPipe, 
     AdminComponent,
     AdminNavbarComponent,
     AdminHeaderComponent,
@@ -49,10 +47,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     SearchComponent,
     VideoComponent,
     GeminiChatComponent,
-
-
-    TimeFormatPipe,
-    RegisterComponent
+    RegisterComponent,
+    SidebarComponent 
   ],
   imports: [
     BrowserModule,
