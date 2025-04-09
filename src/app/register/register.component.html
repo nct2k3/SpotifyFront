@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black ">
+<div class="  p-8 bg-gradient-to-t from-black to-gray-700 flex items-center justify-center  ">
+    <div class="w-2/3 flex justify-center bg-black rounded-2xl  "> 
+        <div class="bg-black p-8 rounded-lg shadow-lg w-96 text-white">
+            <div class="w-full flex justify-center"> <img class="h-12" src="https://img.icons8.com/?size=100&id=11116&format=png&color=ffffff" alt="Logo" class=" h-14"></div>
+            <h2 class="text-center text-3xl font-bold mb-6">Đăng ký vào Spotify</h2>
+            <div>
+            </div>
+            <div class=" w-full border-b  py-6">
+                <label class="block text-white font-bold my-1">Địa chỉ email</label>
+                <input type="text" class="w-full border bg-black  py-2 px-3 rounded mt-1 focus:outline-none" placeholder="name@domain.com">
+                <button class="w-full bg-green-500 text-black font-bold py-3 rounded-full mt-6 hover:scale-105 transition-transform duration-200">Đăng ký</button>
+            </div>
+            <div class="space-y-4 mt-6">
+                <button class="p-[14%] hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-start space-x-4 font-bold">
+                    <img class="h-8" src="https://img.icons8.com/?size=100&id=17949&format=png&color=000000"><span>Đăng ký bằng Google</span>
+                </button>
+                <button class="p-[14%] hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-start space-x-4 font-bold">
+                    <img class="h-8" src="https://img.icons8.com/?size=100&id=118497&format=png&color=000000"><span>Đăng ký bằng Facebook</span>
+                </button>
+                <button class="p-[14%] hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-start space-x-4 font-bold">
+                    <img class="h-8" src="https://img.icons8.com/?size=100&id=30840&format=png&color=ffffff"><span>Đăng ký bằng Apple</span>
+                </button>
+                <button class="p-[14%] hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-start space-x-4 font-bold">
+                    <span>Đăng ký bằng số điện thoại</span>
+                </button>
+            </div>
+            <div class="text-center mt-4 text-gray-400 text-sm">
+                Bạn đã có tài khoản? <a routerLink="/login" class="text-white hover:text-green-500 hover:underline">Đăng nhập Spotify</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
