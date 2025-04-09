@@ -9,6 +9,8 @@ import { AlbumComponent } from './album/album.component';
 import { DetailComponent } from './detail/detail.component';
 import { VideoComponent } from './video/video.component';
 import { SearchComponent } from './search/search.component';
+import { RegisterComponent } from './register/register.component';
+import { VerifyComponent } from './verify/verify.component';
 
 const routes: Routes = [
   { path: 'login', component:LoginComponent  },
@@ -20,6 +22,8 @@ const routes: Routes = [
   {path:'detail',component:DetailComponent},
   {path:'video',component:VideoComponent},
   {path:'search',component:SearchComponent},
+  { path: '**', redirectTo: 'home' },
+  { path: 'verify', component: VerifyComponent },
   { path: '**', redirectTo: 'home' },
 ];
 

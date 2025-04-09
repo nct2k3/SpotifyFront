@@ -1,0 +1,24 @@
+<div class="p-8 bg-gradient-to-t from-black to-gray-700 flex items-center justify-center h-screen">
+    <div class="bg-black p-8 rounded-lg shadow-lg w-96 text-white">
+        <h2 class="text-center text-2xl font-bold mb-6">Nhập mã xác minh</h2>
+        <p class="text-center text-gray-400 mb-4">
+            Nhập mã gồm 6 chữ số mà bạn nhận được qua địa chỉ <span class="text-white font-bold">{{ email }}</span>.
+        </p>
+        <div class="space-y-4">
+            <input #verificationCodeInput type="text" maxlength="6"
+                class="w-full border bg-black py-2 px-3 rounded text-center text-2xl focus:outline-none"
+                placeholder="______">
+            <div class="text-center mt-4">
+                <a href=""
+                    class="text-green-500 hover:underline">
+                    Gửi lại mã
+                </a>
+            </div>
+            <button
+                class="w-full bg-green-500 text-black font-bold py-3 rounded-full mt-6 hover:scale-105 transition-transform duration-200"
+                (click)="onVerify(verificationCodeInput.value)">
+                Xác minh
+            </button>
+        </div>
+    </div>
+</div>

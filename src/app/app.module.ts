@@ -23,6 +23,7 @@ import { SearchComponent } from './search/search.component';
 import { VideoComponent } from './video/video.component';
 import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
 
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -44,8 +45,10 @@ import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
     SearchComponent,
     VideoComponent,
     GeminiChatComponent,
-    
-   
+
+
+    TimeFormatPipe,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
