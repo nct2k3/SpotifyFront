@@ -22,8 +22,12 @@ import { DetailComponent } from './detail/detail.component';
 import { SearchComponent } from './search/search.component';
 import { VideoComponent } from './video/video.component';
 import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
+<<<<<<< Updated upstream
+=======
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+>>>>>>> Stashed changes
 
-import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +58,9 @@ import { RegisterComponent } from './register/register.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MatSnackBarModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
