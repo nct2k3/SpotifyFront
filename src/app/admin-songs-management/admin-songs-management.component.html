@@ -69,7 +69,7 @@
         <td class="p-2 border bg-white break-words">
           <button
             class="bg-green-500 text-white rounded items-center hover:bg-green-700 p-1 ml-2"
-            (click)="openEditModal(song)"
+            (click)="openEditModal(song.id, song)"
           >
             <i class="fa fa-edit"></i>
           </button>
@@ -91,10 +91,12 @@
   >
     <!-- Modal content -->
     <div class="bg-white p-6 rounded-lg w-96 max-h-[80vh] overflow-y-auto">
-      <h2 class="text-xl font-bold mb-4">{{ isEditing ? 'Edit Song' : 'Create New Song' }}</h2>
+      <h2 class="text-xl font-bold mb-4">
+        {{ isEditing ? "Edit Song" : "Create New Song" }}
+      </h2>
 
       <!-- Form Inputs -->
-      <form (ngSubmit)="createOrUpdateSong()">
+      <form (ngSubmit)="onSubmit()">
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700" for="title"
             >Title</label
@@ -107,19 +109,11 @@
             class="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter song title"
           />
-        </div>
 
-        <!-- <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700" for="artist">Artist</label>
-          <input
-            id="artist"
-            type="text"
-            [(ngModel)]="newSong.artist"
-            name="artist"
-            class="w-full p-2 border border-gray-300 rounded"
-            placeholder="Enter artist name"
-          />
-        </div> -->
+          <p *ngIf="titleError" class="text-red-500 text-sm mt-1">
+            {{ titleError }}
+          </p>
+        </div>
 
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700" for="artist"
@@ -128,7 +122,7 @@
           <input
             id="artist"
             type="text"
-            [(ngModel)]="newSong.artist"
+            [(ngModel)]="artistName"
             name="artist"
             (input)="onArtistInput($event)"
             class="w-full p-2 border border-gray-300 rounded"
@@ -146,6 +140,10 @@
               {{ artist.name }}
             </li>
           </ul>
+          <!-- Hiển thị lỗi khi người dùng không chọn từ danh sách gợi ý -->
+          <p *ngIf="artistError" class="text-red-500 text-sm mt-1">
+            {{ artistError }}
+          </p>
         </div>
 
         <div class="mb-4">
@@ -174,10 +172,12 @@
             class="w-full p-2 border border-gray-300 rounded"
             placeholder="Enter song duration"
           />
+          <p *ngIf="durationError" class="text-red-500 text-sm mt-1">
+            {{ durationError }}
+          </p>
         </div>
 
-        <!-- File Input: Song File -->
-        <!-- <div class="mb-4">
+        <div class="mb-4">
           <label
             class="block text-sm font-medium text-gray-700"
             for="file_location"
@@ -189,21 +189,17 @@
             (change)="onFileSelected($event, 'file_location')"
             class="w-full p-2 border border-gray-300 rounded"
           />
-        </div> -->
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700" for="file_location">Song File</label>
-          <input
-            id="file_location"
-            type="file"
-            (change)="onFileSelected($event, 'file_location')"
-            class="w-full p-2 border border-gray-300 rounded"
-          />
-          
           <!-- Hiển thị tên tệp nếu có -->
-          <span *ngIf="newSong.file_location">Tệp đã chọn: {{ newSong.file_location }}</span>
+          <span *ngIf="newSong.file_location && isEditing"
+            >Tệp đã chọn: {{ newSong.file_location }}</span
+          >
+          <!-- Hiển thị lỗi chọn file -->
+          <p *ngIf="fileError" class="text-red-500 text-sm mt-1">
+            {{ fileError }}
+          </p>
         </div>
-        
+
         <!-- File Input: Image -->
         <div class="mb-4">
           <label
@@ -217,7 +213,14 @@
             (change)="onFileSelected($event, 'image_location')"
             class="w-full p-2 border border-gray-300 rounded"
           />
-          <span *ngIf="newSong.image_location">Tệp đã chọn: {{ newSong.image_location }}</span>
+          <!-- Hiên thị tệp đã chọn -->
+          <span *ngIf="newSong.image_location && isEditing"
+            >Tệp đã chọn: {{ newSong.image_location }}</span
+          >
+          <!-- Hiển thị lỗi chọn file -->
+          <p *ngIf="imageError" class="text-red-500 text-sm mt-1">
+            {{ imageError }}
+          </p>
         </div>
 
         <div class="flex justify-between">

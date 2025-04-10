@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
-import { ApiResponseArtist, Artist } from 'src/app/Models/artists.model';
+import { ApiResponseArtist, Artist, ArtistResponse } from 'src/app/Models/artists.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class ArtistsService {
   constructor(private http: HttpClient) {}
 
   // Lấy danh sách nghệ sĩ từ API
-  getArtists(): Observable<Artist[]> {
+  getArtists(): Observable<ArtistResponse[]> {
     return this.http.get<ApiResponseArtist>(this.apiUrl).pipe(
       map(response => response.results)  // Trả về mảng các nghệ sĩ từ trường results
     );

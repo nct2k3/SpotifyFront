@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
 
@@ -19,23 +19,44 @@ export class SongsService {
   }
   // Xóa bài hát theo id
   deleteSong(id: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    console.log(token);
+
+    const headers = new HttpHeaders({
+      'Authorization': `Token ${token}`
+    });
+
     const url = `${this.apiUrl}${id}/`;  // Giả sử API yêu cầu thêm id vào cuối URL
-    return this.http.delete<any>(url).pipe(
+    return this.http.delete<any>(url, {headers}).pipe(
       tap(() => console.log(`Bài hát với ID ${id} đã được xóa`))
     );
   }
 
   // Thêm mới bài hát
   createSong(song: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, song).pipe(
+    const token = localStorage.getItem('token');
+    console.log(token);
+
+    const headers = new HttpHeaders({
+      'Authorization': `Token ${token}`
+    });
+
+    return this.http.post<any>(this.apiUrl, song, { headers }).pipe(
       tap((newSong) => console.log('Bài hát mới đã được tạo:', newSong))
     );
   }
 
   // Cập nhật bài hát
-  updateSong(id: string, song: any): Observable<any> {
+  updateSong(id: number, song: any): Observable<any> {
+    const token = localStorage.getItem('token');
+    console.log(token);
+
+    const headers = new HttpHeaders({
+      'Authorization': `Token ${token}`
+    });
+
     const url = `${this.apiUrl}${id}/`;  // Giả sử API yêu cầu thêm id vào cuối URL
-    return this.http.put<any>(url, song).pipe(
+    return this.http.put<any>(url, song, { headers }).pipe(
       tap((updatedSong) => console.log('Bài hát đã được cập nhật:', updatedSong))
     );
   }
