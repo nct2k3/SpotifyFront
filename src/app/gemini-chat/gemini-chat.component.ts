@@ -49,18 +49,19 @@ export class GeminiChatComponent implements AfterViewChecked {
 
     if (!this.inputValue.trim()) return;
 
+    const userPrompt = this.inputValue.trim();
+    
     const userMessage: Message = {
-      text: this.inputValue,
+      text: userPrompt,
       isUser: true,
       timestamp: new Date()
     };
 
     this.messages = [...this.messages, userMessage];
-    this.inputValue = '';
+    this.inputValue = ''; 
     this.isLoading = true;
 
-    // Replace toPromise() with subscribe
-    this.geminiApiService.getMessage(this.inputValue).subscribe({
+    this.geminiApiService.getMessage(userPrompt).subscribe({
       next: (response) => {
         const aiMessage: Message = {
           text: response,
