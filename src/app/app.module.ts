@@ -26,6 +26,7 @@ import { VideoComponent } from './video/video.component';
 import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
 
 import { RegisterComponent } from './register/register.component';
+import { AdminAlbumManagementComponent } from './admin-album-management/admin-album-management.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { RegisterComponent } from './register/register.component';
 
 
     TimeFormatPipe,
-    RegisterComponent
+    RegisterComponent,
+    AdminAlbumManagementComponent
   ],
   imports: [
     BrowserModule,

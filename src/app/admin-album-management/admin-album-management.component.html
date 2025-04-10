@@ -1,0 +1,126 @@
+<div class="p-5 rounded-lg w-full">
+  <!-- Tiêu đề và thanh tìm kiếm -->
+  <div class="flex items-center justify-between mb-6">
+    <!-- Tiêu đề -->
+    <h2 class="text-white font-bold text-lg">Manage Albums</h2>
+
+    <!-- Thanh tìm kiếm và Nút "Create" -->
+    <div class="flex items-center space-x-4">
+      <!-- Thanh tìm kiếm -->
+      <div class="relative flex items-center w-full max-w-md">
+        <span class="absolute left-3 text-gray-400">
+          <img
+            src="https://img.icons8.com/?size=100&id=7695&format=png&color=000000"
+            alt="Search"
+            class="h-7 rounded-l-full hover:bg-gray-500"
+          />
+        </span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search albums..."
+          class="font-bold h-12 bg-white text-black rounded-full pl-12 pr-10 py-2 focus:outline-none w-full"
+        />
+      </div>
+
+      <!-- Nút "Create" -->
+      <button
+        class="bg-blue-500 text-white rounded-full py-2 px-6 hover:bg-blue-700 transition-colors h-12"
+        (click)="openCreateModal()"
+      >
+        Create
+      </button>
+    </div>
+  </div>
+
+  <table class="w-full table-fixed border-collapse mt-4">
+    <thead>
+      <tr class="bg-gray-800 text-white">
+        <th class="p-2 border break-words">#</th>
+        <th class="p-2 border break-words">Tiêu đề</th>
+        <th class="p-2 border break-words">Ngày phát hành</th>
+        <th class="p-2 border break-words">Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let album of albums; let i = index" class="hover:bg-gray-100">
+        <td class="p-2 border bg-white text-black break-words">{{ i + 1 }}</td>
+        <td class="p-2 border bg-white text-black break-words">
+          {{ album.title }}
+        </td>
+        <td class="p-2 border bg-white text-black break-words">
+          {{ album.release_date | date : "dd/MM/yyyy" }}
+        </td>
+        <td class="p-2 border bg-white text-black break-words">
+          <button
+            (click)="selectAlbum(album)"
+            class="text-blue-600 p-1 ml-2 hover:underline"
+          >
+            <i class="fa fa-eye"></i>
+          </button>
+          <button
+            (click)="editAlbum(album)"
+            class="bg-green-500 text-white rounded items-center hover:bg-green-700 p-1 ml-2"
+          >
+            <i class="fa fa-edit"></i>
+          </button>
+          <button
+            (click)="deleteAlbum(album.id)"
+            class="bg-red-500 text-white rounded items-center hover:bg-red-700 p-1 ml-3"
+          >
+            <i class="fa fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Chi tiết Album -->
+  <div *ngIf="selectedAlbum" class="mt-6 p-4 border rounded bg-gray-50">
+    <h2 class="text-xl font-bold mb-2">{{ selectedAlbum.title }}</h2>
+    <p>
+      <strong>Ngày phát hành:</strong> {{ selectedAlbum.release_date | date }}
+    </p>
+
+    <div class="mt-4">
+      <h3 class="font-semibold">🎤 Nghệ sĩ:</h3>
+      <ul>
+        <li *ngFor="let artist of selectedAlbum.artists">
+          <img
+            [src]="artist.artist_photo"
+            class="w-24 h-24 object-cover my-2 rounded"
+          />
+          <p><strong>Tên:</strong> {{ artist.name }}</p>
+          <p><strong>Năm ra mắt:</strong> {{ artist.debut_year }}</p>
+          <p><strong>Tiểu sử:</strong> {{ artist.bio }}</p>
+        </li>
+      </ul>
+    </div>
+
+    <div class="mt-4">
+      <h3 class="font-semibold">🎵 Danh sách bài hát:</h3>
+      <table class="w-full mt-2 table-auto border">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="p-2 border">Tiêu đề</th>
+            <th class="p-2 border">Thể loại</th>
+            <th class="p-2 border">Thời lượng</th>
+            <th class="p-2 border">File</th>
+            <th class="p-2 border">Ảnh</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let song of selectedAlbum.songs">
+            <td class="p-2 border">{{ song.title }}</td>
+            <td class="p-2 border">{{ song.genre }}</td>
+            <td class="p-2 border">{{ song.duration }} phút</td>
+            <td class="p-2 border">{{ song.file_location }}</td>
+            <td class="p-2 border">
+              <img [src]="song.image_location" class="w-12 h-12 object-cover" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
