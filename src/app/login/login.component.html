@@ -13,16 +13,19 @@
             <div class="w-full flex justify-center"> <img class="h-12" src="https://img.icons8.com/?size=100&id=11116&format=png&color=ffffff" alt="Logo" class=" h-14"></div>
             <h2 class="text-center text-3xl font-bold mb-6">Đăng nhập vào Spotify</h2>
             <div class="space-y-4">
-                <button class="hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-center space-x-2 font-bold ">
-                    <img class="h-8" src="https://img.icons8.com/?size=100&id=17949&format=png&color=000000"><span>Tiếp tục bằng Google</span>
+                <button class="p-[14%] hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-start space-x-4 font-bold">
+                    <img class="h-8" src="https://img.icons8.com/?size=100&id=17949&format=png&color=000000" alt="Google">
+                    <span>Tiếp tục bằng Google</span>
                 </button>
-                <button class="hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-center space-x-2 font-bold ">
-                    <img class="h-8" src="https://img.icons8.com/?size=100&id=118497&format=png&color=000000"><span>Tiếp tục bằng Facebook</span>
+                <button class="p-[14%] hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-start space-x-4 font-bold">
+                    <img class="h-8" src="https://img.icons8.com/?size=100&id=118497&format=png&color=000000" alt="Facebook">
+                    <span>Tiếp tục bằng Facebook</span>
                 </button>
-                <button class="hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-center space-x-2 font-bold ">
-                    <img class="h-8" src="https://img.icons8.com/?size=100&id=30840&format=png&color=ffffff"><span>Tiếp tục bằng Apple</span>
+                <button class="p-[14%] hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-start space-x-4 font-bold">
+                    <img class="h-8" src="https://img.icons8.com/?size=100&id=30840&format=png&color=ffffff" alt="Apple">
+                    <span>Tiếp tục bằng Apple</span>
                 </button>
-                <button class="hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-center space-x-2 font-bold ">
+                <button class="p-[14%] hover:scale-105 transition-transform duration-200 w-full bg-black border py-2 rounded-full flex items-center justify-start space-x-4 font-bold">
                     <span>Tiếp tục bằng số điện thoại</span>
                 </button>
             </div>
@@ -31,20 +34,24 @@
             </div>
             <div class="mt-6">
                 <label class="block text-white font-bold my-1">Email hoặc tên người dùng</label>
-                <input type="text" class="w-full border bg-black  py-2 px-3 rounded mt-1 focus:outline-none" placeholder="Email hoặc tên người dùng">
+                <input id="emailInput" type="text" class="w-full border bg-black py-2 px-3 rounded mt-1 focus:outline-none" placeholder="Email hoặc tên người dùng">            
                 <label class="block text-white font-bold my-1">Mật khẩu</label>
                 <input type="password" class="w-full border bg-black py-2 px-3 rounded mt-1 focus:outline-none" placeholder="Mật khẩu">
             </div>
-            <button class="w-full bg-green-500 text-black font-bold py-3 rounded-full mt-6 hover:scale-105 transition-transform duration-200">Đăng nhập</button>
+            <button 
+                class="w-full bg-green-500 text-black font-bold py-3 rounded-full mt-6 hover:scale-105 transition-transform duration-200"
+                (click)="onLogin()">
+                Đăng nhập
+            </button>
+
             <div class="text-center mt-4 text-gray-400 text-sm">
                 <a href="#" class=" underline  hover:text-green-500">Quên mật khẩu của bạn?</a>
             </div>
             <div class="text-center mt-4 text-gray-400 text-sm">
-                Bạn chưa có tài khoản? <a href="#" class="text-white hover:text-green-500 hover:underline">Đăng ký Spotify</a>
+                Bạn chưa có tài khoản? <a routerLink="/register" class="text-white hover:text-green-500 hover:underline">Đăng ký Spotify</a>
             </div>
         </div>
     </div>
 </div>
 </body>
 </html>
-<app-footer></app-footer>

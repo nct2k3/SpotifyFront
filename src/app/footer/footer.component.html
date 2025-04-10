@@ -16,7 +16,7 @@
       >
       
         <img
-        [src]="currentTrack?.albumArt || 'assets/default-album-art.jpg'"
+        [src]="currentTrack?.image_location"
         [alt]="currentTrack?.name || 'No track playing'"
         [class]="isPlaying ? 'rounded-full h-14 w-14 hover:scale-105 transition-transform animate-spin-slow' : 'rounded-full h-14 w-14 hover:scale-105 transition-transform'"
       />

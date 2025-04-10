@@ -30,7 +30,7 @@
                 <div *ngFor="let item of myplaylist; let i = index">
                     <div  (click)="nextTrack(item)"  class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
                         <a class="text-xl p-2 font-bold ">#{{i + 1}}</a>
-                        <img [src]="item.albumArt"
+                        <img [src]="item.image_location"
                         alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
                         <div class="text-white text-sm px-3">
                             <div class="font-bold text-green-600 hover:underline">{{item.title}} </div>
