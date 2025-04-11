@@ -21,11 +21,11 @@ export class MyPlayListComponent {
   songs: any[] = [];
   myplaylist: any[] = [];
   ngOnInit() {
-    this.songsService.getMyplayList("1").subscribe((data: any) => {
+    this.songsService.getMyplayList("2").subscribe((data: any) => {
       this.songs = data;
       this.SharedService.updateSharedData(this.songs)
     });
-    this.songsService.getMyplayList("1").subscribe((data: any) => {
+    this.songsService.getMyplayList("2").subscribe((data: any) => {
       this.myplaylist = data;
     });
   }

@@ -1,89 +1,109 @@
-<footer class="fixed bottom-0 z-50 w-full h-[80px] bg-gradient-to-r from-gray-950 to-gray-900 px-4 py-2 flex items-center shadow-lg">
-  <!-- Audio Player -->
-  <audio
-    #audioPlayer
-    [src]="currentTrack?.url"
-    (timeupdate)="updateProgress($event)"
-    (loadedmetadata)="duration = audioPlayer.duration"
-  ></audio>
-
-  <!-- Left: Song Info -->
-  <div class="w-1/4 flex items-center">
-    <div class="flex items-center gap-3 hover:bg-gray-800 p-2 rounded-lg cursor-pointer transition-all duration-200" (click)="togglePlay()">
-      <img
-        [src]="currentTrack?.image_location || 'default-image.jpg'"
-        [alt]="currentTrack?.name || 'No track'"
-        [class]="isPlaying ? 'rounded-full h-12 w-12 animate-spin-slow' : 'rounded-full h-12 w-12'"
-        class="hover:scale-105 transition-transform duration-200 object-cover"
+<!-- Footer -->
+<footer class="fixed bottom-0 z-50 flex items-center w-full bg-gradient-to-r from-black to-gray-800 px-4 py-1">
+    <!-- Audio Player -->
+    <audio
+      #audioPlayer
+      [src]="currentTrack?.url"
+      (timeupdate)="updateProgress($event)"
+      (loadedmetadata)="duration = audioPlayer.duration"
+    ></audio>
+  
+    <!-- Left Section: Song Info -->
+    <div class="flex w-1/4 items-center gap-2">
+      <div
+        class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200 mr-2"
+        (click)="togglePlay()"
+      >
+      
+        <img
+        [src]="currentTrack?.image_location"
+        [alt]="currentTrack?.name || 'No track playing'"
+        [class]="isPlaying ? 'rounded-full h-14 w-14 hover:scale-105 transition-transform animate-spin-slow' : 'rounded-full h-14 w-14 hover:scale-105 transition-transform'"
       />
-      <div class="text-white min-w-0 flex-1">
-        <div class="font-semibold text-sm hover:underline truncate">
-          {{ currentTrack?.name || 'No track selected' }}
-        </div>
-        <div class="text-xs text-gray-400 hover:text-gray-200 transition-colors duration-200 truncate">
-          {{ currentTrack?.artist || 'Unknown Artist' }}
+        
+        <div class="text-white text-sm px-3">
+          <div class="font-bold hover:underline">
+            {{ currentTrack?.name || 'No track selected' }}
+          </div>
+          <div class="text-gray-400 hover:text-white transition-colors">
+            {{ currentTrack?.artist || 'Unknown Artist' }}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Center: Playback Controls -->
-  <div class="w-2/4 flex flex-col items-center justify-center gap-2">
-    <div class="flex items-center gap-6">
-      <button class="p-1 hover:bg-gray-800 rounded-full transition-all duration-200">
+  
+    <!-- Center Section: Playback Controls -->
+    <div class="flex flex-col items-center w-2/4">
+      <div class="flex items-center gap-6">
+        <!-- Previous Button -->
         <img
           src="https://img.icons8.com/?size=100&id=91627&format=png&color=ffffff"
           alt="Previous"
           (click)="previousTrack()"
-          class="h-5 w-5 hover:scale-110 transition-transform duration-200 cursor-pointer"
+          class="h-8 hover:scale-110 cursor-pointer"
         />
-      </button>
-      <button class="p-2 bg-white rounded-full hover:scale-110 transition-transform duration-200">
+  
+        <!-- Play/Pause Button -->
         <img
-          [src]="isPlaying ? 'https://img.icons8.com/?size=100&id=byJkZbWndgQ9&format=png&color=000000' : 'https://img.icons8.com/?size=100&id=9978&format=png&color=000000'"
+          [src]="isPlaying ? 'https://img.icons8.com/?size=100&id=9978&format=png&color=000000' : 'https://img.icons8.com/?size=100&id=byJkZbWndgQ9&format=png&color=000000'"
           [alt]="isPlaying ? 'Pause' : 'Play'"
           (click)="togglePlay()"
-          class="h-6 w-6 cursor-pointer"
+          class="h-10 w-10 p-2 bg-white rounded-full hover:scale-110 cursor-pointer"
         />
-      </button>
-      <button class="p-1 hover:bg-gray-800 rounded-full transition-all duration-200">
+  
+        <!-- Next Button -->
         <img
           src="https://img.icons8.com/?size=100&id=91632&format=png&color=ffffff"
           alt="Next"
           (click)="nextTrack()"
-          class="h-5 w-5 hover:scale-110 transition-transform duration-200 cursor-pointer"
+          class="h-8 hover:scale-110 cursor-pointer"
         />
-      </button>
-    </div>
-    <div class="flex items-center gap-2 w-full">
-      <span class="text-xs text-gray-400 tabular-nums">{{ currentTime | timeFormat }}</span>
-      <div class="h-1.5 flex-1 bg-gray-700 rounded-full cursor-pointer relative" (click)="seekTo($event)">
-        <div class="h-1.5 bg-white rounded-full transition-all duration-200" [style.width.%]="progress"></div>
       </div>
-      <span class="text-xs text-gray-400 tabular-nums">{{ duration | timeFormat }}</span>
+  
+      <!-- Progress Bar -->
+      <div class="flex items-center gap-2 w-full mt-2">
+        <span class="text-xs text-gray-400">{{ currentTime | timeFormat }}</span>
+        <div
+          class="h-1 flex-1 bg-gray-600 rounded-full cursor-pointer"
+          (click)="seekTo($event)"
+        >
+          <div
+            class="h-1 bg-white rounded-full"
+            [style.width.%]="progress"
+          ></div>
+        </div>
+        <span class="text-xs text-gray-400">{{ duration | timeFormat }}</span>
+      </div>
     </div>
-  </div>
-
-  <!-- Right: Volume Controls -->
-  <div class="w-1/5 flex items-center justify-end gap-3">
-    <button class="p-1 hover:bg-gray-800 rounded-full transition-all duration-200">
+  
+    <!-- Right Section: Volume Controls -->
+    <div class="w-1/5 flex items-center justify-end gap-4">
+      <!-- Mute Button -->
       <img
-        src="https://img.icons8.com/?size=100&id=22778&format=png&color=ffffff"
+       src="https://img.icons8.com/?size=100&id=22778&format=png&color=ffffff"
         alt="Volume"
         (click)="toggleMute()"
-        class="h-5 w-5 hover:scale-110 transition-transform duration-200 cursor-pointer"
+        class="h-8 hover:scale-110 cursor-pointer"
       />
-    </button>
-    <div class="w-20 h-1.5 bg-gray-700 rounded-full cursor-pointer relative" (click)="adjustVolume($event)">
-      <div class="h-1.5 bg-white rounded-full transition-all duration-200" [style.width.%]="volume"></div>
-    </div>
-    <button class="p-1 hover:bg-gray-800 rounded-full transition-all duration-200">
+  
+      <!-- Volume Bar -->
+      <div
+        class="w-24 h-1 bg-gray-600 rounded-full cursor-pointer"
+        (click)="adjustVolume($event)"
+      >
+        <div
+          class="h-1 bg-white rounded-full"
+          [style.width.%]="volume"
+        ></div>
+      </div>
+  
+      <!-- Queue Button -->
       <img
         src="https://img.icons8.com/?size=100&id=38034&format=png&color=ffffff"
         alt="Queue"
-        (click)="goToVideo(currentTrack?.name, currentTrack?.image_location, currentTrack?.artist, currentTrack?.url)"
-        class="h-5 w-5 hover:scale-110 transition-transform duration-200 cursor-pointer"
+        (click)="goToVideo(currentTrack?.name, currentTrack?.albumArt,currentTrack?.artist,currentTrack?.url)"
+        class="h-5 hover:scale-110 cursor-pointer"
       />
-    </button>
-  </div>
-</footer>
+    </div>
+  </footer>
+  

@@ -1,143 +1,134 @@
+<app-header></app-header>
+
 <body class="bg-black text-white font-sans pt-20">
     <div class="flex lg:flex-row h-auto">
-      <app-sidebar
-        [sidebarVisible]="sidebarVisible"
-        [myplaylist]="myplaylist"
-        (toggleSidebarEvent)="toggleSidebar()"
-        (nextTrackEvent)="nextTrack($event)"
-      ></app-sidebar>
-      <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
-      <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
-  
-      <!-- Main Content -->
-      <main class="flex-1 p-6 bg-gradient-to-r from-green-950 to-black rounded-xl m-1">
-        <!-- Header Tabs -->
-        <header class="flex items-center gap-4 ml-2 mb-6">
-          <div
-            class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
-          >
-            All
-          </div>
-          <div
-            class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
-          >
-            Song
-          </div>
-          <div
-            class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
-          >
-            Podcast
-          </div>
-        </header>
-  
-        <!-- Recommended for you -->
-        <section class="mt-8">
-          <div class="flex justify-between items-center mb-4">
-            <h2
-              class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Recommended for you
-            </h2>
-            <a
-              class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Show All
-            </a>
-          </div>
-          <div class="flex flex-wrap gap-6">
-            <div
-              *ngFor="let item of songs"
-              class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200"
-            >
-              <div class="w-44 h-44 relative">
-                <img
-                  [src]="item.image_location || 'assets/default-album-art.jpg'"
-                  (click)="nextTrack(item)"
-                  [alt]="item.title || 'No title available'"
-                  class="rounded-xl w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <div class="text-sm text-gray-200 text-center mt-3">
-                {{ item.title || 'Unknown Title' }}
-              </div>
-            </div>
-          </div>
-        </section>
-  
-        <!-- Artist albums -->
-        <section class="mt-10">
-          <div class="flex justify-between items-center mb-4">
-            <h2
-              class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Artist albums
-            </h2>
-            <a
-              class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Show All
-            </a>
-          </div>
-          <div class="flex flex-wrap gap-6">
-            <div *ngFor="let item of album">
-              <div
-                (click)="navigateToAlbum(item.id)"
-                id="{{ item.id }}"
-                class="rounded-lg  w-44 h-auto flex flex-col items-center transition-colors duration-200"
-              >
-                <div class="w-44 h-44 relative">
-                  <img
-                    [src]="
-                      item.artists[0]?.artist_photo || 'assets/default-album-art.jpg'
-                    "
-                    [alt]="item.title"
-                    class="rounded-xl w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
-                  />
+      
+        <aside *ngIf="sidebarVisible" class="fixed top-20 z-40 w-1/4  h-full bg-black px-6 py-2 flex flex-col gap-4 rounded-2xl mt-1 ">
+            <nav class="space-y-4 flex justify-between">
+                <div class="flex items-center justify-start">
+                    <a (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer transition-colors duration-200">
+                        <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-5 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
+                    </a>
+                    <div [routerLink]="'/myplaylist'"  class="font-bold ml-2 hover:text-xl transition-all duration-300 ease-in-out hover:underline">Your Library</div>
                 </div>
-                <div class="text-sm text-gray-200 text-center mt-3">
-                  {{ item.title }}
+                <div>
+                    <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class="h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
                 </div>
-              </div>
+            </nav>
+            
+            <div>
+                <span class="flex justify-between">
+                    <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" alt="Search" class="h-6 rounded-full hover:bg-gray-500 transition-colors duration-200">
+                    <div class="flex font-bold hover:cursor-pointer hover:bg-gray-700 rounded transition-colors duration-200">
+                        <div class="px-2">Play list</div>
+                        <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=ffffff" alt="Search" class="h-5 mt-1">
+                    </div>
+                </span>
             </div>
-          </div>
-        </section>
-  
-        <!-- Music worth listening to -->
-        <section class="mt-10">
-          <div class="flex justify-between items-center mb-4">
-            <h2
-              class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Music worth listening to
-            </h2>
-            <a
-              class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Show All
-            </a>
-          </div>
-          <div class="flex flex-wrap gap-6">
-            <div
-              class="rounded-lg  w-44 h-auto flex flex-col items-center transition-colors duration-200"
-            >
-              <div class="w-44 h-44 relative">
-                <img
-                  src="https://photo-zmp3.zadn.vn/avatars/0/9/e/c/09ec67133c4ff1e7c49e79aea4980ede.jpg"
-                  alt="Your Library"
-                  class="rounded-xl w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
-                />
-              </div>
-              <div class="text-sm text-gray-200 text-center mt-3">
-                Dòng chảy của rap Việt luôn cuồn cuộn.
-              </div>
+
+            <!-- play list -->
+                <div *ngFor="let item of myplaylist; let i = index">
+                    <div  (click)="nextTrack(item)"  class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
+                        <a class="text-xl p-2 font-bold ">#{{i + 1}}</a>
+                        <img [src]="item.image_location"
+                        alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
+                        <div class="text-white text-sm px-3">
+                            <div class="font-bold text-green-600 hover:underline">{{item.title}} </div>
+                            <div class="text-gray-400 hover:text-white transition-colors">Play list - Tran Cong Nguyen</div>
+                        </div>
+                    </div>
+                </div>
+             <div class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200"></div>
+        </aside>
+        <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
+
+        <!-- sidebar mini -->
+        <div *ngIf="!sidebarVisible" id="sidebarMini" class=" rounded fixed top-20 z-40 w-24 h-full bg-black px-4 py-2 flex flex-col gap-4  transition-all duration-300">
+            <nav class="space-y-4 flex justify-center">
+                <a  (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
+                   <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-8 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
+                </a>
+            </nav>
+            <!-- play list -->
+            <div class="hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
+                <img src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/7/a/7/57a7501a8ba849b71e68bd3e5e41cc58.jpg"
+                 alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
             </div>
-          </div>
-        </section>
-  
-        <!-- Spacer -->
-        <div class="h-[80px]"></div>
-      </main>
+        </div>
+        <div  *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
+
+
+        <!-- Main Content -->
+
+        <main class="flex-1 p-6 bg-gradient-to-r from-amber-900 to-black rounded-xl m-1   ">
+            <header class="flex  items-center gap-2 ml-2 ">
+                <div class="py-1 px-6 text-gray-500 rounded-full bg-white font-bold hover:cursor-pointer hover:cursor-pointer" > All</div>
+
+                <div class="py-1 px-6 text-gray-100 rounded-full bg-gray-500 font-bold hover:cursor-pointer"> Song</div>
+
+                <div class="py-1 px-6 text-gray-100 rounded-full bg-gray-500 font-bold hover:cursor-pointer"> Podcast</div>
+            </header>
+            <!-- // Recommended for you -->
+            <div class=" flex justify-between items-center mt-4">
+                <div class="p-2 font-bold text-2xl hover:cursor-pointer hover:underline "> Recommended for you </div>
+                <div class="p-2 font-bold mt-4 hover:cursor-pointer hover:underline ">Show All </div>
+
+            </div>
+            
+            <section class="flex flex-wrap items-center gap-4 mt-4">
+                <div *ngFor="let item of songs" 
+                    class="rounded-lg hover:cursor-pointer hover:bg-gray-600 w-44 h-auto flex flex-col items-center">
+                    <img 
+                        [src]="item.image_location || 'assets/default-album-art.jpg'" 
+                        (click)="nextTrack(item)" 
+                        [alt]="item.title || 'No title available'" 
+                        class="rounded-2xl h-44 w-44 p-2">
+
+                    <div class="text-sm px-2 text-gray-200 text-center mt-2">
+                        {{ item.title || 'Unknown Title' }}
+                    </div>
+                </div>
+
+                
+            </section>
+
+            <!-- //just launched recently-->
+            <div class=" flex justify-between items-center mt-4">
+                <div class="p-2 font-bold text-2xl hover:cursor-pointer hover:underline "> 
+                    artist albums </div>
+                <div class="p-2 font-bold mt-4 hover:cursor-pointer hover:underline ">Show All </div>
+
+            </div>
+            <section class="flex flex-wrap items-center gap-4 gap-4  mt-4">
+                <div *ngFor="let item of album" >
+                <div 
+                (click)="navigateToAlbum(item.artist?.id,item.title,item.artist?.artist_photo,item.artist?.name,item.release_date)"
+                class="rounded-lg hover: cursor-pointer hover:bg-gray-600 w-44 h-auto ">
+                    <img [src]="item.artist?.artist_photo || 'assets/default-album-art.jpg'"
+                     [alt]="item.title" class="rounded-2xl h-44 w-44 p-2">
+                     <div class="text-sm px-2 text-gray-200">{{ item.title }}</div>
+                </div>
+            </div>
+            </section>
+            <img src="../../assets/Img/ImgArt/" alt="">
+
+            <!-- music worth listening to -->
+            <div class=" flex justify-between items-center mt-4">
+                <div class="p-2 font-bold text-2xl hover:cursor-pointer hover:underline ">
+                    Music worth listening to </div>
+                <div class="p-2 font-bold mt-4 hover:cursor-pointer hover:underline ">Show All </div>
+
+            </div>
+            <section class="flex flex-wrap items-center gap-4 gap-4  mt-4">
+                <div class="rounded-lg hover: cursor-pointer hover:bg-gray-600 w-44 h-auto ">
+                    <img src="https://photo-zmp3.zadn.vn/avatars/0/9/e/c/09ec67133c4ff1e7c49e79aea4980ede.jpg"
+                     alt="Your Library" class=" rounded-2xl h-44 w-44 p-2">
+                     <div class="text-sm px-2  text-gray-200">Dòng chảy của rap Việt luôn cuồn cuộn.</div>
+                </div>
+            </section>
+        </main>
+
     </div>
-  </body>
-  <app-footer></app-footer>
-  <app-gemini-chat></app-gemini-chat>
+</body>
+<app-footer></app-footer>
+<app-gemini-chat></app-gemini-chat>

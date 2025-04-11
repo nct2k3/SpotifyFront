@@ -45,7 +45,7 @@ export class AdminSongsManagementComponent implements OnInit {
 
   ngOnInit(): void {
     // Lấy danh sách bài hát từ API
-    this.songsService.getTrackApi().subscribe((data) => {
+    this.songsService.getTrack().subscribe((data) => {
       console.log('Songs API data:', data);
       this.songs = data; // Lưu dữ liệu vào biến songs từ API
     });

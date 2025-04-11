@@ -1,16 +1,17 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AlbumService {
+  // private apiUrl =
+  //   'https://74653837-8b90-4060-bc25-272391e60ae4.mock.pstmn.io/album';
+
   private apiUrl = "http://127.0.0.1:8000/api/albums";
   constructor(private http: HttpClient) {}
 
-  // Lấy danh sách album
   getAlbum(): Observable<any> {
     const token = localStorage.getItem('token');
     console.log(token);
@@ -26,13 +27,5 @@ export class AlbumService {
 
   deleteAlbum(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}${id}/`);
-  }
-
-  // Lấy một album cụ thể theo ID (tùy chọn)
-  getAlbumByid(id: string): Observable<any> {
-    const url = `${this.apiUrl}${id}/`;
-    return this.http.get<any>(url).pipe(
-      tap(data => console.log('Album data:', data))
-    );
   }
 }
