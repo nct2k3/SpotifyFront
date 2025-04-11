@@ -25,7 +25,8 @@ import { SearchComponent } from './search/search.component';
 import { VideoComponent } from './video/video.component';
 import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
 import { RegisterComponent } from './register/register.component';
-import { SidebarComponent } from './sidebar/sidebar.component'; // Thêm import này
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { AdminAlbumManagementComponent } from './admin-album-management/admin-album-management.component'; // Thêm import này
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { SidebarComponent } from './sidebar/sidebar.component'; // Thêm import 
     VideoComponent,
     GeminiChatComponent,
     RegisterComponent,
-    SidebarComponent 
+    SidebarComponent,
+    AdminAlbumManagementComponent 
   ],
   imports: [
     BrowserModule,
