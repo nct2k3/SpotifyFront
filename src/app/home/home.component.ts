@@ -35,16 +35,16 @@ export class HomeComponent implements OnInit {
     this.albumService.getAlbum().subscribe((data: any) => {
       this.album = data;
     });
-    this.songsService.getMyplayList("2").subscribe((data: any) => {
+    this.songsService.getMyplayList("1").subscribe((data: any) => {
       this.myplaylist = data;
     });
 
   }
  
   
-  navigateToAlbum(IdArtistAlbum: any, Name:any, Image: any, NameArtiest: any, date: any ) {
+  navigateToAlbum(Id:any) {
     this.router.navigate(['/album'], {
-      queryParams: { IdArtistAlbum, Name, Image, NameArtiest, date }
+      queryParams: { Id: Id }
     });
   }
 

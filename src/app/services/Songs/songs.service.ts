@@ -1,20 +1,21 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators'; // Import map cùng với tap
 
 @Injectable({
   providedIn: 'root'
 })
 export class SongsService {
-  private apiUrlArtist = 'https://f14c4be8-2a85-4630-a08b-e8cde023ae41.mock.pstmn.io/songsArtiest';  
   private apiUrlMyplaylist = 'http://127.0.0.1:8000/api/playlists/?mine=1';
+  private apiUrl = 'http://127.0.0.1:8000/api/songs/';
+  private apiUrlArtist = 'https://f14c4be8-2a85-4630-a08b-e8cde023ae41.mock.pstmn.io/songsArtiest';
 
-  private apiUrl = 'http://127.0.0.1:8000/api/songs/'
   constructor(private http: HttpClient) {}
 
   getTrack(): Observable<any[]> {
     return this.http.get<any>(this.apiUrl).pipe(
-      map(data => data.results)
+      map(data => data.results || data) 
     );
   }
   // Xóa bài hát theo id
@@ -61,16 +62,18 @@ export class SongsService {
     );
   }
 
-  // getMyplayList(): Observable<any> {
+  // Lấy playlist của người dùng
   getMyplayList(userId: string): Observable<any[]> {
     return this.http.get<any>(this.apiUrlMyplaylist).pipe(
       map(data => {
-        const playlists = data.results.filter((item: any) => item.user === userId); 
-        return playlists.flatMap((playlist: any) => playlist.songs); 
+        const playlists = (data.results || data).filter((item: any) => item.user === userId);
+        return playlists.flatMap((playlist: any) => playlist.songs);
       }),
       tap(songs => console.log('Songs from playlists:', songs))
     );
   }
+
+  // Lấy album theo id
   getAlbum(id: string): Observable<any> {
     const url = `${this.apiUrlArtist}/${id}`;
     return this.http.get<any>(url).pipe(
@@ -78,4 +81,3 @@ export class SongsService {
     );
   }
 }
-

@@ -30,7 +30,7 @@ ngOnInit() {
     this.link = params['link'] || ''; 
    
   });
-  this.songsService.getMyplayList("2").subscribe((data: any) => {
+  this.songsService.getMyplayList("1").subscribe((data: any) => {
     this.myplaylist = data;
   });
 }

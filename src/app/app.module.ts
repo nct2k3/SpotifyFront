@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { MyPlayListComponent } from './my-play-list/my-play-list.component';
 import { ProductComponent } from './product/product.component';
 import { HeaderComponent } from './header/header.component';
@@ -17,16 +19,14 @@ import { AdminNavbarComponent } from './admin-navbar/admin-navbar.component';
 import { AdminHeaderComponent } from './admin-header/admin-header.component';
 import { AdminUserManagementComponent } from './admin-user-management/admin-user-management.component';
 import { AdminSongsManagementComponent } from './admin-songs-management/admin-songs-management.component';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AlbumComponent } from './album/album.component';
 import { DetailComponent } from './detail/detail.component';
 import { SearchComponent } from './search/search.component';
 import { VideoComponent } from './video/video.component';
 import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
-
-import { RegisterComponent } from './register/register.component';
 import { AdminAlbumManagementComponent } from './admin-album-management/admin-album-management.component';
+import { RegisterComponent } from './register/register.component';
+import { SidebarComponent } from './sidebar/sidebar.component'; // Thêm import này
 
 @NgModule({
   declarations: [
@@ -37,7 +37,7 @@ import { AdminAlbumManagementComponent } from './admin-album-management/admin-al
     HeaderComponent,
     FooterComponent,
     HomeComponent,
-    TimeFormatPipe,
+    TimeFormatPipe, 
     AdminComponent,
     AdminNavbarComponent,
     AdminHeaderComponent,
@@ -52,7 +52,8 @@ import { AdminAlbumManagementComponent } from './admin-album-management/admin-al
 
     TimeFormatPipe,
     RegisterComponent,
-    AdminAlbumManagementComponent
+    AdminAlbumManagementComponent,
+    SidebarComponent ,
   ],
   imports: [
     BrowserModule,
