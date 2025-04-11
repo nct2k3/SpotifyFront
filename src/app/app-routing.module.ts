@@ -14,6 +14,7 @@ import { VerifyComponent } from './verify/verify.component';
 
 const routes: Routes = [
   { path: 'login', component:LoginComponent  },
+  { path: 'register', component: RegisterComponent },
   {path:'home',component:HomeComponent},
   {path:'myplaylist',component:MyPlayListComponent},
   {path:'product',component:ProductComponent},
@@ -22,7 +23,7 @@ const routes: Routes = [
   {path:'detail',component:DetailComponent},
   {path:'video',component:VideoComponent},
   {path:'search',component:SearchComponent},
-  { path: '**', redirectTo: 'home' },
+  // { path: '**', redirectTo: 'home' },
   { path: 'verify', component: VerifyComponent },
   { path: '**', redirectTo: 'home' },
 ];
