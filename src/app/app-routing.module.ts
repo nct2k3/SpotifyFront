@@ -11,6 +11,7 @@ import { VideoComponent } from './video/video.component';
 import { SearchComponent } from './search/search.component';
 import { RegisterComponent } from './register/register.component';
 import { VerifyComponent } from './verify/verify.component';
+import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
   { path: 'login', component:LoginComponent  },
@@ -25,6 +26,7 @@ const routes: Routes = [
   {path:'search',component:SearchComponent},
   // { path: '**', redirectTo: 'home' },
   { path: 'verify', component: VerifyComponent },
+  { path: 'profile', component: ProfileComponent },
   { path: '**', redirectTo: 'home' },
 ];
 

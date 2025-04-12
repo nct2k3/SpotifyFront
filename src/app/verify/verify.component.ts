@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoginService } from '../services/login/login.service';
-
 @Component({
   selector: 'app-verify',
   templateUrl: './verify.component.html',
@@ -12,17 +10,16 @@ export class VerifyComponent implements OnInit {
   user: string = '';
   email: string = '';
 
-  constructor(private loginService: LoginService, private router: Router) {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
-    const authData = this.loginService.getAuthData();
-    this.token = authData.token;
-    this.user = authData.user;
-    this.email = authData.email;
+    this.token = localStorage.getItem('token') || '';
+    this.user = localStorage.getItem('user') || '';
+    this.email = localStorage.getItem('email') || '';
 
     if (this.token && this.user && this.email) {
-      // Nếu có token, user và email thì redirect đến trang /home
-      this.router.navigate(['/home']);
+      // Đảm bảo các giá trị đã được tải trước khi điều hướng nên dùng window.location.href
+      window.location.href = '/home'; 
     } else {
       this.router.navigate(['/login']);
     }

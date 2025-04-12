@@ -9,6 +9,15 @@ import { LoginService } from '../services/login/login.service';
 export class LoginComponent {
   constructor(private router: Router, private loginService: LoginService) {}
 
+  ngOnInit(): void {
+    // Kiểm tra nếu đã có token trong localStorage
+    const token = localStorage.getItem('token');
+    if (token) {
+      console.log('Đã đăng nhập, chuyển hướng đến trang /home');
+      this.router.navigate(['/home']); // Chuyển hướng đến trang /home
+    }
+  }
+
   onLogin() {
     const userInput = (document.getElementById('userInput') as HTMLInputElement).value;
     const passwordInput = (document.getElementById('passwordInput') as HTMLInputElement).value;

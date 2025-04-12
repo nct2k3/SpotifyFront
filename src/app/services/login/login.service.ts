@@ -21,19 +21,18 @@ export class LoginService {
 
   // Lưu thông tin đăng nhập
   setAuthData(token: string, user: string, email: string, user_id: number): void {
-    this.token = token;
-    this.user = user;
-    this.email = email;
-    this.userId = user_id;
-  }
-
-  // Lấy thông tin đăng nhập
-  getAuthData(): { token: string; user: string; email: string, user_id: number } {
-    return { token: this.token, user: this.user, email: this.email, user_id: this.userId };
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', user);
+    localStorage.setItem('email', email);
+    localStorage.setItem('user_id', user_id.toString());
   }
 
   // Hàm logout
   logout(): Observable<any> {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('email');
+    localStorage.removeItem('user_id');
     return this.http.post(`${this.baseUrl}/logout`, {});
   }
 }
