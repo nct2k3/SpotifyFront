@@ -1,36 +1,37 @@
 <body class="bg-black text-white font-sans pt-20">
-    <div class="flex lg:flex-row h-auto">
-      <app-sidebar
-        [sidebarVisible]="sidebarVisible"
-        [myplaylist]="myplaylist"
-        (toggleSidebarEvent)="toggleSidebar()"
-        (nextTrackEvent)="nextTrack($event)"
-      ></app-sidebar>
-      <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
-      <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
-  
-      <!-- Main Content -->
-      <main class="flex-1 p-6 bg-gradient-to-r from-green-950 to-black rounded-xl m-1">
-        <!-- Header Tabs -->
-        <header class="flex items-center gap-4 ml-2 mb-6">
-          <div
-            class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
-          >
-            All
-          </div>
-          <div
-            class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
-          >
-            Song
-          </div>
-          <div
-            class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
-          >
-            Podcast
-          </div>
-        </header>
-  
-        <!-- Recommended for you -->
+  <div class="flex lg:flex-row h-auto">
+    <app-sidebar
+      [sidebarVisible]="sidebarVisible"
+      [myplaylist]="myplaylist"
+      (toggleSidebarEvent)="toggleSidebar()"
+      (nextTrackEvent)="nextTrack($event)"
+    ></app-sidebar>
+    <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
+    <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 bg-gradient-to-r from-green-950 to-black rounded-xl m-1">
+      <!-- Header Tabs -->
+      <header class="flex items-center gap-4 ml-2 mb-6">
+        <div
+          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+        >
+          All
+        </div>
+        <div
+          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+        >
+          Song
+        </div>
+        <div
+          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+        >
+          Podcast
+        </div>
+      </header>
+
+      <!-- Recommended for you -->
+           
         <section class="mt-8">
           <div class="flex justify-between items-center mb-4">
             <h2
@@ -47,15 +48,23 @@
           <div class="flex flex-wrap gap-6">
             <div
               *ngFor="let item of songs"
-              class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200"
+              class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200 group"
             >
               <div class="w-44 h-44 relative">
                 <img
                   [src]="item.image_location || 'assets/default-album-art.jpg'"
-                  (click)="nextTrack(item)"
                   [alt]="item.title || 'No title available'"
-                  class="rounded-xl w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
+                  class="rounded-xl w-full h-full object-cover shadow-md hover:scale-110 transition-transform duration-300"
+                  (click)="navigateToDetail(item.id)"
                 />
+                <!-- Play button: Visible only on hover, positioned at bottom-right -->
+                <div class="absolute top-1 right-1 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <img
+                    src="https://img.icons8.com/?size=100&id=59862&format=png&color=ffffff"
+                    (click)="nextTrack(item)"
+                    alt="Play"
+                    class="h-10 w-10 p-3 bg-[#1DB954] rounded-full hover:scale-110 cursor-pointer transition-transform duration-200"/>
+                </div>
               </div>
               <div class="text-sm text-gray-200 text-center mt-3">
                 {{ item.title || 'Unknown Title' }}
@@ -63,81 +72,80 @@
             </div>
           </div>
         </section>
-  
-        <!-- Artist albums -->
-        <section class="mt-10">
-          <div class="flex justify-between items-center mb-4">
-            <h2
-              class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Artist albums
-            </h2>
-            <a
-              class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Show All
-            </a>
-          </div>
-          <div class="flex flex-wrap gap-6">
-            <div *ngFor="let item of album">
-              <div
-                (click)="navigateToAlbum(item.id)"
-                id="{{ item.id }}"
-                class="rounded-lg  w-44 h-auto flex flex-col items-center transition-colors duration-200"
-              >
-                <div class="w-44 h-44 relative">
-                  <img
-                    [src]="
-                      item.artists[0]?.artist_photo || '/assets/Img/imgsptf.jpg'
-                    "
-                    [alt]="item.title"
-                    class="rounded-xl w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
-                  />
-                </div>
-                <div class="text-sm text-gray-200 text-center mt-3">
-                  {{ item.title }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-  
-        <!-- Music worth listening to -->
-        <section class="mt-10">
-          <div class="flex justify-between items-center mb-4">
-            <h2
-              class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Music worth listening to
-            </h2>
-            <a
-              class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Show All
-            </a>
-          </div>
-          <div class="flex flex-wrap gap-6">
+
+      <!-- Artist albums -->
+      <section class="mt-10">
+        <div class="flex justify-between items-center mb-4">
+          <h2
+            class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+          >
+            Artist albums
+          </h2>
+          <a
+            class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+          >
+            Show All
+          </a>
+        </div>
+        <div class="flex flex-wrap gap-6">
+          <div *ngFor="let item of album">
             <div
-              class="rounded-lg  w-44 h-auto flex flex-col items-center transition-colors duration-200"
+              (click)="navigateToAlbum(item.id)"
+              id="{{ item.id }}"
+              class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200"
             >
               <div class="w-44 h-44 relative">
                 <img
-                  src="https://photo-zmp3.zadn.vn/avatars/0/9/e/c/09ec67133c4ff1e7c49e79aea4980ede.jpg"
-                  alt="Your Library"
+                  [src]="
+                    item.artists[0]?.artist_photo || '/assets/Img/imgsptf.jpg'
+                  "
+                  [alt]="item.title"
                   class="rounded-xl w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
                 />
               </div>
               <div class="text-sm text-gray-200 text-center mt-3">
-                Dòng chảy của rap Việt luôn cuồn cuộn.
+                {{ item.title }}
               </div>
             </div>
           </div>
-        </section>
-  
-        <!-- Spacer -->
-        <div class="h-[80px]"></div>
-      </main>
-    </div>
-  </body>
-  <app-footer></app-footer>
-  <app-gemini-chat></app-gemini-chat>
+        </div>
+      </section>
+
+      <!-- Music worth listening to -->
+      <section class="mt-10">
+        <div class="flex justify-between items-center mb-4">
+          <h2
+            class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+          >
+            Music worth listening to
+          </h2>
+          <a
+            class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+          >
+            Show All
+          </a>
+        </div>
+        <div class="flex flex-wrap gap-6">
+          <div
+            class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200"
+          >
+            <div class="w-44 h-44 relative">
+              <img
+                src="https://photo-zmp3.zadn.vn/avatars/0/9/e/c/09ec67133c4ff1e7c49e79aea4980ede.jpg"
+                alt="Your Library"
+                class="rounded-xl w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
+              />
+            </div>
+            <div class="text-sm text-gray-200 text-center mt-3">
+              Dòng chảy của rap Việt luôn cuồn cuộn.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Spacer -->
+      <div class="h-[80px]"></div>
+    </main>
+  </div>
+</body>
+<app-footer></app-footer>

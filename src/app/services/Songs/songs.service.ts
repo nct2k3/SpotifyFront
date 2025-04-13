@@ -18,6 +18,9 @@ export class SongsService {
       map(data => data.results || data) 
     );
   }
+  getTrackById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}${id}/`);
+  }
   getTrackApi(): Observable<any> {
     return this.http.get<any>(this.apiUrl).pipe(
       tap(data => console.log('Songs data:', data))

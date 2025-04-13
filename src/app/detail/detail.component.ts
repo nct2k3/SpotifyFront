@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { SongsService } from '../services/Songs/songs.service';
 import { FooterComponent } from '../footer/footer.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-detail',
@@ -8,32 +9,67 @@ import { FooterComponent } from '../footer/footer.component';
   styleUrls: ['./detail.component.css']
 })
 export class DetailComponent {
-  sidebarVisible = true; 
-
-  constructor(private songsService: SongsService) {}
+  sidebarVisible = true;
+  username: string | null = '';
+  email: string | null = '';
+  userId: string | null = '';
+  song: any = null; // Lưu bài hát từ getTrackById
   myplaylist: any[] = [];
-  toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible; 
-    console.log('Sidebar visibility:', this.sidebarVisible);
-    this.songsService.getMyplayList("1").subscribe((data: any) => {
-      this.myplaylist = data;
+
+  constructor(
+    private songsService: SongsService,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    // Lấy thông tin user từ localStorage
+    this.username = localStorage.getItem('user');
+    this.email = localStorage.getItem('email');
+    this.userId = localStorage.getItem('user_id');
+
+    // Lấy playlist (nếu cần cho sidebar)
+    if (this.userId) {
+      this.songsService.getMyplayList(this.userId).subscribe({
+        next: (data: any) => {
+          this.myplaylist = data;
+        },
+        error: (error) => console.error('Error fetching playlist:', error)
+      });
+    }
+
+    // Lấy Id từ query params và gọi getTrackById
+    this.route.queryParams.subscribe((params) => {
+      const id = params['Id'] || params['id']; // Hỗ trợ cả 'Id' và 'id'
+      if (id) {
+        this.songsService.getTrackById(id).subscribe({
+          next: (data: any) => {
+            this.song = data; // Lưu bài hát
+            console.log('Song:', this.song); // Debug
+          },
+          error: (error) => console.error('Error fetching track:', error)
+        });
+      }
     });
   }
+
+  toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible;
+    console.log('Sidebar visibility:', this.sidebarVisible);
+  }
+
   @ViewChild(FooterComponent, { static: false }) footerComponent!: FooterComponent;
 
-    ngAfterViewInit() {
-      if (!this.footerComponent) {
-        console.error('FooterComponent chưa được khởi tạo');
-      }
+  ngAfterViewInit() {
+    if (!this.footerComponent) {
+      console.error('FooterComponent not initialized');
     }
+  }
 
-    nextTrack(data: any): void {
-      if (this.footerComponent) {
-        this.footerComponent.setTrackData(data);
-        this.footerComponent.togglePlay();
-      } else {
-        console.error('FooterComponent chưa được khởi tạo');
-      }
+  nextTrack(data: any): void {
+    if (this.footerComponent) {
+      this.footerComponent.setTrackData(data, true);
+    } else {
+      console.error('FooterComponent chưa được khởi tạo');
     }
-
+  }
 }

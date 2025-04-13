@@ -1,4 +1,5 @@
 <app-header *ngIf="showHeaderFooter"></app-header>
 <router-outlet></router-outlet>
 <app-gemini-chat></app-gemini-chat>
-<app-side-bar-chat></app-side-bar-chat>
+<app-side-bar-chat (conversationSelected)="onConversationSelected($event)"></app-side-bar-chat>
+<app-general-chat [selectedConversation]="selectedConversation" (close)="onChatClose()"></app-general-chat>

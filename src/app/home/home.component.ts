@@ -14,7 +14,11 @@ import { SharedService } from '../services/shared/shared.service';
 export class HomeComponent implements OnInit {
   songs: any[] = [];
   album: any[] = [];
-  myplaylist : any[] = [];   
+  myplaylist : any[] = [];  
+  username: string | null = '';
+  email: string | null = '';
+  userId: string | null = ''; 
+  
 
   constructor(private songsService: SongsService, private albumService: AlbumService,
     private router: Router , private SharedService:SharedService
@@ -28,6 +32,10 @@ export class HomeComponent implements OnInit {
     console.log('Sidebar visibility:', this.sidebarVisible);
   }
   ngOnInit() {
+    this.username = localStorage.getItem('user');
+    this.email = localStorage.getItem('email');
+    this.userId = localStorage.getItem('user_id');
+
     this.songsService.getTrack().subscribe((data: any) => {
       this.songs = data;
       this.SharedService.updateSharedData(this.songs)
@@ -35,12 +43,19 @@ export class HomeComponent implements OnInit {
     this.albumService.getAlbum().subscribe((data: any) => {
       this.album = data;
     });
-    this.songsService.getMyplayList("1").subscribe((data: any) => {
-      this.myplaylist = data;
-    });
+    if (this.userId) {
+      this.songsService.getMyplayList(this.userId).subscribe((data: any) => {
+        this.myplaylist = data;
+      });
+    }
+  
 
   }
- 
+  navigateToDetail(Id:any) {
+    this.router.navigate(['/detail'], {
+      queryParams: { Id:Id }
+    });
+  }
   
   navigateToAlbum(Id:any) {
     this.router.navigate(['/album'], {
@@ -60,7 +75,6 @@ export class HomeComponent implements OnInit {
     nextTrack(data: any): void {
       if (this.footerComponent) {
         this.footerComponent.setTrackData(data);
-        this.footerComponent.togglePlay();
       } else {
         console.error('FooterComponent chưa được khởi tạo');
       }

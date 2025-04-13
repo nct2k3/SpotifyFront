@@ -30,6 +30,7 @@ import { AdminAlbumManagementComponent } from './admin-album-management/admin-al
 import { ProfileComponent } from './profile/profile.component'; // Thêm import này
 import { GeneralChatComponent } from './general-chat/general-chat.component';
 import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; // Thêm import này
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; 
     HttpClientModule,
     FormsModule,
     MatSnackBarModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    RouterModule.forRoot([])
   ],
   providers: [],
   bootstrap: [AppComponent]

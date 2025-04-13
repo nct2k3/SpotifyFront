@@ -1,186 +1,140 @@
 <!-- <app-header></app-header> -->
 
-<body class="bg-black text-white font-sans pt-20">
+<div class="bg-black text-white font-sans pt-20">
     <div class="flex lg:flex-row h-auto">
-      
-        <aside *ngIf="sidebarVisible" class="fixed top-20 z-40 w-1/4  h-full bg-black px-6 py-2 flex flex-col gap-4 rounded-2xl mt-1 ">
-            <nav class="space-y-4 flex justify-between">
-                <div class="flex items-center justify-start">
-                    <a (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer transition-colors duration-200">
-                        <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-5 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
-                    </a>
-                    <!-- <div [routerLink]="'/myplaylist'"  class="font-bold ml-2 hover:text-xl transition-all duration-300 ease-in-out hover:underline">Your Library</div> -->
-                </div>
-                <div>
-                    <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class="h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
-                </div>
-            </nav>
-            
+      <app-sidebar
+        [sidebarVisible]="sidebarVisible"
+        [myplaylist]="myplaylist"
+        (toggleSidebarEvent)="toggleSidebar()"
+      ></app-sidebar>
+      <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
+      <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
+  
+      <main class="flex-1 bg-gradient-to-b from-green-900 to-black rounded-xl m-1">
+        <div class="max-w-full">
+          <!-- Header bài hát -->
+          <div *ngIf="song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-800 to-black rounded-t-2xl">
+            <img
+              [src]="song.image_location || 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg'"
+              [alt]="song.title || 'Song Cover'"
+              class="w-36 h-36 rounded-lg"
+            />
             <div>
-                <span class="flex justify-between">
-                    <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" alt="Search" class="h-6 rounded-full hover:bg-gray-500 transition-colors duration-200">
-                    <div class="flex font-bold hover:cursor-pointer hover:bg-gray-700 rounded transition-colors duration-200">
-                        <div class="px-2">Play list</div>
-                        <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=ffffff" alt="Search" class="h-5 mt-1">
-                    </div>
-                </span>
+              <h1 class="text-gray-400 m-2">Bài hát</h1>
+              <h1 class="text-5xl font-bold">{{ song.title || 'Unknown Title' }}</h1>
+              <p class="text-gray-400 m-2">
+                {{ song.artists?.[0]?.name || 'Unknown Artist' }} • {{ song.duration || 0 | number:'1.0-2' }} min
+              </p>
             </div>
-
-            <!-- play list -->
-                <div *ngFor="let item of myplaylist; let i = index">
-                    <div  (click)="nextTrack(item)"  class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
-                        <a class="text-xl p-2 font-bold ">#{{i + 1}}</a>
-                        <img [src]="item.albumArt"
-                        alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
-                        <div class="text-white text-sm px-3">
-                            <div class="font-bold text-green-600 hover:underline">{{item.title}} </div>
-                            <div class="text-gray-400 hover:text-white transition-colors">Play list - Tran Cong Nguyen</div>
-                        </div>
-                    </div>
+          </div>
+          <div *ngIf="!song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-800 to-black rounded-t-2xl">
+            <div class="w-36 h-36 bg-gray-800 rounded-lg animate-pulse"></div>
+            <div>
+              <h1 class="text-gray-400 m-2">Bài hát</h1>
+              <h1 class="text-5xl font-bold bg-gray-800 h-12 w-64 rounded animate-pulse"></h1>
+              <p class="text-gray-400 m-2 bg-gray-800 h-6 w-48 rounded animate-pulse"></p>
+            </div>
+          </div>
+  
+          <!-- Controls -->
+          <div class="flex items-center justify-between p-4">
+            <div class="flex items-center space-x-4">
+              <img
+                src="https://img.icons8.com/?size=100&id=59862&format=png&color=000000"
+                alt="Play"
+                (click)="nextTrack(song)"
+                class="h-12 w-12 p-3 bg-green-500 rounded-full hover:scale-110 cursor-pointer"
+              />
+              <div>
+                <img
+                  src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff"
+                  alt="Create Playlist"
+                  class="border-2 h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200"
+                />
+              </div>
+              <button class="text-white font-bold text-2xl mb-3">. . .</button>
+            </div>
+            <div class="text-white flex items-center space-x-2">
+              <span>Danh sách</span>
+              <span class="text-xl">☰</span>
+            </div>
+          </div>
+  
+          <!-- Lời bài hát và Nghệ sĩ -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+            <div class="p-4">
+              <div class="text-lg font-bold mb-2">Lời bài hát</div>
+              <div class="h-[250px] overflow-y-auto scrollbar">
+                <div class="pr-4">
+                  {{ song?.lyrics || 'No lyrics available' }}
                 </div>
-             <div class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200"></div>
-        </aside>
-        <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
-
-        <!-- sidebar mini -->
-        <div *ngIf="!sidebarVisible" id="sidebarMini" class=" rounded fixed top-20 z-40 w-24 h-full bg-black px-4 py-2 flex flex-col gap-4  transition-all duration-300">
-            <nav class="space-y-4 flex justify-center">
-                <a  (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
-                   <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-8 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
-                </a>
-            </nav>
-            <!-- play list -->
-            <div class="hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
-                <img src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/7/a/7/57a7501a8ba849b71e68bd3e5e41cc58.jpg"
-                 alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
+              </div>
             </div>
+            <div class="p-4">
+              <div class="text-lg font-bold mb-2">Nghệ sĩ</div>
+              <div *ngIf="song?.artists?.length" class="flex">
+                <img
+                  [src]="song.artists[0]?.artist_photo || 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg'"
+                  class="h-12 w-12 rounded-full"
+                />
+                <div class="text-sm font-bold m-3">{{ song.artists[0]?.name || 'Unknown Artist' }}</div>
+              </div>
+              <div *ngIf="!song?.artists?.length" class="flex">
+                <div class="h-12 w-12 bg-gray-800 rounded-full animate-pulse"></div>
+                <div class="text-sm font-bold m-3 bg-gray-800 h-6 w-24 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Đề xuất (giữ nguyên) -->
+          <div class="p-6">
+            <h2 class="text-xl font-bold">Đề xuất</h2>
+            <p class="text-gray-400 text-sm">Dựa trên nội dung có trong danh sách phát này</p>
+            <div class="mt-4 space-y-4">
+              <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                <div class="flex items-center space-x-4">
+                  <img src="../../assets/Img/image3.png" alt="Song Cover" class="w-12 h-12 rounded-lg" />
+                  <div>
+                    <p class="text-white">MỘNG YU</p>
+                    <p class="text-gray-400 text-sm">AMEE, RPT MCK</p>
+                  </div>
+                </div>
+                <button class="border border-white rounded-full px-4 py-1 text-white">Thêm</button>
+              </div>
+              <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                <div class="flex items-center space-x-4">
+                  <img src="../../assets/Img/image3.png" alt="Song Cover" class="w-12 h-12 rounded-lg" />
+                  <div>
+                    <p class="text-white">Ngày Đẹp Trời Để Nói Chia Tay</p>
+                    <p class="text-gray-400 text-sm">Lou Hoàng</p>
+                  </div>
+                </div>
+                <button class="border border-white rounded-full px-4 py-1 text-white">Thêm</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div  *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
-
-        <main class="flex-1  bg-gradient-to-b from-green-900 to-black rounded-xl m-1">
-            <div class="max-full ">
-                <div class="flex w-full items-center space-x-4 p-6  bg-gradient-to-r from-green-800 to-black rounded-t-2xl">
-                    <img src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg" alt="Playlist Cover" class="w-36 h-36 rounded-lg">
-                    <div>
-                        <h1 class="text-gray-400 m-2">Bai hat</h1>
-                        <h1 class="text-5xl font-bold">Mat ket noi</h1>
-                        <p class="text-gray-400 m-2">Tran Cong Nguyen 34 songs, 2hr 01min</p>
-                    </div>
-                </div>
-                <div class=" flex items-center justify-between  p-4">
-                    <div class="flex items-center space-x-4">
-                        <img src="https://img.icons8.com/?size=100&id=59862&format=png&color=000000" 
-                            alt="Play" 
-                            class="h-12 w-12 p-3 bg-green-500 rounded-full hover:scale-110 cursor-pointer">
-                            <div>
-                                <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class=" border-2 h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
-                            </div>
-                        <button class="text-white font-bold text-2xl mb-3">. . .</button>
-                    </div>
-                    <div class="text-white flex items-center space-x-2">
-                        <span>Danh sách</span>
-                        <span class="text-xl">☰</span>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-                    <div class="p-4">
-                        <div class="text-lg font-bold mb-2">Lời bài hát</div>
-                            <div class="h-[250px] overflow-y-auto scrollbar">
-                                <div class="pr-4">
-                                    Nỗi nhớ em trong đêm thật dài
-                                Thêm lý do cho anh tồn tại
-                                Để lại chạm vào bờ môi ấy dịu dàng
-                                Lời thì thầm ngọt ngào bên tai
-                                Ta mất nhau thật rồi em ơi
-                                Tan vỡ hai cực đành chia đôi
-                                Anh sẽ luôn ghi nhớ em trong từng tế bào
-                                Vậy mà dừng lại như thế sao?
-                                Yeah, chẳng cần vật chất, chẳng cần spotlight
-                                Chỉ cần vài nốt nhạc hoà cùng cây mic
-                                Từ chối cuộc vui đi về một nơi xa
-                                Vì bận ngồi đây thả thêm một vài câu ca
-                                Giữa đời, có được mấy
-                                D-O-M-I-C
-                                Nhưng có lẽ giờ này em đã ngủ say
-                                Còn anh thì vẫn mang
-                                Nỗi nhớ em trong đêm thật dài
-                                Thêm lý do cho anh tồn tại
-                                Để lại chạm vào bờ môi ấy dịu dàng
-                                Lời thì thầm ngọt ngào bên tai
-                                Ta mất nhau thật rồi em ơi
-                                Tan vỡ hai cực đành chia đôi
-                                Anh sẽ luôn ghi nhớ em trong từng tế bào
-                                Vậy mà dừng lại như thế sao?
-                                Cuộc gọi nhỡ cho em hàng đêm, đến tận 200 lần
-                                Dòng ký ức trong em về anh, bây giờ đang phai dần
-                                Quay gót rời đi, không để lại gì
-                                Bay vút qua tầm tay, sao còn vương vấn để làm gì?
-                                Bọn mình kết thúc thật rồi, hết sức thật rồi phải không em ơi?
-                                Chuyện tình có khúc phải lòng, có lúc phải rời, vậy đến lúc rồi
-                                Và có lẽ giờ này em đã ngủ say
-                                Còn anh thì vẫn mang
-
-                                </div>
-                            </div>
-
-                            <style>
-                            .scrollbar::-webkit-scrollbar {
-                                width: 8px;
-                            }
-
-                            .scrollbar::-webkit-scrollbar-track {
-                                background: rgba(255, 255, 255, 0.1);
-                                border-radius: 4px;
-                            }
-
-                            .scrollbar::-webkit-scrollbar-thumb {
-                                background: rgba(255, 255, 255, 0.3);
-                                border-radius: 4px;
-                            }
-
-                            .scrollbar::-webkit-scrollbar-thumb:hover {
-                                background: rgba(255, 255, 255, 0.5);
-                            }
-                            </style>
-                    </div>
-                    <div class=" p-4">
-                        <div class="text-lg font-bold mb-2">Nghệ sĩ</div>
-                        <div class="flex">
-                            <img class="h-12 w-12 rounded-full" src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg">
-                            <div class="text-sm font-bold m-3"> Nguyen thi a</div>
-                        </div>
-                        
-                    </div>
-                </div>
-
-                <div class=" p-6">
-                    <h2 class="text-xl font-bold">Đề xuất</h2>
-                    <p class="text-gray-400 text-sm">Dựa trên nội dung có trong danh sách phát này</p>
-                    <div class="mt-4 space-y-4">
-                        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
-                            <div class="flex items-center space-x-4">
-                                <img src="../../assets/Img/image3.png" alt="Song Cover" class="w-12 h-12 rounded-lg">
-                                <div>
-                                    <p class="text-white">MỘNG YU</p>
-                                    <p class="text-gray-400 text-sm">AMEE, RPT MCK</p>
-                                </div>
-                            </div>
-                            <button class="border border-white rounded-full px-4 py-1 text-white">Thêm</button>
-                        </div>
-                        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
-                            <div class="flex items-center space-x-4">
-                                <img src="../../assets/Img/image3.png" alt="Song Cover" class="w-12 h-12 rounded-lg">
-                                <div>
-                                    <p class="text-white">Ngày Đẹp Trời Để Nói Chia Tay</p>
-                                    <p class="text-gray-400 text-sm">Lou Hoàng</p>
-                                </div>
-                            </div>
-                            <button class="border border-white rounded-full px-4 py-1 text-white">Thêm</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+      </main>
     </div>
-</body>
+    <div class="h-[100px]">
 
+    </div>
+  </div>
+  <app-footer></app-footer>
+  
+  <style>
+    .scrollbar::-webkit-scrollbar {
+      width: 8px;
+    }
+    .scrollbar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+  </style>

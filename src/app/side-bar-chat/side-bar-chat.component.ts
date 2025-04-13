@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewChecked, EventEmitter, Output } from '@angular/core';
 
 interface Conversation {
   id: number;
@@ -67,6 +67,15 @@ export class SideBarChatComponent implements AfterViewChecked {
       unread: false
     }
   ];
+  username: string | null = '';
+  email: string | null = '';
+  userId: string | null = '';
+
+  ngOnInit() {
+    this.username = localStorage.getItem('user');
+    this.email = localStorage.getItem('email');
+    this.userId = localStorage.getItem('user_id');
+  }
 
   @ViewChild('conversationsEnd') conversationsEndRef!: ElementRef;
 
@@ -74,20 +83,6 @@ export class SideBarChatComponent implements AfterViewChecked {
     this.scrollToBottom();
   }
 
-  toggleChat() {
-    this.isOpen = !this.isOpen;
-    if (!this.isOpen) {
-      this.selectedConversation = null; // Close any open chat when sidebar is closed
-    }
-  }
-
-  selectConversation(conversation: Conversation) {
-    this.selectedConversation = conversation;
-  }
-
-  closeChat() {
-    this.selectedConversation = null;
-  }
 
   handleSearchChange(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -119,4 +114,20 @@ export class SideBarChatComponent implements AfterViewChecked {
       return `${diffInDays} ngày`;
     }
   }
+  @Output() conversationSelected = new EventEmitter<Conversation>();
+
+  selectConversation(conversation: Conversation) {
+    this.selectedConversation = conversation; // Lưu hội thoại được chọn
+    this.conversationSelected.emit(conversation); // Phát sự kiện
+    this.isOpen = false; // Đóng sidebar sau khi chọn
+  }
+
+  toggleChat() {
+    this.isOpen = !this.isOpen;
+    if (!this.isOpen && !this.selectedConversation) {
+      this.selectedConversation = null; // Chỉ reset nếu không có hội thoại được chọn
+    }
+  }
+  
+
 }
