@@ -53,7 +53,7 @@ interface GeminiResponse {
 })
 export class GeminiApiService {
   private API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-  private API_KEY = '';
+  private API_KEY = 'AIzaSyBdVkLPrE1-_kB57EVUWeV-5fIS11u4miY';
 
   constructor() {}
 

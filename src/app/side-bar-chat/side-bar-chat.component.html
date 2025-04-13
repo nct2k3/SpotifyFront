@@ -1,0 +1,96 @@
+<div class="fixed inset-0 z-50">
+  <!-- Chat toggle button -->
+  <button
+    *ngIf="!isOpen"
+    (click)="toggleChat()"
+    class="fixed top-4 right-5 z-10"
+  >
+    <div>
+      <img
+        class="h-10 w-10 rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
+        src="https://img.icons8.com/?size=100&id=13724&format=png&color=000000"
+      />
+    </div>
+  </button>
+
+  <!-- Conversation list window -->
+  <div
+    class="absolute right-0  bg-gray-900 rounded-none shadow-2xl w-[30%] h-full transition-all duration-300 transform"
+    [ngClass]="{'scale-100 opacity-100 translate-y-0': isOpen, 'scale-90 opacity-0 translate-y-10 pointer-events-none': !isOpen}"
+  >
+    <!-- Header -->
+    <div class="bg-gray-900 text-white px-4 py-3 flex justify-between items-center h-14">
+      <span class="font-sans font-semibold text-base">Đoạn chat</span>
+      <button
+        (click)="toggleChat()"
+        class="w-8 h-8 flex items-center justify-center rounded-full text-xl font-bold hover:bg-gray-700 transition-colors"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- Search bar -->
+    <div class="px-4 py-2">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="handleSearchChange($event)"
+        placeholder="Tìm kiếm trên Messenger"
+        class="w-full p-2 bg-gray-700 text-white border border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-sans transition-all"
+      />
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex px-4 py-2 border-b border-gray-700">
+      <button class="flex-1 text-center py-2 text-sm font-sans text-white border-b-2 border-blue-500">
+        Hộp thư
+      </button>
+      <button class="flex-1 text-center py-2 text-sm font-sans text-gray-400">
+        Cộng đồng
+      </button>
+    </div>
+
+    <!-- Conversation list -->
+    <div class="overflow-y-auto" style="height:100%; width: 100%;">
+      <div *ngFor="let conversation of conversations" class="flex items-center px-4 py-3 hover:bg-gray-800 cursor-pointer">
+        <!-- Profile picture -->
+        <div class="relative">
+          <img
+            *ngIf="conversation.profilePicture"
+            [src]="conversation.profilePicture"
+            class="w-12 h-12 rounded-full mr-3"
+            alt="{{ conversation.name }}"
+            (error)="handleImageError($event)"
+          />
+          <div
+            *ngIf="!conversation.profilePicture"
+            class="w-12 h-12 rounded-full mr-3 bg-gray-600 flex items-center justify-center text-white text-lg font-sans"
+          >
+            {{ conversation.name.charAt(0) }}
+          </div>
+          <!-- Unread indicator -->
+          <div
+            *ngIf="conversation.unread"
+            class="absolute bottom-0 right-3 w-5 h-5 bg-blue-500 rounded-full border-2 border-gray-900"
+          ></div>
+        </div>
+
+        <!-- Conversation info -->
+        <div class="flex-1 min-w-0">
+          <div class="flex justify-between items-baseline">
+            <span class="text-sm font-sans font-medium text-white truncate">
+              {{ conversation.name }}
+            </span>
+            <span class="text-xs font-sans text-gray-400">
+              {{ formatTime(conversation.timestamp) }}
+            </span>
+          </div>
+          <div class="text-sm font-sans text-gray-400 truncate">
+            {{ conversation.lastMessage }}
+          </div>
+        </div>
+      </div>
+      <div #conversationsEnd></div>
+    </div>
+  </div>
+</div>

@@ -11,7 +11,8 @@ import { VideoComponent } from './video/video.component';
 import { SearchComponent } from './search/search.component';
 import { RegisterComponent } from './register/register.component';
 import { VerifyComponent } from './verify/verify.component';
-
+import { GeneralChatComponent } from './general-chat/general-chat.component';
+import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component';
 const routes: Routes = [
   { path: 'login', component:LoginComponent  },
   {path:'home',component:HomeComponent},
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: '**', redirectTo: 'home' },
   { path: 'verify', component: VerifyComponent },
   { path: '**', redirectTo: 'home' },
+  { path: 'register', component: RegisterComponent },
 ];
 
 @NgModule({
