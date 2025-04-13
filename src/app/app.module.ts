@@ -28,6 +28,7 @@ import { RegisterComponent } from './register/register.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { GeneralChatComponent } from './general-chat/general-chat.component';
 import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; // Thêm import này
+import { AdminAlbumManagementComponent } from './admin-album-management/admin-album-management.component'; // Thêm import này
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; 
     HeaderComponent,
     FooterComponent,
     HomeComponent,
-    TimeFormatPipe, 
+    TimeFormatPipe,
     AdminComponent,
     AdminNavbarComponent,
     AdminHeaderComponent,
@@ -52,7 +53,9 @@ import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; 
     RegisterComponent,
     SidebarComponent,
     GeneralChatComponent,
-    SideBarChatComponent 
+    SideBarChatComponent,
+    SidebarComponent,
+    AdminAlbumManagementComponent
   ],
   imports: [
     BrowserModule,

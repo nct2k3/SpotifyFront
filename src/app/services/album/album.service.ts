@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -13,7 +13,15 @@ export class AlbumService {
 
   // Lấy danh sách album
   getAlbum(): Observable<any> {
-    return this.http.get<any>(this.apiUrl).pipe(
+    
+    const token = localStorage.getItem('token');
+    console.log(token);
+
+    const headers = new HttpHeaders({
+      Authorization: `Token ${token}`,
+    });
+
+    return this.http.get<any>(this.apiUrl, {headers}).pipe(
       tap(data => console.log('Albums data:', data.results)),
       map(data => data.results) 
     );
@@ -25,5 +33,9 @@ export class AlbumService {
     return this.http.get<any>(url).pipe(
       tap(data => console.log('Album data:', data))
     );
+  }
+
+  deleteAlbum(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}${id}/`);
   }
 }
