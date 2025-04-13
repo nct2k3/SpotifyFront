@@ -26,9 +26,10 @@ import { VideoComponent } from './video/video.component';
 import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
 import { RegisterComponent } from './register/register.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { AdminAlbumManagementComponent } from './admin-album-management/admin-album-management.component';
+import { ProfileComponent } from './profile/profile.component'; // Thêm import này
 import { GeneralChatComponent } from './general-chat/general-chat.component';
 import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; // Thêm import này
-import { AdminAlbumManagementComponent } from './admin-album-management/admin-album-management.component'; // Thêm import này
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { AdminAlbumManagementComponent } from './admin-album-management/admin-al
     GeneralChatComponent,
     SideBarChatComponent,
     SidebarComponent,
-    AdminAlbumManagementComponent
+    AdminAlbumManagementComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
