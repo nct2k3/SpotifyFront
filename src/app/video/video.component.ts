@@ -23,13 +23,13 @@ export class VideoComponent {
 ngOnInit() {
   this.route.queryParams.subscribe((params) => {
   
-    this.name = params['Name'] || '';
-    this.image = params['Image'] || '';
+    this.name = params['name'] || '';
+    this.image = params['image'] || '';
     this.NameArtiest = params['NameArtiest'] || '';
     this.date = params['date'] || '';
     this.link = params['link'] || ''; 
-   
   });
+
   this.songsService.getMyplayList("1").subscribe((data: any) => {
     this.myplaylist = data;
   });

@@ -1,0 +1,31 @@
+body {
+    background-color: #121212; /* Màu nền giống hình */
+  }
+  
+  main {
+    background-color: #181818; /* Màu nền chính */
+  }
+  
+  .bg-gray-800 {
+    background-color: #282828; /* Màu nền cho mỗi playlist */
+  }
+  
+  .bg-gray-700:hover {
+    background-color: #333333; /* Màu khi hover */
+  }
+  
+  .bg-red-500 {
+    background-color: #ff0000; /* Màu nút Xóa */
+  }
+  
+  .bg-red-500:hover {
+    background-color: #cc0000; /* Màu nút Xóa khi hover */
+  }
+  
+  input {
+    background-color: #333333; /* Màu nền thanh tìm kiếm */
+  }
+  
+  input::placeholder {
+    color: #b3b3b3; /* Màu placeholder */
+  }

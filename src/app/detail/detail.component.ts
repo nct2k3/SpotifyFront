@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { SongsService } from '../services/Songs/songs.service';
 import { FooterComponent } from '../footer/footer.component';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-detail',
@@ -19,6 +20,7 @@ export class DetailComponent {
   constructor(
     private songsService: SongsService,
     private route: ActivatedRoute
+    , private router: Router
   ) {}
 
   ngOnInit() {
@@ -26,8 +28,6 @@ export class DetailComponent {
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
-
-    // Lấy playlist (nếu cần cho sidebar)
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe({
         next: (data: any) => {
@@ -51,6 +51,25 @@ export class DetailComponent {
       }
     });
   }
+  addNewPlaylist(songId: string): void {
+    if (!songId) {
+      console.error('Không có bài hát được chọn');
+      return;
+    }
+    const playlistData = {
+      title: "Test Playlist",
+      song_ids: [songId] 
+    };
+    this.songsService.addPlaylist(playlistData).subscribe({
+      next: (response) => {
+        console.log('Playlist added:', response);
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Error adding playlist:', error);
+      }
+    });
+}
 
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible;

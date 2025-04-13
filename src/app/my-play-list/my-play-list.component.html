@@ -26,7 +26,7 @@
             <div>
               <h1 class="text-gray-400 m-2">Playlist</h1>
               <h1 class="text-5xl font-bold">My Playlist! #1</h1>
-              <p class="text-gray-400 m-2">Tran Cong Nguyen 34 songs, 2hr 01min</p>
+              <p class="text-gray-400 m-2">{{username }}</p>
             </div>
           </div>
   
@@ -34,19 +34,12 @@
           <div class="flex items-center justify-between p-4">
             <div class="flex items-center space-x-4">
               <img
-                src="https://img.icons8.com/?size=100&id=59862&format=png&color=000000"
+                src="https://img.icons8.com/?size=100&id=59862&format=png&color=ffffff"
                 (click)="nextTrack(songs[0])"
                 alt="Play"
                 class="h-12 w-12 p-3 bg-green-500 rounded-full hover:scale-110 cursor-pointer"
               />
-              <div>
-                <img
-                  src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff"
-                  alt="Create Playlist"
-                  class="border-2 h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200"
-                />
-              </div>
-              <button class="text-white font-bold text-2xl mb-3">. . .</button>
+              
             </div>
             <div class="text-white flex items-center space-x-2">
               <span>Danh sách</span>
@@ -55,38 +48,49 @@
           </div>
   
           <!-- Song List Table -->
-          <div class="p-6">
+          <div class="px-6 pb-6">
             <table class="w-full text-left">
               <thead>
-                <tr class="border-b">
-                  <th class="py-2">#</th>
-                  <th class="py-2">Title</th>
-                  <th class="py-2">Album</th>
-                  <th class="py-2">Duration</th>
+                <tr class="border-b border-gray-700 text-gray-400">
+                  <th class="py-3 px-4 w-12">#</th>
+                  <th class="py-3 px-4">Song</th>
+              
+                  <th class="py-3 px-4">Duration</th>
+                  <th class="py-3 px-4">Delete</th>
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="let item of songs; let i = index"
-                  (click)="nextTrack(item)"
-                  class="hover:bg-black"
-                >
-                  <td class="py-2 rounded-l-xl p-2">{{ i + 1 }}</td>
-                  <td class="flex items-center p-2">
-                    <div class="w-12 h-12 relative">
-                      <img
-                        [src]="item.image_location || 'assets/default-album-art.jpg'"
-                        class="w-full h-full rounded object-cover mr-2"
-                      />
-                    </div>
-                    {{ item.title || 'Unknown Title' }}
-                  </td>
-                  <td class="p-2">{{ item.album || 'Unknown Album' }}</td>
-                  <td class="p-2">{{ item.duration || 'N/A' }}</td>
-                </tr>
-                <tr *ngIf="songs.length === 0">
-                  <td colspan="4" class="py-2 text-center">
-                    No songs available
+                <ng-container *ngFor="let playlist of myplaylistAll; let i = index">
+                  <tr
+                    *ngFor="let item of playlist.songs"
+                    (click)="nextTrack(item)"
+                    class="hover:bg-gray-800/50 transition-colors duration-200 rounded-xl cursor-pointer"
+                  >
+                    <td class="py-3 px-4 rounded-l-xl">#{{ i + 1 }}</td>
+                    <td class="py-3 px-4 flex items-center space-x-3">
+                      <div class="w-12 h-12">
+                        <img
+                          [src]="item.image_location || 'assets/default-album-art.jpg'"
+                          class="w-full h-full rounded-md object-cover"
+                        />
+                      </div>
+                      <span class="font-medium">{{ item.title || 'Unknown Title' }}</span>
+                    </td>
+                   
+                    <td class="py-3 px-4 text-gray-400">{{ item.duration || 'N/A' }}</td>
+                    <td class="py-3 px-4">
+                      <button
+                        (click)="deleteMyplaylist(playlist.id); $event.stopPropagation()"
+                        class="bg-green-500 text-black hover:scale-110 transition-transform duration-200 text-sm rounded px-3 py-1 text-white"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                </ng-container>
+                <tr *ngIf="myplaylistAll.length === 0 || myplaylistAll[0].songs.length === 0">
+                  <td colspan="5" class="py-4 text-center text-gray-400">
+                    Không có bài hát nào
                   </td>
                 </tr>
               </tbody>
@@ -149,6 +153,8 @@
         </div>
         <div class="h-[70px]"></div>
       </main>
+
+      
     </div>
   </body>
   <app-footer></app-footer>

@@ -2,10 +2,11 @@
 
 <div class="bg-black text-white font-sans pt-20">
     <div class="flex lg:flex-row h-auto">
-      <app-sidebar
+        <app-sidebar
         [sidebarVisible]="sidebarVisible"
         [myplaylist]="myplaylist"
         (toggleSidebarEvent)="toggleSidebar()"
+        (nextTrackEvent)="nextTrack($event)"
       ></app-sidebar>
       <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
       <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
@@ -45,11 +46,17 @@
                 (click)="nextTrack(song)"
                 class="h-12 w-12 p-3 bg-green-500 rounded-full hover:scale-110 cursor-pointer"
               />
-              <div>
+              <div class="relative group">
+                <div class="absolute bottom-full left-20 transform -translate-x-1/2 mb-2 hidden group-hover:block">
+                  <div class="bg-gray-800 text-white text-sm py-1 px-2 rounded whitespace-nowrap">
+                    Add to your playlist
+                  </div>
+                </div>
                 <img
                   src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff"
                   alt="Create Playlist"
                   class="border-2 h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200"
+                  (click)="addNewPlaylist(song.id)"
                 />
               </div>
               <button class="text-white font-bold text-2xl mb-3">. . .</button>

@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
 
     nextTrack(data: any): void {
       if (this.footerComponent) {
-        this.footerComponent.setTrackData(data);
+        this.footerComponent.setTrackData(data, true);
       } else {
         console.error('FooterComponent chưa được khởi tạo');
       }

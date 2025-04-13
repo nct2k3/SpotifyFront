@@ -17,6 +17,8 @@ export class MyPlayListComponent {
   songs: any[] = [];
   myplaylist: any[] = [];
 
+  myplaylistAll: any[] = [];
+
 
   constructor(private songsService: SongsService, private sharedService: SharedService,private router: Router) {}
 
@@ -30,9 +32,7 @@ export class MyPlayListComponent {
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
-  
-
-    // Kiểm tra userId trước khi gọi API
+ 
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe({
         next: (data: any) => {
@@ -44,9 +44,41 @@ export class MyPlayListComponent {
           console.error('Error fetching playlist:', error);
         }
       });
+
+      this.songsService.getMyplayListAll(this.userId).subscribe({
+        next: (data: any) => {
+          this.myplaylistAll = data;
+         console.log(this.myplaylistAll);
+        },
+        error: (error) => {
+          console.error('Error fetching playlist:', error);
+        }
+      })
     } else {
       this.router.navigate(['/login']); 
     }
+  }
+  deleteMyplaylist(Id:string){
+
+    this.songsService.deletePlaylist(Id).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.songsService.getMyplayList(Id).subscribe({
+          next: (data: any) => {
+            this.songs = data;
+            this.myplaylist = data;
+            this.sharedService.updateSharedData(this.songs);
+            window.location.reload();
+          },
+          error: (error) => {
+            console.error('Error fetching playlist:', error);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error fetching playlist:', error);
+      }
+    });
   }
 
   @ViewChild(FooterComponent, { static: false }) footerComponent!: FooterComponent;
