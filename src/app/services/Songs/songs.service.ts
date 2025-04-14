@@ -19,6 +19,11 @@ export class SongsService {
       map(data => data.results || data) 
     );
   }
+  searchSongs(query: string): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/search?q=${query}`).pipe(
+      map(data => data.results || data)
+    );
+  }
   getTrackById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}${id}/`);
   }
