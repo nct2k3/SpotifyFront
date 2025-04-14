@@ -33,56 +33,86 @@
     </div>
   </div>
 
-  <!-- Bảng danh sách người dùng -->
-  <table class="w-full table-fixed border-collapse mt-4">
-    <thead>
-      <tr class="bg-gray-800 text-white">
-        <th class="p-2 border break-words">Title</th>
-        <th class="p-2 border break-words">Artists</th>
-        <th class="p-2 border break-words">Genre</th>
-        <th class="p-2 border break-words">File location</th>
-        <th class="p-2 border break-words">Image location</th>
-        <th class="p-2 border break-words">Duration</th>
-        <th class="p-2 border break-words">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let song of filteredSongs()">
-        <td class="p-2 border bg-white text-black break-words">
-          {{ song.title }}
-        </td>
-        <td class="p-2 border bg-white text-black break-words">
-          <div *ngFor="let artist of song.artists">{{ artist.name }}</div>
-        </td>
-        <td class="p-2 border bg-white text-black break-words">
-          {{ song.genre }}
-        </td>
-        <td class="p-2 border bg-white text-black break-words">
-          {{ song.file_location }}
-        </td>
-        <td class="p-2 border bg-white text-black break-words">
-          {{ song.image_location }}
-        </td>
-        <td class="p-2 border bg-white text-black break-words">
-          {{ song.duration }}
-        </td>
-        <td class="p-2 border bg-white break-words">
-          <button
-            class="bg-green-500 text-white rounded items-center hover:bg-green-700 p-1 ml-2"
-            (click)="openEditModal(song.id, song)"
+  <!-- Bảng danh sách bài hát -->
+  <!-- Container với min-height để đảm bảo bảng chiếm đủ không gian -->
+  <div class="min-h-[calc(100vh-10rem)] flex flex-col mt-4 bg-zinc-900">
+    <!-- Bảng danh sách bài hát -->
+    <table class="w-full table-fixed rounded-lg shadow-lg flex-1">
+      <thead>
+        <tr class="bg-gray-800 text-white">
+          <th class="w-12 py-3"></th>
+          <!-- No title for Image column -->
+          <th class="py-3 text-center break-words">Title</th>
+          <th class="py-3 text-center break-words">Artists</th>
+          <th class="py-3 text-center break-words">Genre</th>
+          <th class="py-3 text-center break-words">File</th>
+          <th class="py-3 text-center break-words">Image</th>
+          <th class="py-3 text-center break-words">Duration</th>
+          <th class="py-3 text-center break-words">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-zinc-900">
+        <tr
+          *ngFor="let song of filteredSongs()"
+          class="hover:bg-zinc-700 transition-colors"
+        >
+          <td class="py-3 text-center text-white break-words w-12">
+            <img
+              [src]="song.image_location"
+              alt="{{ song.title }}"
+              class="w-10 h-10 object-cover mx-auto rounded"
+            />
+          </td>
+          <td class="py-3 text-center text-white break-words">
+            {{ song.title }}
+          </td>
+          <td class="py-3 text-center text-white break-words">
+            <div *ngFor="let artist of song.artists">{{ artist.name }}</div>
+          </td>
+          <td class="py-3 text-center text-white break-words">
+            {{ song.genre }}
+          </td>
+          <td
+            class="py-3 text-center text-gray-400 break-words truncate"
+            [title]="song.file_location"
           >
-            <i class="fa fa-edit"></i>
-          </button>
-          <button
-            class="bg-red-500 text-white rounded items-center hover:bg-red-700 p-1 ml-3"
-            (click)="deleteSong(song.id)"
+            <i class="fa fa-music mr-1"></i>
+            {{ getFileName(song.file_location) }}
+          </td>
+          <td
+            class="py-3 text-center text-gray-400 break-words truncate"
+            [title]="song.image_location"
           >
-            <i class="fa fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            <i class="fa fa-image mr-1"></i>
+            {{ getFileName(song.image_location) }}
+          </td>
+          <td class="py-3 text-center text-white break-words">
+            {{ song.duration }}
+          </td>
+          <td
+            class="py-3 text-center text-white break-words flex justify-center space-x-2"
+          >
+            <button
+              class="bg-green-600 text-white rounded-full hover:bg-green-800 p-2 transition-colors"
+              (click)="openEditModal(song.id, song)"
+            >
+              <i class="fa fa-edit"></i>
+            </button>
+            <button
+              class="bg-red-600 text-white rounded-full hover:bg-red-800 p-2 transition-colors"
+              (click)="deleteSong(song.id)"
+            >
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <!-- Thêm hàng trống để đảm bảo bảng chiếm hết không gian -->
+        <tr class="flex-1 bg-zinc-900" *ngIf="filteredSongs().length < 5">
+          <td colspan="8" class="h-full"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <!-- Modal Create Song -->
   <div

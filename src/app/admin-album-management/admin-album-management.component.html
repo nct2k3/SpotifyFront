@@ -2,30 +2,33 @@
   <!-- Tiêu đề và thanh tìm kiếm -->
   <div class="flex items-center justify-between mb-6">
     <!-- Tiêu đề -->
-    <h2 class="text-white font-bold text-lg">Manage Albums</h2>
+    <h2 class="text-white font-bold text-xl">Manage Albums</h2>
 
     <!-- Thanh tìm kiếm và Nút "Create" -->
     <div class="flex items-center space-x-4">
       <!-- Thanh tìm kiếm -->
       <div class="relative flex items-center w-full max-w-md">
-        <span class="absolute left-3 text-gray-400">
+        <span
+          class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+        >
           <img
             src="https://img.icons8.com/?size=100&id=7695&format=png&color=000000"
             alt="Search"
-            class="h-7 rounded-l-full hover:bg-gray-500"
+            class="h-6"
           />
         </span>
         <input
           type="text"
           [(ngModel)]="searchTerm"
           placeholder="Search albums..."
-          class="font-bold h-12 bg-white text-black rounded-full pl-12 pr-10 py-2 focus:outline-none w-full"
+          (input)="searchAlbums()"
+          class="font-semibold h-12 bg-zinc-800 text-white rounded-full pl-12 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full transition-all"
         />
       </div>
 
       <!-- Nút "Create" -->
       <button
-        class="bg-blue-500 text-white rounded-full py-2 px-6 hover:bg-blue-700 transition-colors h-12"
+        class="bg-blue-600 text-white rounded-full py-2 px-6 hover:bg-blue-800 transition-colors h-12 font-semibold"
         (click)="openCreateModal()"
       >
         Create
@@ -33,94 +36,326 @@
     </div>
   </div>
 
-  <table class="w-full table-fixed border-collapse mt-4">
-    <thead>
-      <tr class="bg-gray-800 text-white">
-        <th class="p-2 border break-words">#</th>
-        <th class="p-2 border break-words">Tiêu đề</th>
-        <th class="p-2 border break-words">Ngày phát hành</th>
-        <th class="p-2 border break-words">Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let album of albums; let i = index" class="hover:bg-gray-100">
-        <td class="p-2 border bg-white text-black break-words">{{ i + 1 }}</td>
-        <td class="p-2 border bg-white text-black break-words">
-          {{ album.title }}
-        </td>
-        <td class="p-2 border bg-white text-black break-words">
-          {{ album.release_date | date : "dd/MM/yyyy" }}
-        </td>
-        <td class="p-2 border bg-white text-black break-words">
-          <button
-            (click)="selectAlbum(album)"
-            class="text-blue-600 p-1 ml-2 hover:underline"
-          >
-            <i class="fa fa-eye"></i>
-          </button>
-          <button
-            (click)="editAlbum(album)"
-            class="bg-green-500 text-white rounded items-center hover:bg-green-700 p-1 ml-2"
-          >
-            <i class="fa fa-edit"></i>
-          </button>
-          <button
-            (click)="deleteAlbum(album.id)"
-            class="bg-red-500 text-white rounded items-center hover:bg-red-700 p-1 ml-3"
-          >
-            <i class="fa fa-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Bảng danh sách album -->
 
-  <!-- Chi tiết Album -->
-  <div *ngIf="selectedAlbum" class="mt-6 p-4 border rounded bg-gray-50">
-    <h2 class="text-xl font-bold mb-2">{{ selectedAlbum.title }}</h2>
-    <p>
-      <strong>Ngày phát hành:</strong> {{ selectedAlbum.release_date | date }}
-    </p>
+  <div
+    class="min-h-[calc(100vh-10rem)] flex flex-col mt-4 bg-zinc-900 rounded-lg"
+  >
+    <table class="w-full table-fixed rounded-lg shadow-lg">
+      <thead>
+        <tr class="bg-gray-800 text-white">
+          <th class="p-3 text-center break-words">Tiêu đề</th>
+          <th class="p-3 text-center break-words">Ngày phát hành</th>
+          <th class="p-3 text-center break-words rounded-tr-lg">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let album of albums; let i = index"
+          class="hover:bg-zinc-700 transition-colors"
+        >
+          <td class="p-3 text-center text-white break-words">
+            {{ album.title }}
+          </td>
+          <td class="p-3 text-center text-white break-words">
+            {{ album.release_date | date : "dd/MM/yyyy" }}
+          </td>
+          <td class="p-3 text-white break-words flex justify-center space-x-2">
+            <button
+              (click)="selectAlbum(album)"
+              class="text-blue-500 hover:text-blue-700 p-2 transition-colors"
+            >
+              <i class="fa fa-eye"></i>
+            </button>
+            <button
+              (click)="editAlbum(album)"
+              class="bg-green-600 text-white rounded-full hover:bg-green-800 p-2 transition-colors"
+            >
+              <i class="fa fa-edit"></i>
+            </button>
+            <button
+              (click)="deleteAlbum(album.id)"
+              class="bg-red-600 text-white rounded-full hover:bg-red-800 p-2 transition-colors"
+            >
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <div class="mt-4">
-      <h3 class="font-semibold">🎤 Nghệ sĩ:</h3>
-      <ul>
-        <li *ngFor="let artist of selectedAlbum.artists">
-          <img
-            [src]="artist.artist_photo"
-            class="w-24 h-24 object-cover my-2 rounded"
-          />
-          <p><strong>Tên:</strong> {{ artist.name }}</p>
-          <p><strong>Năm ra mắt:</strong> {{ artist.debut_year }}</p>
-          <p><strong>Tiểu sử:</strong> {{ artist.bio }}</p>
-        </li>
-      </ul>
+  <!-- Modal chi tiết Album -->
+  <div
+    *ngIf="showModal"
+    class="fixed inset-0 flex items-center justify-center z-[1000] p-5"
+  >
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0 bg-black opacity-70"
+      (click)="closeModal()"
+    ></div>
+
+    <!-- Nội dung modal -->
+    <div
+      class="relative bg-white text-black rounded-lg p-8 w-full max-w-3xl max-h-[85vh] overflow-y-auto shadow-xl"
+    >
+      <!-- Nút đóng modal -->
+      <button
+        class="absolute top-4 right-4 text-gray-600 hover:text-gray-800 transition-colors"
+        (click)="closeModal()"
+      >
+        <i class="fa fa-times text-2xl"></i>
+      </button>
+
+      <!-- Chi tiết Album -->
+      <h2 class="text-2xl font-bold mb-4">{{ selectedAlbum.title }}</h2>
+      <p class="mb-6">
+        <strong>Ngày phát hành:</strong>
+        {{ selectedAlbum.release_date | date : "dd/MM/yyyy" }}
+      </p>
+
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-3">🎤 Nghệ sĩ:</h3>
+        <ul>
+          <li
+            *ngFor="let artist of selectedAlbum.artists"
+            class="mb-4 flex items-start space-x-4"
+          >
+            <img
+              [src]="artist.artist_photo"
+              class="w-24 h-24 object-cover rounded-lg"
+            />
+            <div>
+              <p><strong>Tên:</strong> {{ artist.name }}</p>
+              <p><strong>Năm ra mắt:</strong> {{ artist.debut_year }}</p>
+              <p><strong>Tiểu sử:</strong> {{ artist.bio }}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-3">🎵 Danh sách bài hát:</h3>
+        <table class="w-full mt-2 table-auto">
+          <thead>
+            <tr class="bg-gray-200 text-black">
+              <th class="p-3 rounded-tl-lg">Tiêu đề</th>
+              <th class="p-3">Thể loại</th>
+              <th class="p-3">Thời lượng</th>
+              <th class="p-3">File</th>
+              <th class="p-3 rounded-tr-lg">Ảnh</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let song of selectedAlbum.songs"
+              class="bg-white hover:bg-gray-300 transition-colors"
+            >
+              <td class="p-3">{{ song.title }}</td>
+              <td class="p-3">{{ song.genre }}</td>
+              <td class="p-3">{{ song.duration }} phút</td>
+              <td class="p-3 truncate" [title]="song.file_location">
+                {{ getFileName(song.file_location) }}
+              </td>
+              <td class="p-3 truncate" [title]="song.image_location">
+                {{ getFileName(song.image_location) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 
-    <div class="mt-4">
-      <h3 class="font-semibold">🎵 Danh sách bài hát:</h3>
-      <table class="w-full mt-2 table-auto border">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="p-2 border">Tiêu đề</th>
-            <th class="p-2 border">Thể loại</th>
-            <th class="p-2 border">Thời lượng</th>
-            <th class="p-2 border">File</th>
-            <th class="p-2 border">Ảnh</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let song of selectedAlbum.songs">
-            <td class="p-2 border">{{ song.title }}</td>
-            <td class="p-2 border">{{ song.genre }}</td>
-            <td class="p-2 border">{{ song.duration }} phút</td>
-            <td class="p-2 border">{{ song.file_location }}</td>
-            <td class="p-2 border">
-              <img [src]="song.image_location" class="w-12 h-12 object-cover" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <!-- Modal tạo mới Album -->
+  <div
+    *ngIf="isModalOpen"
+    class="fixed inset-0 flex items-center justify-center z-[1000] p-5"
+  >
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0 bg-black/70"
+      (click)="closeCreateModal()"
+    ></div>
+
+    <!-- Modal Content -->
+    <div
+      class="relative bg-white text-black rounded-2xl p-8 w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl"
+    >
+      <!-- Close Button -->
+      <button
+        class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+        (click)="closeCreateModal()"
+      >
+        <i class="fa fa-times text-xl"></i>
+      </button>
+
+      <!-- Album Form -->
+      <h2 class="text-3xl font-semibold mb-6">
+        {{ isEditing ? "Edit Album" : "Create New Album" }}
+      </h2>
+
+      <form
+        (ngSubmit)="isEditing ? updateAlbum() : createAlbum()"
+        class="space-y-6"
+      >
+        <!-- Title -->
+        <div>
+          <label for="title" class="block text-sm font-medium mb-2"
+            >Title</label
+          >
+          <input
+            id="title"
+            type="text"
+            [(ngModel)]="newAlbum.title"
+            name="title"
+            class="w-full p-3 bg-gray-100 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter album title"
+            required
+          />
+        </div>
+
+        <!-- Release Date -->
+        <div>
+          <label for="release_date" class="block text-sm font-medium mb-2"
+            >Release Date</label
+          >
+          <input
+            id="release_date"
+            type="date"
+            [(ngModel)]="newAlbum.release_date"
+            name="release_date"
+            class="w-full p-3 bg-gray-100 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <!-- Artist Selection -->
+        <div>
+          <label for="artist_search" class="block text-sm font-medium mb-2"
+            >Artists</label
+          >
+          <input
+            id="artist_search"
+            type="text"
+            [(ngModel)]="artistSearchTerm"
+            (input)="searchArtists()"
+            name="artist_search"
+            class="w-full p-3 bg-gray-100 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search artists..."
+          />
+
+          <div
+            *ngIf="filteredArtists.length > 0"
+            class="mt-2 max-h-40 overflow-y-auto bg-gray-100 rounded-xl shadow-md"
+          >
+            <div
+              *ngFor="let artist of filteredArtists"
+              class="p-3 hover:bg-gray-200 cursor-pointer"
+              (click)="addArtist(artist.id)"
+            >
+              {{ artist.name }}
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <div *ngIf="newAlbum.artist_ids.length > 0" class="space-y-2">
+              <div
+                *ngFor="let artistId of newAlbum.artist_ids"
+                class="flex items-center justify-between bg-gray-200 p-2 rounded-xl"
+              >
+                <span>{{ getArtistName(artistId) }}</span>
+                <button
+                  type="button"
+                  class="text-red-600 hover:text-red-800"
+                  (click)="removeArtist(artistId)"
+                >
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div
+              *ngIf="newAlbum.artist_ids.length === 0"
+              class="text-gray-500 text-sm"
+            >
+              No artists selected.
+            </div>
+          </div>
+        </div>
+
+        <!-- Song Selection -->
+        <div>
+          <label for="song_search" class="block text-sm font-medium mb-2"
+            >Songs</label
+          >
+          <input
+            id="song_search"
+            type="text"
+            [(ngModel)]="songSearchTerm"
+            (input)="searchSongs()"
+            name="song_search"
+            class="w-full p-3 bg-gray-100 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search songs..."
+          />
+
+          <div
+            *ngIf="filteredSongs.length > 0"
+            class="mt-2 max-h-40 overflow-y-auto bg-gray-100 rounded-xl shadow-md"
+          >
+            <div
+              *ngFor="let song of filteredSongs"
+              class="p-3 hover:bg-gray-200 cursor-pointer"
+              (click)="addSong(song.id)"
+            >
+              {{ song.title }}
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <div *ngIf="newAlbum.song_ids.length > 0" class="space-y-2">
+              <div
+                *ngFor="let songId of newAlbum.song_ids"
+                class="flex items-center justify-between bg-gray-200 p-2 rounded-xl"
+              >
+                <span>{{ getSongTitle(songId) }}</span>
+                <button
+                  type="button"
+                  class="text-red-600 hover:text-red-800"
+                  (click)="removeSong(songId)"
+                >
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div
+              *ngIf="newAlbum.song_ids.length === 0"
+              class="text-gray-500 text-sm"
+            >
+              No songs selected.
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            class="bg-gray-300 text-black rounded-xl py-2 px-6 hover:bg-gray-400 transition"
+            (click)="closeCreateModal()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white rounded-xl py-2 px-6 hover:bg-blue-800 transition"
+            [disabled]="!newAlbum.title || !newAlbum.release_date"
+          >
+            {{ isEditing ? "Update" : "Create" }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
+<app-toast-message #toast></app-toast-message>

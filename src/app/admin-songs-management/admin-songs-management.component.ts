@@ -35,7 +35,6 @@ export class AdminSongsManagementComponent implements OnInit {
   titleError: string = ''; //kiểm tra title đã nhập chưa
   durationError: string = ''; //đảm bảo không âm
 
-
   constructor(
     private songsService: SongsService,
     private artistsService: ArtistsService,
@@ -66,7 +65,7 @@ export class AdminSongsManagementComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.isEditing = false;
-     // Reset dữ liệu
+    // Reset dữ liệu
     this.newSong = {
       title: '',
       artist_ids: [] as number[],
@@ -79,7 +78,7 @@ export class AdminSongsManagementComponent implements OnInit {
   }
 
   // Mở modal và truyền dữ liệu bài hát vào
-  openEditModal(id:number, song: any) {
+  openEditModal(id: number, song: any) {
     this.isEditing = true; // Đang chỉnh sửa
     this.newSong = {
       title: song.title,
@@ -121,6 +120,13 @@ export class AdminSongsManagementComponent implements OnInit {
     });
   }
 
+  // Helper method to extract file name from path
+  getFileName(path: string): string {
+    if (!path || path === '../') return 'N/A';
+    const parts = path.split('/');
+    return parts[parts.length - 1]; // Returns the last part (file name)
+  }
+
   // Chức năng xóa người dùng
   deleteSong(songId: string) {
     this.songsService.deleteSong(songId).subscribe(
@@ -147,18 +153,20 @@ export class AdminSongsManagementComponent implements OnInit {
     if (this.isEditing) {
       // Thực hiện cập nhật bài hát nếu đang chỉnh sửa
       console.log('Updating song:', this.newSong);
-      this.songsService.updateSong(this.idSongEdit, this.newSong).subscribe(() => {
-        this.closeModal(); // Đóng modal sau khi lưu
-        alert("Sửa thành công");
-        this.loadSongs();
-      });
+      this.songsService
+        .updateSong(this.idSongEdit, this.newSong)
+        .subscribe(() => {
+          this.closeModal(); // Đóng modal sau khi lưu
+          alert('Sửa thành công');
+          this.loadSongs();
+        });
     } else {
       // Thực hiện tạo bài hát mới
       console.log('Creating new song:', this.newSong);
       console.log(this.newSong);
       this.songsService.createSong(this.newSong).subscribe(() => {
         this.closeModal(); // Đóng modal sau khi tạo
-        alert("Thêm thành công")
+        alert('Thêm thành công');
         this.loadSongs();
       });
     }
@@ -207,7 +215,6 @@ export class AdminSongsManagementComponent implements OnInit {
     this.newSong.artist_ids = []; // Reset id nếu chưa chọn từ danh sách
   }
 
-
   //hàm kiểm tra hợp lệ của form
   validateForm(): boolean {
     let isValid = true;
@@ -224,10 +231,7 @@ export class AdminSongsManagementComponent implements OnInit {
       isValid = false;
     }
 
-    if (
-      this.newSong.duration == null || 
-      this.newSong.duration <= 0
-    ) {
+    if (this.newSong.duration == null || this.newSong.duration <= 0) {
       this.durationError = 'Vui lòng nhập thời lượng bài hát lớn hơn 0.';
       isValid = false;
     }
