@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginService } from '../services/login/login.service';
 
@@ -8,10 +8,11 @@ import { LoginService } from '../services/login/login.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  isLoggedIn: boolean = false; // Trạng thái đăng nhập
-  userName: string = ''; // Tên người dùng
-  userInitial: string = ''; // Chữ cái đầu tiên của tên người dùng
-  isMenuOpen: boolean = false; // Trạng thái hiển thị menu
+  isLoggedIn: boolean = false;
+  userName: string = '';
+  userInitial: string = '';
+  isMenuOpen: boolean = false;
+  searchQuery: string = ''; // Store the search input
 
   constructor(private router: Router, private loginService: LoginService) {}
 
@@ -19,37 +20,43 @@ export class HeaderComponent {
     if (localStorage.getItem('token')) {
       this.isLoggedIn = true;
       this.userName = localStorage.getItem('user') || '';
-      this.userInitial = this.userName.charAt(0).toUpperCase(); // Lấy chữ cái đầu tiên và viết hoa
+      this.userInitial = this.userName.charAt(0).toUpperCase();
     } else {
       this.isLoggedIn = false;
     }
   }
 
+  performSearch(): void {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/search'], { queryParams: { q: this.searchQuery } });
+    }
+  }
+
   navigateToLogin(): void {
-    this.router.navigate(['/login']); // Điều hướng đến trang đăng nhập
+    this.router.navigate(['/login']);
   }
 
   goToAbout() {
-    this.router.navigate(['/album']); 
+    this.router.navigate(['/album']);
   }
 
   toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen; // Đổi trạng thái hiển thị menu
+    this.isMenuOpen = !this.isMenuOpen;
   }
 
   navigateToProfile(): void {
-    this.isMenuOpen = false; // Đóng menu
-    this.router.navigate(['/profile']); // Điều hướng đến trang Hồ sơ
+    this.isMenuOpen = false;
+    this.router.navigate(['/profile']);
   }
 
   navigateToSettings(): void {
-    this.isMenuOpen = false; // Đóng menu
-    this.router.navigate(['/settings']); // Điều hướng đến trang Cài đặt
+    this.isMenuOpen = false;
+    this.router.navigate(['/settings']);
   }
 
   logout(): void {
-    this.isMenuOpen = false; // Đóng menu
-    this.loginService.logout(); // Gọi hàm logout từ LoginService
-    this.router.navigate(['/login']); // Điều hướng đến trang Đăng nhập
+    this.isMenuOpen = false;
+    this.loginService.logout();
+    this.router.navigate(['/login']);
   }
 }

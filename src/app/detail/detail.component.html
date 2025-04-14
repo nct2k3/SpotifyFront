@@ -1,6 +1,6 @@
 <!-- <app-header></app-header> -->
 
-<div class="bg-black text-white font-sans pt-20">
+<div class="bg-black text-white font-sans pt-[70px]">
     <div class="flex lg:flex-row h-auto">
         <app-sidebar
         [sidebarVisible]="sidebarVisible"
@@ -59,7 +59,20 @@
                   (click)="addNewPlaylist(song.id)"
                 />
               </div>
-              <button class="text-white font-bold text-2xl mb-3">. . .</button>
+              <div class="relative group">
+                <div class="absolute bottom-full left-20 transform -translate-x-1/2 mb-2 hidden group-hover:block">
+                  <div class="bg-gray-800 text-white text-sm py-1 px-2 rounded whitespace-nowrap">
+                    Download song
+                  </div>
+                </div>
+                <a [href]="song?.file_location" download>
+                  <img
+                    src="https://img.icons8.com/?size=100&id=26193&format=png&color=ffffff"
+                    alt="Download Song"
+                    class="h-8 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200"
+                  />
+                </a>
+              </div>
             </div>
             <div class="text-white flex items-center space-x-2">
               <span>Danh sách</span>
