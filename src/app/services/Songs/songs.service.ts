@@ -32,6 +32,7 @@ export class SongsService {
       tap(data => console.log('Songs data:', data))
     );
   }
+  
   addPlaylist(playlistData: { title: string; song_ids: string[] }): Observable<any> {
     const token = localStorage.getItem('token');
     console.log(token);
@@ -42,6 +43,7 @@ export class SongsService {
     return this.http.post(`${this.apiUrls}playlists/`, playlistData, { headers }).pipe(
     );
   }
+
   deletePlaylist(playlistId: string): Observable<any> {
     const token = localStorage.getItem('token');
     console.log(token);
