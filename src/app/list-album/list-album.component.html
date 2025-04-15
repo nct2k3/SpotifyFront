@@ -1,0 +1,69 @@
+
+<body class="bg-[#121212] text-white font-sans pt-20">
+    <div class="flex lg:flex-row h-auto">
+      <app-sidebar
+        [sidebarVisible]="sidebarVisible"
+        [myplaylist]="myplaylist"
+        (toggleSidebarEvent)="toggleSidebar()"
+        (nextTrackEvent)="nextTrack($event)"
+        class="bg-[#040404] text-white"
+      ></app-sidebar>
+      <div *ngIf="sidebarVisible" class="w-1/4 h-full bg-[#040404]" id="asideBehind"></div>
+      <div *ngIf="!sidebarVisible" class="w-16 h-full bg-[#040404]" id="sidebarMiniBehind"></div>
+  
+      <main class="flex-1 bg-[#121212] mx-2 px-6">
+    
+        <header class="flex items-center gap-4 mb-6 sticky top-[70px] z-40  py-2">
+            <div
+              (click)="navigateToHome()"
+              class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+            >
+              Home
+            </div>
+            <div
+            (click)="navigateToListSong()"
+              class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+            >
+              Song
+            </div>
+            <div
+            (click)="navigateToMylistalbum()"
+              class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+            >
+              Album
+            </div>
+            <h1 class="text-3xl font-bold ml-[30%] text-end">Albums for your</h1>
+          </header>
+          
+        <section class="px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
+  
+            <div class="bg-[#181818] flex w-auto rounded-lg p-1 hover:bg-[#282828] transition-colors cursor-pointer">
+              <img src="../../assets/Img/image1.png" alt="Discover Weekly" class="w-16 h-16 object-cover rounded-lg mt-1">
+              <div class="px-2">
+                <h3 class="text-lg font-semibold">Discover Weekly</h3>
+                <p class="text-gray-400 text-sm">Tuyển tập nhạc mỗi ngày tuần. Thưởng thức ca...</p>
+              </div>
+            </div>
+            
+  
+        
+          </div>
+        </section>
+    
+        <section  class="p-2">
+          <div class="grid grid-cols-4 gap-6">
+            <div *ngFor="let item of album" class="bg-[#181818] rounded-lg m-2 p-4 hover:bg-[#282828] transition-colors cursor-pointer">
+              <img (click)="navigateToAlbum(item.id)"  [src]="
+                    item.artists[0]?.artist_photo || '/assets/Img/imgsptf.jpg'" alt="Discover Weekly" class="w-full h-40 object-cover rounded-lg mb-4">
+              <h3 class="text-lg font-semibold">{{ item.title }}</h3>
+              <p class="text-gray-400 text-sm">Các album phổ biến nhất hiện nay.</p>
+            </div>
+          </div>
+        </section>
+  
+       </main>
+    </div>
+  </body>
+  
+  <app-footer></app-footer>

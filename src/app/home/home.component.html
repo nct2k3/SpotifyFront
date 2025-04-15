@@ -10,23 +10,25 @@
     <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
 
     <!-- Main Content -->
-    <main class="flex-1 p-6 bg-gradient-to-r from-green-950 to-black rounded-xl m-1">
+    <main class="flex-1 px-6 bg-gradient-to-r from-green-950 to-black rounded-xl m-1">
       <!-- Header Tabs -->
-      <header class="flex items-center gap-4 ml-2 mb-6">
+      <header class="flex items-center gap-4 mb-6 mt-2 sticky top-[70px] z-40 bg-gradient-to-r from-green-950 to-black py-2">
         <div
           class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
           All
         </div>
         <div
+        (click)="navigateToListSong()"
           class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
           Song
         </div>
         <div
+        (click)="navigateToMylistalbum()"
           class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
-          Podcast
+          Album
         </div>
       </header>
 
@@ -40,6 +42,7 @@
               Recommended for you
             </h2>
             <a
+            (click)="navigateToListSong()"
               class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
             >
               Show All
@@ -58,12 +61,12 @@
                   (click)="navigateToDetail(item.id)"
                 />
                 <!-- Play button: Visible only on hover, positioned at bottom-right -->
-                <div class="absolute top-1 right-1 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div class="absolute top-[120px] right-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <img
                     src="https://img.icons8.com/?size=100&id=59862&format=png&color=ffffff"
                     (click)="nextTrack(item)"
                     alt="Play"
-                    class="h-10 w-10 p-3 bg-[#1DB954] rounded-full hover:scale-110 cursor-pointer transition-transform duration-200"/>
+                    class="h-12 w-12 p-3 bg-[#1DB954] rounded-full hover:scale-110 cursor-pointer transition-transform duration-200"/>
                 </div>
               </div>
               <div class="text-sm text-gray-200 text-center mt-3">
@@ -82,6 +85,7 @@
             Artist albums
           </h2>
           <a
+            (click)="navigateToMylistalbum()"
             class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
           >
             Show All

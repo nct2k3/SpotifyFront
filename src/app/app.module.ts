@@ -31,6 +31,7 @@ import { ProfileComponent } from './profile/profile.component'; // Thêm import 
 import { GeneralChatComponent } from './general-chat/general-chat.component';
 import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; // Thêm import này
 import { RouterModule } from '@angular/router';
+import { ListAlbumComponent } from './list-album/list-album.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { RouterModule } from '@angular/router';
     SideBarChatComponent,
     SidebarComponent,
     AdminAlbumManagementComponent,
-    ProfileComponent
+    ProfileComponent,
+    ListAlbumComponent
   ],
   imports: [
     BrowserModule,

@@ -9,7 +9,7 @@
   ></audio>
 
   <div class="w-1/4 flex items-center">
-    <div class="flex items-center gap-3 hover:bg-gray-800 p-2 rounded-lg cursor-pointer transition-all duration-200" (click)="togglePlay()">
+    <div class="flex items-center gap-3  p-2 rounded-lg cursor-pointer transition-all duration-200" (click)="togglePlay()">
       <img
         [src]="currentTrack?.image_location || 'default-image.jpg'"
         [alt]="currentTrack?.name || 'No track'"
