@@ -1,26 +1,38 @@
 <!-- Main Content -->
 <div class="flex-1 p-6 overflow-y-auto max-w-7xl mx-auto">
   <!-- Tiêu đề và thanh tìm kiếm -->
-  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
+  <div
+    class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8"
+  >
     <h2 class="text-3xl font-bold text-white">Manage Songs</h2>
     <div class="flex items-center space-x-4 mt-4 sm:mt-0">
       <!-- Thanh tìm kiếm -->
       <div class="relative w-full max-w-xs">
         <span class="absolute inset-y-0 left-4 flex items-center text-gray-400">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
         </span>
         <input
           type="text"
           [(ngModel)]="searchTerm"
           placeholder="Search songs..."
-          class="w-full h-10 pl-12 pr-4 bg-[#2A2A2A] text-white rounded-full focus:outline-none focus:ring-2 focus:ring-[#1DB954] transition-all duration-200"
+          class="h-11 pl-12 pr-4 bg-[#2A2A2A] text-gray-200 rounded-xl border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1DB954] focus:border-transparent transition-all duration-300 placeholder-gray-500"
         />
       </div>
       <!-- Nút Create -->
       <button
-        class="bg-[#1DB954] text-black font-bold text-sm rounded-full py-2 px-6 hover:bg-[#1ED760] transition-colors duration-200"
+        class="bg-[#1DB954] text-black font-semibold text-sm rounded-full py-2 px-6 hover:bg-[#1ED760] transition-colors duration-300 shadow-md hover:shadow-lg"
         (click)="openCreateModal()"
       >
         Create
@@ -28,9 +40,8 @@
     </div>
   </div>
 
-  <!-- Bảng danh sách bài hát -->
   <!-- Container với min-height để đảm bảo bảng chiếm đủ không gian -->
-  <div class="min-h-[calc(100vh-10rem)] flex flex-col mt-4 bg-zinc-900">
+  <div class="min-h-[calc(100vh-11rem)] flex flex-col mt-4 bg-zinc-900">
     <!-- Bảng danh sách bài hát -->
     <table class="w-full table-fixed rounded-lg shadow-lg flex-1">
       <thead>
@@ -112,110 +123,197 @@
   <!-- Modal Create/Edit Song -->
   <div
     *ngIf="isModalOpen"
-    class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50"
+    class="fixed inset-0 flex items-center justify-center z-[1000] p-5"
   >
-    <div class="bg-[#282828] p-8 rounded-xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
-      <h2 class="text-2xl font-bold text-white mb-6">
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0 bg-black opacity-75"
+      (click)="closeModal()"
+    ></div>
+
+    <div
+      class="relative bg-white text-gray-800 rounded-xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
+    >
+      <!-- Close Button -->
+      <button
+        class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+        (click)="closeModal()"
+      >
+        <i class="fa fa-times text-xl"></i>
+      </button>
+
+      <h2 class="text-2xl font-semibold text-gray-900 mb-6">
         {{ isEditing ? "Edit Song" : "Create New Song" }}
       </h2>
-      <form (ngSubmit)="onSubmit()">
-        <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-300 mb-2" for="title">Title</label>
+
+      <form (ngSubmit)="onSubmit()"  class="space-y-6">
+        <!-- Title -->
+        <div>
+          <label
+            class="block text-sm font-medium  text-gray-700 mb-2"
+            for="title"
+            >Title</label
+          >
           <input
             id="title"
             type="text"
             [(ngModel)]="newSong.title"
             name="title"
-            class="w-full p-3 bg-[#3E3E3E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1DB954] transition-all duration-200"
+            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter song title"
           />
-          <p *ngIf="titleError" class="text-red-500 text-sm mt-2">{{ titleError }}</p>
+          <p *ngIf="titleError" class="text-red-500 text-sm mt-2">
+            {{ titleError }}
+          </p>
         </div>
+
+        <!-- Artist -->
         <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-300 mb-2" for="artist">Artist</label>
+          <label
+            class="block text-sm font-medium text-gray-700 mb-2"
+            for="artist"
+            >Artist</label
+          >
           <input
             id="artist"
             type="text"
             [(ngModel)]="artistName"
             name="artist"
             (input)="onArtistInput($event)"
-            class="w-full p-3 bg-[#3E3E3E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1DB954] transition-all duration-200"
+            class="w-full p-3 bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter artist name"
           />
           <ul
             *ngIf="filteredArtists.length > 0"
-            class="mt-2 p-3 bg-[#3E3E3E] rounded-lg max-h-60 overflow-y-auto"
+            class="mt-2 p-3 bg-gray-100 rounded-lg max-h-60 overflow-y-auto"
           >
             <li
               *ngFor="let artist of filteredArtists"
               (click)="selectArtist(artist)"
-              class="cursor-pointer p-2 hover:bg-[#4E4E4E] text-white rounded transition-colors duration-200"
+              class="cursor-pointer p-2 hover:bg-gray-300 text-gray-700 rounded transition-colors duration-200"
             >
               {{ artist.name }}
             </li>
           </ul>
-          <p *ngIf="artistError" class="text-red-500 text-sm mt-2">{{ artistError }}</p>
+          <p *ngIf="artistError" class="text-red-500 text-sm mt-2">
+            {{ artistError }}
+          </p>
         </div>
+
+        <!-- Genre -->
         <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-300 mb-2" for="genre">Genre</label>
+          <label
+            class="block text-sm font-medium text-gray-700  mb-2"
+            for="genre"
+            >Genre</label
+          >
           <input
             id="genre"
             type="text"
             [(ngModel)]="newSong.genre"
             name="genre"
-            class="w-full p-3 bg-[#3E3E3E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1DB954] transition-all duration-200"
+            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter genre"
           />
         </div>
+
+        <!-- Duration -->
         <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-300 mb-2" for="duration">Duration (min)</label>
+          <label
+            class="block text-sm font-medium text-gray-700 mb-2"
+            for="duration"
+            >Duration (min)</label
+          >
           <input
             id="duration"
             type="number"
             [(ngModel)]="newSong.duration"
             name="duration"
-            class="w-full p-3 bg-[#3E3E3E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1DB954] transition-all duration-200"
+            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter song duration"
           />
-          <p *ngIf="durationError" class="text-red-500 text-sm mt-2">{{ durationError }}</p>
+          <p *ngIf="durationError" class="text-red-500 text-sm mt-2">
+            {{ durationError }}
+          </p>
         </div>
+
+        <!-- Lyrics -->
         <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-300 mb-2" for="file_location">Song File</label>
+          <label
+            class="block text-sm font-medium text-gray-700 mb-2"
+            for="lyrics"
+            >Lyrics</label
+          >
+          <textarea
+            id="lyrics"
+            [(ngModel)]="newSong.lyrics"
+            name="lyrics"
+            rows="5"
+            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            placeholder="Enter lyrics..."
+          ></textarea>
+        </div>
+
+        <!-- File upload (song) -->
+        <div class="mb-5">
+          <label
+            class="block text-sm font-medium text-gray-700 mb-2"
+            for="file_location"
+            >Song File</label
+          >
           <input
             id="file_location"
             type="file"
             (change)="onFileSelected($event, 'file_location')"
-            class="w-full p-3 bg-[#3E3E3E] text-white rounded-lg file:bg-[#1DB954] file:text-black file:font-semibold file:border-0 file:rounded-lg file:px-4 file:py-2 hover:file:bg-[#1ED760]"
+            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
           />
-          <span *ngIf="newSong.file_location && isEditing" class="text-gray-300 text-sm mt-2 block">
+          <span
+            *ngIf="newSong.file_location && isEditing"
+            class="text-gray-500 text-sm mt-2 block"
+          >
             Selected: {{ newSong.file_location }}
           </span>
-          <p *ngIf="fileError" class="text-red-500 text-sm mt-2">{{ fileError }}</p>
+          <p *ngIf="fileError" class="text-red-500 text-sm mt-2">
+            {{ fileError }}
+          </p>
         </div>
+
+        <!-- File upload (image) -->
         <div class="mb-5">
-          <label class="block text-sm font-medium text-gray-300 mb-2" for="image_location">Image</label>
+          <label
+            class="block text-sm font-medium text-gray-700 mb-2"
+            for="image_location"
+            >Image</label
+          >
           <input
             id="image_location"
             type="file"
             (change)="onFileSelected($event, 'image_location')"
-            class="w-full p-3 bg-[#3E3E3E] text-white rounded-lg file:bg-[#1DB954] file:text-black file:font-semibold file:border-0 file:rounded-lg file:px-4 file:py-2 hover:file:bg-[#1ED760]"
+            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
           />
-          <span *ngIf="newSong.image_location && isEditing" class="text-gray-300 text-sm mt-2 block">
+          <span
+            *ngIf="newSong.image_location && isEditing"
+            class="text-gray-500 text-sm mt-2 block"
+          >
             Selected: {{ newSong.image_location }}
           </span>
-          <p *ngIf="imageError" class="text-red-500 text-sm mt-2">{{ imageError }}</p>
+          <p *ngIf="imageError" class="text-red-500 text-sm mt-2">
+            {{ imageError }}
+          </p>
         </div>
-        <div class="flex justify-between">
+
+        <!-- Buttons -->
+        <div class="flex justify-end space-x-4">
           <button
             type="button"
-            class="bg-[#3E3E3E] text-white font-semibold rounded-full py-2 px-6 hover:bg-[#4E4E4E] transition-colors duration-200"
+            class="bg-gray-300 text-gray-800 rounded-lg py-2 px-6 hover:bg-gray-400 transition-all duration-200"
             (click)="closeModal()"
           >
             Cancel
           </button>
           <button
             type="submit"
-            class="bg-[#1DB954] text-black font-semibold rounded-full py-2 px-6 hover:bg-[#1ED760] transition-colors duration-200"
+            class="bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-all duration-200"
           >
             Save
           </button>
@@ -224,3 +322,4 @@
     </div>
   </div>
 </div>
+<app-toast-message #toast></app-toast-message>

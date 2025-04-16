@@ -1,0 +1,303 @@
+<div class="p-5 rounded-lg w-full min-w-full">
+  <!-- Header: Title, Search Bar, and Create Button -->
+  <div
+    class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8"
+  >
+    <!-- Title -->
+    <h2 class="text-3xl font-bold text-white">Manage Artists</h2>
+
+    <!-- Search Bar and Create Button -->
+    <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+      <!-- Search Bar -->
+      <div class="relative w-full max-w-sm">
+        <span class="absolute inset-y-0 left-4 flex items-center text-gray-400">
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search artists..."
+          class="h-11 pl-12 pr-4 bg-[#2A2A2A] text-gray-200 rounded-xl border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1DB954] focus:border-transparent transition-all duration-300 placeholder-gray-500"
+        />
+      </div>
+
+      <!-- Create Button -->
+      <button
+        class="bg-[#1DB954] text-black font-semibold text-sm rounded-full py-2 px-6 hover:bg-[#1ED760] transition-colors duration-300 shadow-md hover:shadow-lg"
+        (click)="openCreateModal()"
+      >
+        Create
+      </button>
+    </div>
+  </div>
+
+  <!-- Artist List Container -->
+  <div class="min-h-[calc(100vh-11rem)] min-w-full flex flex-col mt-6">
+    <!-- Grid Container with Minimum Width -->
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full"
+    >
+      <div
+        *ngFor="let artist of filteredArtists()"
+        class="bg-zinc-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate-fade-in"
+      >
+        <div class="flex items-center space-x-4 mb-4">
+          <!-- Artist Image -->
+          <img
+            [src]="artist.artist_photo || 'assets/Img/default-avatar.png'"
+            alt="{{ artist.name }}"
+            class="w-20 h-20 rounded-full object-cover border-2 border-gray-600 shadow-sm"
+          />
+          <!-- Artist Info -->
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-white truncate">
+              {{ artist.name }}
+            </h3>
+            <p class="text-xs text-gray-400 mt-1">
+              Debut: {{ artist.debut_year }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <p class="text-sm text-gray-300 line-clamp-3 mb-4">{{ artist.bio }}</p>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-2">
+          <button
+            class="bg-green-600 text-white rounded-full p-2 hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md"
+            (click)="openEditModal(artist.id, artist)"
+          >
+            <i class="fa fa-edit text-sm"></i>
+          </button>
+          <button
+            class="bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition-all duration-200 shadow-sm hover:shadow-md"
+            (click)="deleteArtist(artist.id)"
+          >
+            <i class="fa fa-trash text-sm"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      *ngIf="!filteredArtists()?.length"
+      class="w-full min-w-full flex flex-col items-center justify-center h-64 text-gray-400"
+    >
+      <svg
+        class="w-16 h-16 text-gray-500 mb-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5.121 17.804A7.978 7.978 0 0112 14c2.762 0 5.237 1.404 6.879 3.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <p class="text-lg">No artists found.</p>
+      <button
+        class="mt-4 text-sm text-[#1DB954] hover:text-[#1ED760] transition-colors duration-200"
+        (click)="openCreateModal()"
+      >
+        Create your first artist
+      </button>
+    </div>
+  </div>
+
+  <!-- Combined Artist Modal (Create/Edit) -->
+  <div
+    *ngIf="isModalOpen"
+    class="fixed inset-0 flex items-center justify-center z-[1000] p-5"
+  >
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0 bg-black opacity-75"
+      (click)="closeModal()"
+    ></div>
+
+    <!-- Modal Content -->
+    <div
+      class="relative bg-white text-gray-800 rounded-xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
+    >
+      <!-- Close Button -->
+      <button
+        class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+        (click)="closeModal()"
+      >
+        <i class="fa fa-times text-xl"></i>
+      </button>
+
+      <!-- Form Header -->
+      <h2 class="text-2xl font-semibold text-gray-900 mb-6">
+        {{ isEditMode ? "Edit Artist" : "Create New Artist" }}
+      </h2>
+
+      <!-- Form -->
+      <form
+        #artistForm="ngForm"
+        (ngSubmit)="saveArtist(artistForm)"
+        class="space-y-6"
+      >
+        <!-- Name -->
+        <div>
+          <label
+            for="artist_name"
+            class="block text-sm font-medium text-gray-700 mb-2"
+            >Name</label
+          >
+          <input
+            id="artist_name"
+            type="text"
+            [(ngModel)]="currentArtist.name"
+            name="artist_name"
+            #nameInput="ngModel"
+            class="w-full p-3 bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            placeholder="Enter artist name"
+            required
+          />
+          <div *ngIf="nameInput.invalid" class="text-red-600 text-sm mt-1">
+            Name is required.
+          </div>
+        </div>
+
+        <!-- Debut Year -->
+        <div>
+          <label
+            for="debut_year"
+            class="block text-sm font-medium text-gray-700 mb-2"
+            >Debut Year</label
+          >
+          <div class="flex space-x-2">
+            <select
+              [(ngModel)]="currentArtist.debut_year"
+              name="debut_year_select"
+              #yearSelect="ngModel"
+              required
+              class="w-full p-3 bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            >
+              <option value="" disabled>Select a year</option>
+              <option *ngFor="let year of years" [value]="year">
+                {{ year }}
+              </option>
+            </select>
+          </div>
+          <div *ngIf="yearSelect.invalid" class="text-red-600 text-sm mt-1">
+            Select release year.
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div>
+          <label for="bio" class="block text-sm font-medium text-gray-700 mb-2"
+            >Bio</label
+          >
+          <textarea
+            id="bio"
+            [(ngModel)]="currentArtist.bio"
+            name="bio"
+            #bioInput="ngModel"
+            class="w-full p-3 bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            placeholder="Enter artist bio"
+            rows="4"
+            required
+          ></textarea>
+          <div *ngIf="bioInput.invalid" class="text-red-600 text-sm mt-1">
+            Bio is required.
+          </div>
+        </div>
+
+        <!-- Artist Photo (File Upload) -->
+        <div>
+          <label
+            for="artist_photo"
+            class="block text-sm font-medium text-gray-700 mb-2"
+            >Artist Photo</label
+          >
+          <input
+            id="artist_photo"
+            type="file"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            class="w-full p-3 bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+          />
+          <!-- Hiển thị lỗi nếu chưa chọn ảnh -->
+          <div
+            *ngIf="currentArtist.artist_photo === ''"
+            class="text-red-600 text-sm mt-1"
+          >
+            Vui lòng chọn ảnh nghệ sĩ.
+          </div>
+          <!-- Preview Image -->
+          <div *ngIf="previewImage" class="mt-2">
+            <img
+              [src]="previewImage"
+              alt="Preview"
+              class="w-32 h-32 object-cover rounded-lg"
+            />
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            class="bg-gray-300 text-gray-800 rounded-lg py-2 px-6 hover:bg-gray-400 transition-all duration-200"
+            (click)="closeModal()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="artistForm.invalid"
+            class="bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-all duration-200"
+          >
+            {{ isEditMode ? "Update" : "Create" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<app-toast-message #toast></app-toast-message>
+
+<style>
+  /* Fade-in animation for artist cards */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  /* Line clamp for bio text */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

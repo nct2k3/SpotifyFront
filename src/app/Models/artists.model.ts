@@ -12,7 +12,7 @@ export interface Artist {
 }
 
 export interface ArtistResponse {
-  id: number;
+  id: string;
   name: string;
   bio: string;
   artist_photo: string;
