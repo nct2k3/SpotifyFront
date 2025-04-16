@@ -23,13 +23,16 @@ export class ListAlbumComponent {
   this.username = localStorage.getItem('user');
   this.email = localStorage.getItem('email');
   this.userId = localStorage.getItem('user_id');
+  this.albumService.getAlbum().subscribe((data: any) => {
+    this.album = data;
+  });
+  this.songsService.getTrack().subscribe((data: any) => {
+    this.songs = data;
+  });
 
   if (this.userId) {
     this.songsService.getMyplayList(this.userId).subscribe({
       next: (data: any) => {
-        this.albumService.getAlbum().subscribe((data: any) => {
-          this.album = data;
-        });
         this.myplaylist = data; 
       },
       error: (error) => {

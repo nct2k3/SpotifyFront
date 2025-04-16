@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { SongsService } from '../services/Songs/songs.service';
 import { Router } from '@angular/router';
 import { FooterComponent } from '../footer/footer.component';
+import { AlbumService } from '../services/album/album.service';
 
 @Component({
   selector: 'app-product',
@@ -18,19 +19,24 @@ export class ProductComponent {
   userId: string | null = '';
   sidebarVisible = true;
   isSong=true;
-  constructor(private songsService: SongsService,private router: Router) {}
+  constructor(private songsService: SongsService,private router: Router, private albumService: AlbumService ) {}
 
   ngOnInit() {
   this.username = localStorage.getItem('user');
   this.email = localStorage.getItem('email');
   this.userId = localStorage.getItem('user_id');
+  this.albumService.getAlbum().subscribe((data: any) => {
+    this.album = data;
+  });
 
   if (this.userId) {
+    this.songsService.getTrack().subscribe((data: any) => {
+      this.songs = data;
+     
+    });
+
     this.songsService.getMyplayList(this.userId).subscribe({
       next: (data: any) => {
-        if(this.isSong){
-          this.songs = data;
-        }
         this.myplaylist = data; 
       },
       error: (error) => {
@@ -45,6 +51,11 @@ export class ProductComponent {
     if (!this.footerComponent) {
       console.error('FooterComponent chưa được khởi tạo');
     }
+  }
+  navigateToAlbum(Id:any) {
+    this.router.navigate(['/album'], {
+      queryParams: { Id: Id }
+    });
   }
 
   nextTrack(data: any): void {

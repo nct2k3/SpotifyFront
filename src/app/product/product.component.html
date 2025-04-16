@@ -15,7 +15,7 @@
       <header class="flex items-center gap-4 mb-6  sticky top-[70px] z-40  py-2">
         <div
           (click)="navigateToHome()"
-          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
           Home
         </div>
@@ -27,7 +27,7 @@
         </div>
         <div
         (click)="navigateToMylistalbum()"
-          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
           Album
         </div>
@@ -35,25 +35,27 @@
       </header>
     
       <section class="px-4">
-        <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-4 gap-6">
 
-          <div class="bg-[#181818] flex w-auto rounded-lg p-1 hover:bg-[#282828] transition-colors cursor-pointer">
-            <img src="../../assets/Img/image1.png" alt="Discover Weekly" class="w-16 h-16 object-cover rounded-lg mt-1">
-            <div class="px-2">
-              <h3 class="text-lg font-semibold">Discover Weekly</h3>
-              <p class="text-gray-400 text-sm">Tuyển tập nhạc mỗi ngày tuần. Thưởng thức ca...</p>
+         
+
+          <div *ngFor="let item of album.slice(0, 8)" class="bg-[#181818] flex w-auto rounded-sm hover:bg-[#282828] transition-colors cursor-pointer items-center " (click)="navigateToAlbum(item.id)">
+            <img  [src]="item.artists[0]?.artist_photo" alt="Discover Weekly" class="w-14 h-14 object-cover rounded-l-sm">
+            <div class="px-4 flex items-center">
+              <h3 class="text-sm font-semibold ">Album: {{item.title}}</h3>
             </div>
           </div>
+
+          
           
 
-      
         </div>
       </section>
   
       <section  class="p-2">
         <div class="grid grid-cols-4 gap-6">
           <div *ngFor="let item of songs" class="bg-[#181818] rounded-lg m-2 p-4 hover:bg-[#282828] transition-colors cursor-pointer">
-            <img (click)="navigateToDetail(item.id)" [src]="item.image_location" alt="Discover Weekly" class="w-full h-40 object-cover rounded-lg mb-4">
+            <img (click)="navigateToDetail(item.id)" [src]="item.image_location||'https://static1.anpoimages.com/wordpress/wp-content/uploads/2024/04/spotify-feature-image.jpg'" alt="Discover Weekly" class="w-full h-40 object-cover rounded-lg mb-4">
             <h3 class="text-lg font-semibold">{{item.title}}</h3>
             <p class="text-gray-400 text-sm">Tuyển tập nhạc mỗi ngày tuần. Thưởng thức ca...</p>
           </div>

@@ -25,15 +25,24 @@ export class AlbumComponent {
   Id: any;
   sidebarVisible = true;
   myplaylist: any[] = [];
+  username: string | null = null;
+  email: string | null = null;
+  userId: string | null = null;
+
 
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible;
   }
 
   ngOnInit() {
-    this.songs.getMyplayList("1").subscribe((data: any) => {
+    this.username = localStorage.getItem('user');
+    this.email = localStorage.getItem('email');
+    this.userId = localStorage.getItem('user_id');
+    if(this.userId){
+    this.songs.getMyplayList(this.userId).subscribe((data: any) => {
       this.myplaylist = data;
     });
+  }
     this.route.queryParams.subscribe((params) => {
       const albumId = params['Id'];
       if (albumId) {

@@ -1,13 +1,15 @@
 <div class="bg-black text-white font-sans">
   <header class="fixed top-0 z-50 h-[70px] bg-black w-full px-6 py-3 flex items-center shadow-lg">
     <div class="w-4/5 flex items-center gap-6">
-      <img src="https://img.icons8.com/?size=100&id=11116&format=png&color=ffffff" alt="Logo"
-        class="h-10 w-10 object-contain hover:scale-105 transition-transform duration-200 cursor-pointer" />
-      <button [routerLink]="'/home'" class="text-white hover:text-gray-300 transition-colors duration-200">
-        <img src="https://img.icons8.com/?size=100&id=1iF9PyJ2Thzo&format=png&color=ffffff" alt="Home"
+      <img [routerLink]="'/home'" src="https://img.icons8.com/?size=100&id=11116&format=png&color=ffffff" alt="Logo"
+        class=" ml-4 h-10 w-10 object-contain " />
+
+      <button [routerLink]="'/home'" class="text-white hover:text-gray-300 transition-colors duration-200 ml-[23%]">
+        <img src="https://img.icons8.com/?size=100&id=UEFsnIx21N69&format=png&color=ffffff" alt="Home"
           class="h-10 w-10 hover:scale-105 transition-transform duration-200" />
       </button>
-      <div class="ml-8 relative flex items-center w-2/4 h-8">
+
+      <div class="ml-2 relative flex items-center w-2/4 h-8">
         <span class="absolute left-3 text-gray-500">
           <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" alt="Search"
             class="h-8 w-8 hover:scale-110 transition-transform duration-200 cursor-pointer"
@@ -21,14 +23,15 @@
             class="h-6 w-6 hover:bg-gray-800 rounded-full p-1 transition-colors duration-200 cursor-pointer" />
         </span>
       </div>
+
     </div>
     <div class="w-1/5 flex items-center justify-end gap-4">
-      <button class="p-1 hover:bg-gray-800 rounded-full transition-all duration-200">
-        <img src="https://img.icons8.com/?size=100&id=68376&format=png&color=ffffff" alt="Notifications"
-          class="h-8 w-8 hover:scale-105 transition-transform duration-200" />
+      <button class="p-1  rounded-full transition-all duration-200">
+        <img src="https://img.icons8.com/?size=100&id=gnsB3xE8Q5Et&format=png&color=ffffff" alt="Notifications"
+          class="h-8 w-8 hover:scale-110 transition-transform duration-200" />
       </button>
       <div *ngIf="isLoggedIn; else loginButton" class="relative">
-        <div class="w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-full font-bold text-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
+        <div class="w-10 h-10 bg-blue-400 text-white flex items-center justify-center rounded-full font-bold text-lg hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
           (click)="toggleMenu()">
           {{ userInitial }}
         </div>

@@ -97,18 +97,25 @@
     class="bg-gray-900 rounded-lg p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto scrollbar"
     (click)="$event.stopPropagation()"
   >
-    <h2 class="text-2xl font-bold text-white mb-4">
-      {{ currentTrack?.name || 'No track selected' }} - Lyrics
-    </h2>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold text-white">
+        {{ currentTrack?.name || 'No track selected' }} - Lyrics
+      </h2>
+      <button 
+        class="p-2 hover:bg-gray-700 rounded-full transition-all duration-200" 
+        (click)="toggleLyrics()"
+      >
+        <img
+          src="https://img.icons8.com/?size=100&id=23537&format=png&color=ffffff"
+          alt="Close"
+          class="h-8 w-8 rounded-full hover:scale-110 transition-transform duration-200"
+        />
+      </button>
+    </div>
     <div class="text-gray-300 text-sm leading-relaxed">
       {{ currentTrack?.lyrics || 'No lyrics available' }}
     </div>
-    <button
-      class="mt-4 px-4 py-2 bg-green-500 text-black rounded-full hover:bg-green-600 transition-colors duration-200"
-      (click)="toggleLyrics()"
-    >
-      Close
-    </button>
+    
   </div>
 </div>
 

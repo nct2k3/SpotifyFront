@@ -20,13 +20,13 @@
         </div>
         <div
         (click)="navigateToListSong()"
-          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
           Song
         </div>
         <div
         (click)="navigateToMylistalbum()"
-          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
           Album
         </div>
@@ -37,7 +37,7 @@
         <section class="mt-8">
           <div class="flex justify-between items-center mb-4">
             <h2
-              class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+              class="p-2 text-2xl font-bold text-gray-100  transition-colors duration-200"
             >
               Recommended for you
             </h2>
@@ -50,12 +50,12 @@
           </div>
           <div class="flex flex-wrap gap-6">
             <div
-              *ngFor="let item of songs"
+              *ngFor="let item of songs.slice(0, 4)"
               class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200 group"
             >
               <div class="w-44 h-44 relative">
                 <img
-                  [src]="item.image_location || 'assets/default-album-art.jpg'"
+                  [src]="item.image_location || 'https://static1.anpoimages.com/wordpress/wp-content/uploads/2024/04/spotify-feature-image.jpg'"
                   [alt]="item.title || 'No title available'"
                   class="rounded-xl w-full h-full object-cover shadow-md hover:scale-110 transition-transform duration-300"
                   (click)="navigateToDetail(item.id)"
@@ -80,7 +80,7 @@
       <section class="mt-10">
         <div class="flex justify-between items-center mb-4">
           <h2
-            class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+            class="p-2 text-2xl font-bold text-gray-100 transition-colors duration-200"
           >
             Artist albums
           </h2>
@@ -92,7 +92,7 @@
           </a>
         </div>
         <div class="flex flex-wrap gap-6">
-          <div *ngFor="let item of album">
+          <div *ngFor="let item of album.slice(0, 5)">
             <div
               (click)="navigateToAlbum(item.id)"
               id="{{ item.id }}"
