@@ -137,11 +137,11 @@ export class AdminAlbumManagementComponent implements OnInit {
       next: (res) => {
         this.loadAlbums(); // load lại danh sách album
         this.closeCreateModal(); // đóng form
-        this.toast.showMessage('Album cập nhật thành công!', 'success');
+        this.toast.showMessage('Update successful artists!', 'success');
       },
       error: (err) => {
         console.error('Update failed', err);
-        this.toast.showMessage('Cập nhật thất bại!', 'error');
+        this.toast.showMessage('Update failed artists!', 'error');
       }
     });
   }  
@@ -152,11 +152,11 @@ export class AdminAlbumManagementComponent implements OnInit {
         next: () => {
           this.albums = this.albums.filter((a) => a.id !== id);
           if (this.selectedAlbum?.id === id) this.selectedAlbum = null;
-          this.toast.showMessage('Xóa album thành công!', 'success');
+          this.toast.showMessage('Delete successful artists!', 'success');
         },
         error: (err) =>{
           console.error('Lỗi xóa album:', err),
-          this.toast.showMessage('Xóa thất bại!', 'error');
+          this.toast.showMessage('Delete failed artists!', 'error');
 
         },
       });
@@ -253,11 +253,11 @@ export class AdminAlbumManagementComponent implements OnInit {
         this.albums.push(res);
         this.closeCreateModal();
         
-        this.toast.showMessage('Album thêm thành công!', 'success');
+        this.toast.showMessage('Create successful artists!', 'success');
       },
       error: (err) => {
         console.error('Lỗi tạo album:', err);
-        this.toast.showMessage('Thêm thất bại!', 'error');
+        this.toast.showMessage('Create failed artists!', 'error');
       }
     });
   }

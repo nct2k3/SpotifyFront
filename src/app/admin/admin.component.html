@@ -6,8 +6,11 @@
   </div>
   
   <div class="admin-content">
-    <!-- Hiển thị phần "User Management" -->
+    <!-- Hiển thị phần "Users Management" -->
     <app-admin-user-management *ngIf="activeComponent === 'users'"></app-admin-user-management>
+
+    <!-- Hiển thị phần "Artists Management" -->
+    <app-admin-artist-management *ngIf="activeComponent === 'artists'"></app-admin-artist-management>
     
     <!-- Hiển thị phần "Songs Management" -->
     <app-admin-songs-management *ngIf="activeComponent === 'songs'"></app-admin-songs-management>

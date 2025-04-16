@@ -1,16 +1,22 @@
-/* Cấu trúc layout chính của trang */
 .admin-layout {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
-  }
-  
-  .admin-content {
-    display: flex;
-    margin-left: 200px; /* Đảm bảo nội dung không bị che khuất bởi navbar bên trái */
-    padding: 10px;
-    margin-top: 80px;
-    height: calc(100vh-100px);
-    background: linear-gradient(to bottom right, #252d39, #000000);
-    flex-grow: 1; /* Nội dung sẽ chiếm toàn bộ không gian còn lại */
-  }
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.admin-content {
+  display: flex;
+  margin-left: 200px;
+  padding: 10px;
+  margin-top: 80px;
+  height: auto;
+  background: linear-gradient(to bottom right, #252d39, #000000);
+  flex-grow: 1;
+  width: calc(100% - 200px); /* Ensure the content takes the full width minus the navbar */
+}
+
+/* Ensure children of admin-content take the full width */
+.admin-content > * {
+  width: 100%;
+  min-width: 100%;
+}

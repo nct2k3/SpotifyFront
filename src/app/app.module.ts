@@ -32,6 +32,7 @@ import { GeneralChatComponent } from './general-chat/general-chat.component';
 import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; // Thêm import này
 import { RouterModule } from '@angular/router';
 import { ToastMessageComponent } from './shared/toast-message/toast-message.component';
+import { AdminArtistManagementComponent } from './admin-artist-management/admin-artist-management.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { ToastMessageComponent } from './shared/toast-message/toast-message.comp
     SidebarComponent,
     AdminAlbumManagementComponent,
     ProfileComponent,
-    ToastMessageComponent
+    ToastMessageComponent,
+    AdminArtistManagementComponent
   ],
   imports: [
     BrowserModule,
