@@ -56,7 +56,12 @@ export class HomeComponent implements OnInit {
       queryParams: { Id:Id }
     });
   }
-  
+   navigateToListSong(){
+    this.router.navigate(['/product']);
+   }
+   navigateToMylistalbum(){
+    this.router.navigate(['/allAlbum']);
+   }
   navigateToAlbum(Id:any) {
     this.router.navigate(['/album'], {
       queryParams: { Id: Id }

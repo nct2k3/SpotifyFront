@@ -33,6 +33,7 @@ import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; 
 import { RouterModule } from '@angular/router';
 import { ToastMessageComponent } from './shared/toast-message/toast-message.component';
 import { AdminArtistManagementComponent } from './admin-artist-management/admin-artist-management.component';
+import { ListAlbumComponent } from './list-album/list-album.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,8 @@ import { AdminArtistManagementComponent } from './admin-artist-management/admin-
     ProfileComponent,
     ToastMessageComponent,
     AdminArtistManagementComponent
+    ProfileComponent,
+    ListAlbumComponent
   ],
   imports: [
     BrowserModule,

@@ -1,117 +1,67 @@
-<app-header></app-header>
 
-<body class="bg-black text-white font-sans pt-20">
-    <div class="flex lg:flex-row h-auto">
-      
-        <aside *ngIf="sidebarVisible" class="fixed top-20 z-40 w-1/4  h-full bg-black px-6 py-2 flex flex-col gap-4 rounded-2xl mt-1 ">
-            <nav class="space-y-4 flex justify-between">
-                <div class="flex items-center justify-start">
-                    <a (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer transition-colors duration-200">
-                        <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-5 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
-                    </a>
-                    <div [routerLink]="'/myplaylist'"  class="font-bold ml-2 hover:text-xl transition-all duration-300 ease-in-out hover:underline">Your Library</div>
-                </div>
-                <div>
-                    <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class="h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
-                </div>
-            </nav>
-            
-            <div>
-                <span class="flex justify-between">
-                    <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" alt="Search" class="h-6 rounded-full hover:bg-gray-500 transition-colors duration-200">
-                    <div class="flex font-bold hover:cursor-pointer hover:bg-gray-700 rounded transition-colors duration-200">
-                        <div class="px-2">Play list</div>
-                        <img src="https://img.icons8.com/?size=100&id=8113&format=png&color=ffffff" alt="Search" class="h-5 mt-1">
-                    </div>
-                </span>
-            </div>
+<body class="bg-[#121212] text-white font-sans pt-20">
+  <div class="flex lg:flex-row h-auto">
+    <app-sidebar
+      [sidebarVisible]="sidebarVisible"
+      [myplaylist]="myplaylist"
+      (toggleSidebarEvent)="toggleSidebar()"
+      (nextTrackEvent)="nextTrack($event)"
+      class="bg-[#040404] text-white"
+    ></app-sidebar>
+    <div *ngIf="sidebarVisible" class="w-1/4 h-full bg-[#040404]" id="asideBehind"></div>
+    <div *ngIf="!sidebarVisible" class="w-16 h-full bg-[#040404]" id="sidebarMiniBehind"></div>
 
-            <!-- play list -->
-             <div class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
-                <img src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/7/a/7/57a7501a8ba849b71e68bd3e5e41cc58.jpg"
-                 alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
-                 <div class="text-white text-sm px-3">
-                    <div class="font-bold hover:underline"> My play list #1</div>
-                    <div class="text-gray-400 hover:text-white transition-colors">Play list - Tran Cong Nguyen</div>
-                 </div>
-             </div>
-             <div class="flex w-full hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200"></div>
-        </aside>
-        <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
-
-        <!-- sidebar mini -->
-        <div *ngIf="!sidebarVisible" id="sidebarMini" class=" rounded fixed top-20 z-40 w-24 h-full bg-black px-4 py-2 flex flex-col gap-4  transition-all duration-300">
-            <nav class="space-y-4 flex justify-center">
-                <a  (click)="toggleSidebar()" class="flex items-center gap-2 text-gray-300 hover:text-white font-bold hover:cursor-pointer mt-2 transition-colors duration-200">
-                   <img src="https://img.icons8.com/?size=100&id=NOstspVegLmA&format=png&color=ffffff" alt="Your Library" class="h-8 rounded-full font-bold hover:cursor-pointer hover:scale-110 transition-transform">
-                </a>
-            </nav>
-            <!-- play list -->
-            <div class="hover:bg-gray-800 p-2 rounded-lg transition-colors duration-200">
-                <img src="https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/5/7/a/7/57a7501a8ba849b71e68bd3e5e41cc58.jpg"
-                 alt="Your Library" class="rounded h-12 w-12 hover:scale-105 transition-transform">
-            </div>
+    <main class="flex-1 bg-[#121212] mx-2 px-6">
+      <header class="flex items-center gap-4 mb-6  sticky top-[70px] z-40  py-2">
+        <div
+          (click)="navigateToHome()"
+          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+        >
+          Home
         </div>
-        <div  *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
+        <div
+        (click)="navigateToListSong()"
+          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+        >
+          Song
+        </div>
+        <div
+        (click)="navigateToMylistalbum()"
+          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+        >
+          Album
+        </div>
+        <h1 class="text-3xl font-bold ml-[30%] text-end">Songs for your</h1>
+      </header>
+    
+      <section class="px-4">
+        <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <main class="flex-1  bg-gradient-to-b from-amber-900 to-black rounded-xl m-1">
-            <div class="max-full ">
-                <div class="flex w-full items-center space-x-4 p-6  bg-gradient-to-r from-amber-800 to-black rounded-t-2xl">
-                    <img src="../../assets/Img/image1.png" alt="Playlist Cover" class="w-42 h-42 rounded-lg">
-                    <div>
-                        <h1 class="text-6xl font-bold">Happy Hits!</h1>
-                        <p class="text-gray-300 m-2">Hits to boost your mood and fill you with happiness!</p>
-                        <p class="text-gray-400 m-2">Spotify • 5,868,565 likes • 34 songs, 2hr 01min</p>
-                    </div>
-                </div>
-                <div class=" flex items-center justify-between  p-4">
-                    <div class="flex items-center space-x-4">
-                        <img src="https://img.icons8.com/?size=100&id=59862&format=png&color=000000" 
-                            alt="Play" 
-                            class="h-12 w-12 p-3 bg-green-500 rounded-full hover:scale-110 cursor-pointer">
-                            <div>
-                                <img src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff" alt="Create Playlist" class=" border-2 h-7 p-1 hover:bg-gray-700 rounded-full transition-colors duration-200">
-                            </div>
-                        <button class="text-white font-bold text-2xl mb-3">. . .</button>
-                    </div>
-                    <div class="text-white flex items-center space-x-2">
-                        <span>Danh sách</span>
-                        <span class="text-xl">☰</span>
-                    </div>
-                </div>
-                <div class=" p-6">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="border-b ">
-                                <th class="py-2">#</th>
-                                <th class="py-2">Title</th>
-                                <th class="py-2">Album</th>
-                                <th class="py-2">Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="hover:bg-black">
-                                <td class="py-2 rounded-l-xl p-2">1</td>
-                                <td class="flex items-center  p-2"><img src="../../assets/Img/image1.png" class="h-12 w-12 rounded mr-2 my-2"> Play It Safe</td>
-                                <td class="  p-2">Julia Wolf</td>
-                                <td class="  p-2">2:12</td>
-                            </tr>
-                            <tr class="hover:bg-black">
-                                <td class="py-2 rounded-l-xl p-2">2</td>
-                                <td class="flex items-center  p-2"><img src="../../assets/Img/image1.png" class="h-12 w-12 rounded mr-2 my-2"> Play It Safe</td>
-                                <td class="  p-2">Julia Wolf</td>
-                                <td class="  p-2">2:12</td>
-                            </tr>
-                            <tr class="hover:bg-black">
-                                <td class="py-2 rounded-l-xl p-2">3</td>
-                                <td class="flex items-center  p-2"><img src="../../assets/Img/image1.png" class="h-12 w-12 rounded mr-2 my-2"> Play It Safe</td>
-                                <td class="  p-2">Julia Wolf</td>
-                                <td class="  p-2">2:12</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+          <div class="bg-[#181818] flex w-auto rounded-lg p-1 hover:bg-[#282828] transition-colors cursor-pointer">
+            <img src="../../assets/Img/image1.png" alt="Discover Weekly" class="w-16 h-16 object-cover rounded-lg mt-1">
+            <div class="px-2">
+              <h3 class="text-lg font-semibold">Discover Weekly</h3>
+              <p class="text-gray-400 text-sm">Tuyển tập nhạc mỗi ngày tuần. Thưởng thức ca...</p>
             </div>
-        </main>
-    </div>
+          </div>
+          
+
+      
+        </div>
+      </section>
+  
+      <section  class="p-2">
+        <div class="grid grid-cols-4 gap-6">
+          <div *ngFor="let item of songs" class="bg-[#181818] rounded-lg m-2 p-4 hover:bg-[#282828] transition-colors cursor-pointer">
+            <img (click)="navigateToDetail(item.id)" [src]="item.image_location" alt="Discover Weekly" class="w-full h-40 object-cover rounded-lg mb-4">
+            <h3 class="text-lg font-semibold">{{item.title}}</h3>
+            <p class="text-gray-400 text-sm">Tuyển tập nhạc mỗi ngày tuần. Thưởng thức ca...</p>
+          </div>
+        </div>
+      </section>
+
+     </main>
+  </div>
 </body>
+
+<app-footer></app-footer>
