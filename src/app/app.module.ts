@@ -63,7 +63,7 @@ import { ListAlbumComponent } from './list-album/list-album.component';
     AdminAlbumManagementComponent,
     ProfileComponent,
     ToastMessageComponent,
-    AdminArtistManagementComponent
+    AdminArtistManagementComponent,
     ProfileComponent,
     ListAlbumComponent
   ],
