@@ -3,6 +3,7 @@ import { Chart, registerables } from 'chart.js';
 import { AlbumService } from '../services/album/album.service';
 import { SongsService } from '../services/Songs/songs.service';
 import { ArtistsService } from '../services/artists/artists.service';
+import { UsersService } from '../services/users/users.service';
 import { Album } from '../Models/albums.model';
 // import { LoginService } from '../services/login/login.service';
 
@@ -33,8 +34,9 @@ export class AdminDashboardManagementComponent implements OnInit {
     private albumService: AlbumService,
     private songsService: SongsService,
     private artistsService: ArtistsService,
-    // private loginService: LoginService
-  ) {}
+    private userService: UsersService
+  ) // private loginService: LoginService
+  {}
 
   ngOnInit(): void {
     this.fetchStats();
@@ -67,7 +69,9 @@ export class AdminDashboardManagementComponent implements OnInit {
         });
 
         // Sắp xếp thể loại theo số lượng giảm dần
-        const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
+        const sortedGenres = Object.entries(genreCounts).sort(
+          (a, b) => b[1] - a[1]
+        );
 
         // Gán giá trị cho genres1, genres2, genres3 và tổng số bài hát
         this.stats.genres1 = sortedGenres[0]?.[0] || 'N/A';
@@ -79,7 +83,12 @@ export class AdminDashboardManagementComponent implements OnInit {
         this.stats.genres3 = sortedGenres[2]?.[0] || 'N/A';
         this.stats.totalGeneres3 = sortedGenres[2]?.[1] || 0;
 
-        console.log('Top genres:', this.stats.genres1, this.stats.genres2, this.stats.genres3);
+        console.log(
+          'Top genres:',
+          this.stats.genres1,
+          this.stats.genres2,
+          this.stats.genres3
+        );
       },
       (error) => {
         console.error('Error fetching songs:', error);
@@ -96,15 +105,16 @@ export class AdminDashboardManagementComponent implements OnInit {
       }
     );
 
+    //Lấy tổng số người dùng
     // Lấy tổng số người dùng
-    // this.loginService.getUsers().subscribe(
-    //   (users) => {
-    //     this.stats.totalUsers = users.length;
-    //   },
-    //   (error) => {
-    //     console.error('Error fetching users:', error);
-    //   }
-    // );
+    this.userService.getTrack().subscribe(
+      (users) => {
+        this.stats.totalUsers = users.length;
+      },
+      (error) => {
+        console.error('Error fetching users:', error);
+      }
+    );
   }
 
   renderCharts(): void {
@@ -113,14 +123,20 @@ export class AdminDashboardManagementComponent implements OnInit {
     const labels = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(today);
       date.setDate(today.getDate() - (6 - i)); // Lấy ngày từ 6 ngày trước đến hôm nay
-      return date.toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' }); // Hiển thị ngày/tháng
+      return date.toLocaleDateString(undefined, {
+        month: '2-digit',
+        day: '2-digit',
+      }); // Hiển thị ngày/tháng
     });
 
-     // Đếm số lượng album phát hành theo từng ngày
+    // Đếm số lượng album phát hành theo từng ngày
     const albumCounts = Array(7).fill(0); // Mảng chứa số lượng album cho mỗi ngày
     this.stats.albums.forEach((album) => {
       const releaseDate = new Date(album.release_date); // Ngày phát hành của album
-      const releaseDateString = releaseDate.toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' });
+      const releaseDateString = releaseDate.toLocaleDateString(undefined, {
+        month: '2-digit',
+        day: '2-digit',
+      });
       const index = labels.indexOf(releaseDateString); // Tìm ngày phát hành trong mảng labels
       if (index !== -1) {
         albumCounts[index]++; // Tăng số lượng album cho ngày tương ứng
@@ -136,7 +152,15 @@ export class AdminDashboardManagementComponent implements OnInit {
           {
             label: 'Thống kê số album phát hành theo ngày',
             data: albumCounts, // Dữ liệu số lượng album theo ngày
-            backgroundColor: ['#4caf50', '#2196f3', '#ff9800', '#e91e63', '#9c27b0', '#3f51b5', '#00bcd4'],
+            backgroundColor: [
+              '#4caf50',
+              '#2196f3',
+              '#ff9800',
+              '#e91e63',
+              '#9c27b0',
+              '#3f51b5',
+              '#00bcd4',
+            ],
           },
         ],
       },
@@ -164,14 +188,22 @@ export class AdminDashboardManagementComponent implements OnInit {
     new Chart('genresChart', {
       type: 'pie',
       data: {
-        labels: [this.stats.genres1, this.stats.genres2, this.stats.genres3, this.stats.genres4],
+        labels: [
+          this.stats.genres1,
+          this.stats.genres2,
+          this.stats.genres3,
+          this.stats.genres4,
+        ],
         datasets: [
           {
             data: [
               this.stats.totalGeneres1,
               this.stats.totalGeneres2,
               this.stats.totalGeneres3,
-              this.stats.totalSongs - this.stats.totalGeneres1 - this.stats.totalGeneres2 - this.stats.totalGeneres3,
+              this.stats.totalSongs -
+                this.stats.totalGeneres1 -
+                this.stats.totalGeneres2 -
+                this.stats.totalGeneres3,
             ],
             backgroundColor: ['#4caf50', '#2196f3', '#ff9800', '#e91e63'],
           },
