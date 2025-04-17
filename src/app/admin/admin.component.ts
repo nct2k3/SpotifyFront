@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent {
-  activeComponent: string = 'users'; // Mặc định là 'users'
+  activeComponent: string = 'dashboard';
 
   // Nhận sự kiện và cập nhật activeComponent
   onActiveComponentChange(component: string) {

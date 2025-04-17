@@ -1,0 +1,33 @@
+<div class="p-6">
+    <h1 class="text-3xl font-bold text-white mb-6">Admin Dashboard</h1>
+  
+    <!-- Thống kê tổng quan -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-green-500 text-white p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold">Tổng số Albums</h3>
+        <p class="text-2xl font-bold">{{ stats.totalAlbums }}</p>
+      </div>
+      <div class="bg-blue-500 text-white p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold">Tổng số Bài hát</h3>
+        <p class="text-2xl font-bold">{{ stats.totalSongs }}</p>
+      </div>
+      <div class="bg-purple-500 text-white p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold">Tổng số Nghệ sĩ</h3>
+        <p class="text-2xl font-bold">{{ stats.totalArtists }}</p>
+      </div>
+      <div class="bg-red-500 text-white p-4 rounded-lg shadow">
+        <h3 class="text-lg font-semibold">Tổng số Người dùng</h3>
+        <p class="text-2xl font-bold">{{ stats.totalUsers }}</p>
+      </div>
+    </div>
+  
+    <!-- Biểu đồ -->
+    <div class="charts grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <canvas id="albumsChart"></canvas>
+      </div>
+      <div>
+        <canvas id="songsChart"></canvas>
+      </div>
+    </div>
+  </div>

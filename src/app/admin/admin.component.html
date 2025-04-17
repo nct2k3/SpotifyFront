@@ -6,6 +6,9 @@
   </div>
   
   <div class="admin-content">
+    <!-- Hiển thị phần "Dashboard" -->
+    <app-admin-dashboard-management *ngIf="activeComponent === 'dashboard'"></app-admin-dashboard-management>
+
     <!-- Hiển thị phần "Users Management" -->
     <app-admin-user-management *ngIf="activeComponent === 'users'"></app-admin-user-management>
 

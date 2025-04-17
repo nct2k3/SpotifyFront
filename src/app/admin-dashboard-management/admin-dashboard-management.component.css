@@ -1,0 +1,8 @@
+.charts {
+    margin-top: 20px;
+  }
+  
+  canvas {
+    width: 100% !important;
+    height: 400px !important;
+  }

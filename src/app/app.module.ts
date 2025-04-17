@@ -34,6 +34,7 @@ import { RouterModule } from '@angular/router';
 import { ToastMessageComponent } from './shared/toast-message/toast-message.component';
 import { AdminArtistManagementComponent } from './admin-artist-management/admin-artist-management.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
+import { AdminDashboardManagementComponent } from './admin-dashboard-management/admin-dashboard-management.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { ListAlbumComponent } from './list-album/list-album.component';
     ToastMessageComponent,
     AdminArtistManagementComponent,
     ProfileComponent,
-    ListAlbumComponent
+    ListAlbumComponent,
+    AdminDashboardManagementComponent
   ],
   imports: [
     BrowserModule,
