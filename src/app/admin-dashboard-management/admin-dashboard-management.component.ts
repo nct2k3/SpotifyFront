@@ -3,6 +3,7 @@ import { Chart, registerables } from 'chart.js';
 import { AlbumService } from '../services/album/album.service';
 import { SongsService } from '../services/Songs/songs.service';
 import { ArtistsService } from '../services/artists/artists.service';
+import { Album } from '../Models/albums.model';
 // import { LoginService } from '../services/login/login.service';
 
 Chart.register(...registerables);
@@ -14,6 +15,7 @@ Chart.register(...registerables);
 })
 export class AdminDashboardManagementComponent implements OnInit {
   stats = {
+    albums: [] as Album[],
     totalAlbums: 0,
     totalSongs: 0,
     totalArtists: 0,
@@ -43,6 +45,7 @@ export class AdminDashboardManagementComponent implements OnInit {
     this.albumService.getAlbum().subscribe(
       (albums) => {
         this.stats.totalAlbums = albums.length;
+        this.stats.albums = albums; // Lưu trữ danh sách album để sử dụng trong biểu đồ
         this.renderCharts();
       },
       (error) => {
@@ -105,21 +108,35 @@ export class AdminDashboardManagementComponent implements OnInit {
   }
 
   renderCharts(): void {
+    // Tính toán 7 ngày từ ngày hiện tại trở lại
+    const today = new Date();
+    const labels = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (6 - i)); // Lấy ngày từ 6 ngày trước đến hôm nay
+      return date.toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' }); // Hiển thị ngày/tháng
+    });
+
+     // Đếm số lượng album phát hành theo từng ngày
+    const albumCounts = Array(7).fill(0); // Mảng chứa số lượng album cho mỗi ngày
+    this.stats.albums.forEach((album) => {
+      const releaseDate = new Date(album.release_date); // Ngày phát hành của album
+      const releaseDateString = releaseDate.toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' });
+      const index = labels.indexOf(releaseDateString); // Tìm ngày phát hành trong mảng labels
+      if (index !== -1) {
+        albumCounts[index]++; // Tăng số lượng album cho ngày tương ứng
+      }
+    });
+
     // Biểu đồ cột
     new Chart('albumsChart', {
       type: 'bar',
       data: {
-        labels: ['Albums', 'Songs', 'Artists', 'Users'],
+        labels: labels,
         datasets: [
           {
-            label: 'Thống kê',
-            data: [
-              this.stats.totalAlbums,
-              this.stats.totalSongs,
-              this.stats.totalArtists,
-              this.stats.totalUsers,
-            ],
-            backgroundColor: ['#4caf50', '#2196f3', '#ff9800', '#e91e63'],
+            label: 'Thống kê số album phát hành theo ngày',
+            data: albumCounts, // Dữ liệu số lượng album theo ngày
+            backgroundColor: ['#4caf50', '#2196f3', '#ff9800', '#e91e63', '#9c27b0', '#3f51b5', '#00bcd4'],
           },
         ],
       },
@@ -134,22 +151,17 @@ export class AdminDashboardManagementComponent implements OnInit {
         scales: {
           y: {
             beginAtZero: true, // Bắt đầu từ 0
-            suggestedMax: Math.max(
-              this.stats.totalAlbums,
-              this.stats.totalSongs,
-              this.stats.totalArtists,
-              this.stats.totalUsers
-            ) + 5, // Đặt giá trị tối đa lớn hơn giá trị lớn nhất một chút
+            suggestedMax: Math.max(...albumCounts) + 5, // Đặt giá trị tối đa lớn hơn giá trị lớn nhất một chút
             ticks: {
               stepSize: undefined, // Để Chart.js tự động tính toán bước nhảy
             },
           },
         },
       },
-    });  
+    });
 
-    // Biểu đồ tròn( cần hiển thị cái khác .......sửa chỗ này lại)
-    new Chart('songsChart', {
+    // Biểu đồ tròn: Số lượng nhạc theo thể loại
+    new Chart('genresChart', {
       type: 'pie',
       data: {
         labels: [this.stats.genres1, this.stats.genres2, this.stats.genres3, this.stats.genres4],
