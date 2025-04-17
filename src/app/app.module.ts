@@ -35,6 +35,7 @@ import { ToastMessageComponent } from './shared/toast-message/toast-message.comp
 import { AdminArtistManagementComponent } from './admin-artist-management/admin-artist-management.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AdminDashboardManagementComponent } from './admin-dashboard-management/admin-dashboard-management.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     ToastMessageComponent,
     AdminArtistManagementComponent,
     ProfileComponent,
-    ListAlbumComponent
+    ListAlbumComponent,
+    AdminDashboardManagementComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,17 @@
+.charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Chia đều 2 cột */
+  gap: 1.5rem; /* Khoảng cách giữa các cột */
+}
+
+.charts > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px; /* Đặt chiều cao cố định cho các biểu đồ */
+}
+
+canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
