@@ -127,30 +127,42 @@
   >
     <!-- Overlay -->
     <div
-      class="absolute inset-0 bg-black opacity-75"
+      class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
       (click)="closeModal()"
     ></div>
 
     <div
-      class="relative bg-white text-gray-800 rounded-xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
+      class="relative bg-[#2A2A2A] text-gray-200 rounded-xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
     >
       <!-- Close Button -->
       <button
         class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200"
         (click)="closeModal()"
       >
-        <i class="fa fa-times text-xl"></i>
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
       </button>
 
-      <h2 class="text-2xl font-semibold text-gray-900 mb-6">
+      <h2 class="text-2xl font-semibold text-white mb-6">
         {{ isEditing ? "Edit Song" : "Create New Song" }}
       </h2>
 
-      <form (ngSubmit)="onSubmit()"  class="space-y-6">
+      <form (ngSubmit)="onSubmit()" class="space-y-6">
         <!-- Title -->
         <div>
           <label
-            class="block text-sm font-medium  text-gray-700 mb-2"
+            class="block text-sm font-medium text-gray-200 mb-2"
             for="title"
             >Title</label
           >
@@ -159,7 +171,7 @@
             type="text"
             [(ngModel)]="newSong.title"
             name="title"
-            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter song title"
           />
           <p *ngIf="titleError" class="text-red-500 text-sm mt-2">
@@ -167,34 +179,108 @@
           </p>
         </div>
 
-        <!-- Artist -->
+        <!-- Artist Multi-select -->
         <div class="mb-5">
           <label
-            class="block text-sm font-medium text-gray-700 mb-2"
-            for="artist"
-            >Artist</label
+            class="block text-sm font-medium text-gray-200 mb-2"
+            for="artists"
+            >Artists</label
           >
-          <input
-            id="artist"
-            type="text"
-            [(ngModel)]="artistName"
-            name="artist"
-            (input)="onArtistInput($event)"
-            class="w-full p-3 bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
-            placeholder="Enter artist name"
-          />
-          <ul
-            *ngIf="filteredArtists.length > 0"
-            class="mt-2 p-3 bg-gray-100 rounded-lg max-h-60 overflow-y-auto"
-          >
-            <li
-              *ngFor="let artist of filteredArtists"
-              (click)="selectArtist(artist)"
-              class="cursor-pointer p-2 hover:bg-gray-300 text-gray-700 rounded transition-colors duration-200"
+
+          <div class="relative">
+            <div class="flex gap-2 mb-2">
+              <input
+                id="artists"
+                type="text"
+                [(ngModel)]="artistSearch"
+                name="artistSearch"
+                placeholder="Search artists..."
+                (input)="onArtistInput($event)"
+                class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+              />
+              <button
+                type="button"
+                class="bg-[#3A3A3A] text-white px-3 py-2 rounded-lg hover:bg-[#252525] transition flex items-center justify-center"
+                (click)="toggleArtistDropdown()"
+              >
+                <svg
+                  *ngIf="!showArtistDropdown"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+
+                <svg
+                  *ngIf="showArtistDropdown"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.974 9.974 0 012.224-3.592M9.88 9.88a3 3 0 104.243 4.243"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 3l18 18"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Artist suggestions -->
+            <ul
+              *ngIf="showArtistDropdown && filteredArtists.length > 0"
+              class="absolute left-0 right-0 mt-1 bg-[#2d2d2d] border border-gray-500 rounded-lg shadow-lg max-h-48 overflow-y-auto z-50"
+            >
+              <li
+                *ngFor="let artist of filteredArtists"
+                (click)="addArtist(artist)"
+                class="px-4 py-2 text-gray-200 hover:bg-gray-600 cursor-pointer transition-colors duration-150"
+              >
+                {{ artist.name }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Selected artists -->
+          <div class="flex flex-wrap mt-3 gap-2">
+            <span
+              *ngFor="let artist of selectedArtists"
+              class="flex items-center bg-[#3A3A3A] text-white rounded-full px-3 py-1 text-sm"
             >
               {{ artist.name }}
-            </li>
-          </ul>
+              <button
+                class="ml-2 hover:text-red-400 transition-colors"
+                (click)="removeArtist(artist)"
+                type="button"
+              >
+                ✕
+              </button>
+            </span>
+          </div>
+
           <p *ngIf="artistError" class="text-red-500 text-sm mt-2">
             {{ artistError }}
           </p>
@@ -203,7 +289,7 @@
         <!-- Genre -->
         <div class="mb-5">
           <label
-            class="block text-sm font-medium text-gray-700  mb-2"
+            class="block text-sm font-medium text-gray-200 mb-2"
             for="genre"
             >Genre</label
           >
@@ -212,7 +298,7 @@
             type="text"
             [(ngModel)]="newSong.genre"
             name="genre"
-            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter genre"
           />
         </div>
@@ -220,7 +306,7 @@
         <!-- Duration -->
         <div class="mb-5">
           <label
-            class="block text-sm font-medium text-gray-700 mb-2"
+            class="block text-sm font-medium text-gray-200 mb-2"
             for="duration"
             >Duration (min)</label
           >
@@ -229,7 +315,7 @@
             type="number"
             [(ngModel)]="newSong.duration"
             name="duration"
-            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter song duration"
           />
           <p *ngIf="durationError" class="text-red-500 text-sm mt-2">
@@ -240,7 +326,7 @@
         <!-- Lyrics -->
         <div class="mb-5">
           <label
-            class="block text-sm font-medium text-gray-700 mb-2"
+            class="block text-sm font-medium text-gray-200 mb-2"
             for="lyrics"
             >Lyrics</label
           >
@@ -249,7 +335,7 @@
             [(ngModel)]="newSong.lyrics"
             name="lyrics"
             rows="5"
-            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter lyrics..."
           ></textarea>
         </div>
@@ -257,7 +343,7 @@
         <!-- File upload (song) -->
         <div class="mb-5">
           <label
-            class="block text-sm font-medium text-gray-700 mb-2"
+            class="block text-sm font-medium text-gray-200 mb-2"
             for="file_location"
             >Song File</label
           >
@@ -265,11 +351,11 @@
             id="file_location"
             type="file"
             (change)="onFileSelected($event, 'file_location')"
-            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
           />
           <span
             *ngIf="newSong.file_location && isEditing"
-            class="text-gray-500 text-sm mt-2 block"
+            class="text-gray-200 text-sm mt-2 block"
           >
             Selected: {{ newSong.file_location }}
           </span>
@@ -281,7 +367,7 @@
         <!-- File upload (image) -->
         <div class="mb-5">
           <label
-            class="block text-sm font-medium text-gray-700 mb-2"
+            class="block text-sm font-medium text-gray-200 mb-2"
             for="image_location"
             >Image</label
           >
@@ -289,11 +375,11 @@
             id="image_location"
             type="file"
             (change)="onFileSelected($event, 'image_location')"
-            class="w-full p-3  bg-gray-50 text-gray-800 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
           />
           <span
             *ngIf="newSong.image_location && isEditing"
-            class="text-gray-500 text-sm mt-2 block"
+            class="text-gray-200 text-sm mt-2 block"
           >
             Selected: {{ newSong.image_location }}
           </span>
@@ -306,7 +392,7 @@
         <div class="flex justify-end space-x-4">
           <button
             type="button"
-            class="bg-gray-300 text-gray-800 rounded-lg py-2 px-6 hover:bg-gray-400 transition-all duration-200"
+            class="bg-[#3A3A3A] text-gray-200 rounded-lg py-2 px-6 hover:bg-gray-400 transition-all duration-200"
             (click)="closeModal()"
           >
             Cancel

@@ -1,8 +1,7 @@
-import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SongsService } from '../services/Songs/songs.service';
 import { ArtistsService } from '../services/artists/artists.service';
 import { Artist, ArtistResponse } from '../Models/artists.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToastMessageComponent } from '../shared/toast-message/toast-message.component';
 @Component({
   selector: 'app-admin-songs-management',
@@ -19,6 +18,9 @@ export class AdminSongsManagementComponent implements OnInit {
   isEditing: boolean = false; // update
   idSongEdit: number = -1;
   artistName: string = ''; //tên của nghệ sĩ
+  artistSearch: string = '';
+  selectedArtists: ArtistResponse[] = [];
+  showArtistDropdown: boolean = false;
   newSong = {
     title: '',
     artist_ids: [] as string[],
@@ -26,7 +28,7 @@ export class AdminSongsManagementComponent implements OnInit {
     duration: null,
     file_location: '',
     image_location: '',
-    lyrics: ''
+    lyrics: '',
   }; // Dữ liệu của bài hát mới
 
   artists: ArtistResponse[] = []; // Danh sách tất cả các nghệ sĩ
@@ -40,9 +42,7 @@ export class AdminSongsManagementComponent implements OnInit {
 
   constructor(
     private songsService: SongsService,
-    private artistsService: ArtistsService,
-    private snackBar: MatSnackBar,
-    private renderer: Renderer2
+    private artistsService: ArtistsService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +57,10 @@ export class AdminSongsManagementComponent implements OnInit {
       this.artists = data; // Lưu danh sách nghệ sĩ
       this.filteredArtists = data; // Gán danh sách nghệ sĩ cho filteredArtists
     });
+  }
+
+  toggleArtistDropdown() {
+    this.showArtistDropdown = !this.showArtistDropdown;
   }
 
   // Mở modal khi bấm "Create"
@@ -76,7 +80,7 @@ export class AdminSongsManagementComponent implements OnInit {
       duration: null,
       file_location: '',
       image_location: '',
-      lyrics: ''
+      lyrics: '',
     };
     this.idSongEdit = -1;
     this.artistError = '';
@@ -96,7 +100,7 @@ export class AdminSongsManagementComponent implements OnInit {
       duration: song.duration,
       file_location: song.file_location,
       image_location: song.image_location,
-      lyrics: song.lyrics
+      lyrics: song.lyrics,
     };
     this.idSongEdit = id;
     this.isModalOpen = true;
@@ -121,6 +125,34 @@ export class AdminSongsManagementComponent implements OnInit {
     this.artistName = artist.name;
     this.newSong.artist_ids = [artist.id]; // Gán tên nghệ sĩ vào đối tượng newSong
     this.filteredArtists = []; // Ẩn dropdown sau khi chọn
+  }
+
+  onArtistInput(event: any) {
+    const value = event.target.value.toLowerCase();
+    this.filteredArtists = this.artists.filter(
+      (artist) =>
+        artist.name.toLowerCase().includes(value) &&
+        !this.selectedArtists.some((selected) => selected.id === artist.id)
+    );
+    this.artistError = ''; // Xóa lỗi khi người dùng gõ lại
+    this.newSong.artist_ids = []; // Reset id nếu chưa chọn từ danh sách
+  }
+
+  addArtist(artist: ArtistResponse) {
+    this.selectedArtists.push(artist);
+    // Xóa khỏi danh sách gợi ý
+    this.filteredArtists = this.filteredArtists.filter(
+      (a) => a.id !== artist.id
+    );
+    this.artistSearch = '';
+    this.showArtistDropdown = false;
+  }
+
+  removeArtist(artist: ArtistResponse) {
+    this.selectedArtists = this.selectedArtists.filter(
+      (a) => a.id !== artist.id
+    );
+    this.filteredArtists.push(artist);
   }
 
   // Hàm load lại danh sách bài hát từ API
@@ -174,8 +206,6 @@ export class AdminSongsManagementComponent implements OnInit {
       );
     } else {
       // Thực hiện tạo bài hát mới
-      console.log('Creating new song:', this.newSong);
-      console.log(this.newSong);
       this.songsService.createSong(this.newSong).subscribe(
         (res) => {
           this.closeModal(); // Đóng modal sau khi tạo
@@ -195,23 +225,22 @@ export class AdminSongsManagementComponent implements OnInit {
     const file: File = event.target.files[0];
     const fileName = file?.name || '';
     const extension = fileName.split('.').pop()?.toLowerCase();
-  
+
     if (file) {
       if (field === 'file_location') {
         this.fileError = ''; // Reset lỗi trước đó
-  
-        if (extension === 'mp4') {
+
+        if (extension === 'mp4' || extension === 'mp3') {
           const relativePath = `../../assets/Songs/${fileName}`;
           this.newSong.file_location = relativePath;
         } else {
           this.newSong.file_location = '';
           this.fileError = 'Vui lòng chọn tệp .mp4 hợp lệ.';
         }
-  
       } else if (field === 'image_location') {
         const validImageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
         this.imageError = ''; // Reset lỗi trước đó
-  
+
         if (validImageExtensions.includes(extension || '')) {
           const relativePath = `../../assets/Img/${fileName}`;
           this.newSong.image_location = relativePath;
@@ -221,17 +250,6 @@ export class AdminSongsManagementComponent implements OnInit {
         }
       }
     }
-  }
-  
-
-  // Hàm lọc nghệ sĩ khi người dùng nhập vào input
-  onArtistInput(event: any) {
-    const query = event.target.value.toLowerCase();
-    this.filteredArtists = this.artists.filter(
-      (artist) => artist.name.toLowerCase().includes(query) // Lọc nghệ sĩ theo tên
-    );
-    this.artistError = ''; // Xóa lỗi khi người dùng gõ lại
-    this.newSong.artist_ids = []; // Reset id nếu chưa chọn từ danh sách
   }
 
   //hàm kiểm tra hợp lệ của form
@@ -256,14 +274,12 @@ export class AdminSongsManagementComponent implements OnInit {
     }
 
     // Validate artist
-    const matchedArtist = this.artists.find(
-      (artist) => artist.name === this.artistName
-    );
-    if (!matchedArtist) {
-      this.artistError = 'Vui lòng chọn nghệ sĩ từ danh sách gợi ý.';
+    if (this.selectedArtists.length === 0) {
+      this.artistError = 'Vui lòng chọn ít nhất một nghệ sĩ từ danh sách.';
       isValid = false;
     } else {
-      this.newSong.artist_ids = [matchedArtist.id];
+      this.artistError = ''; // Xóa lỗi nếu đã chọn
+      this.newSong.artist_ids = this.selectedArtists.map((artist) => artist.id);
     }
 
     // Validate song file

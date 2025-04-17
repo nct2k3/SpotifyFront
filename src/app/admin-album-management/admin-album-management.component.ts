@@ -26,6 +26,7 @@ export class AdminAlbumManagementComponent implements OnInit {
   artistSearchTerm: string = ''; // Search term for artists
   songSearchTerm: string = ''; // Search term for songs
   albumToEdit: any = null;
+  showSongDropdown: boolean = false; // mở ds songs
   newAlbum: any = {
     title: '',
     artist_ids: [],
@@ -197,6 +198,11 @@ export class AdminAlbumManagementComponent implements OnInit {
   // Remove artist from selected list
   removeArtist(artistId: string): void {
     this.newAlbum.artist_ids = this.newAlbum.artist_ids.filter((id: string) => id !== artistId);
+  }
+
+  
+  toggleSongDropdown() {
+    this.showSongDropdown = !this.showSongDropdown;
   }
 
   // Add song to selected list

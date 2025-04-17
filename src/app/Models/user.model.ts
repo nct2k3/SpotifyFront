@@ -4,4 +4,22 @@ export interface User {
     email: string;
     created_at: Date;
   }
+
+  export interface UserReponse{
+    id?: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+  }
+
+  export interface UserCreate {
+    id?: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    password: string;
+    password2: string;
+  }
   

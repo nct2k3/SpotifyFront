@@ -181,24 +181,36 @@
   >
     <!-- Overlay -->
     <div
-      class="absolute inset-0 bg-black/70"
+      class="absolute inset-0 bg-black opacity-75"
       (click)="closeCreateModal()"
     ></div>
 
     <!-- Modal Content -->
     <div
-      class="relative bg-white text-black rounded-2xl p-8 w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl"
+      class="relative bg-[#2A2A2A] text-gray-200 rounded-2xl p-8 w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl"
     >
       <!-- Close Button -->
       <button
         class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
         (click)="closeCreateModal()"
       >
-        <i class="fa fa-times text-xl"></i>
+      <svg
+      class="w-6 h-6"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M6 18L18 6M6 6l12 12"
+      />
+    </svg>
       </button>
 
       <!-- Album Form -->
-      <h2 class="text-3xl font-semibold mb-6">
+      <h2 class="text-3xl font-semibold text-white mb-6">
         {{ isEditing ? "Edit Album" : "Create New Album" }}
       </h2>
 
@@ -209,7 +221,7 @@
       >
         <!-- Title -->
         <div>
-          <label for="title" class="block text-sm font-medium mb-2"
+          <label for="title" class="block text-sm text-gray-200 font-medium mb-2"
             >Title</label
           >
           <input
@@ -218,7 +230,7 @@
             [(ngModel)]="newAlbum.title"
             name="title"
             #titleInput="ngModel"
-            class="w-full p-3 bg-gray-100 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter album title"
             required
           />
@@ -238,7 +250,7 @@
             [(ngModel)]="newAlbum.release_date"
             name="release_date"
             #releaseInput="ngModel"
-            class="w-full p-3 bg-gray-100 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
           <div *ngIf="releaseInput.invalid" class="text-red-600 text-sm mt-1">
@@ -248,7 +260,7 @@
 
         <!-- Artist Selection -->
         <div>
-          <label for="artist_search" class="block text-sm font-medium mb-2"
+          <label for="artist_search" class="block text-gray-200 text-sm font-medium mb-2"
             >Artists</label
           >
           <input
@@ -257,17 +269,17 @@
             [(ngModel)]="artistSearchTerm"
             (input)="searchArtists()"
             name="artist_search"
-            class="w-full p-3 bg-gray-100 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Search artists..."
           />
 
           <div
             *ngIf="filteredArtists.length > 0"
-            class="mt-2 max-h-40 overflow-y-auto bg-gray-100 rounded-xl shadow-md"
+            class="mt-2 max-h-40 overflow-y-auto bg-[#3A3A3A] text-gray-200 rounded-xl shadow-md"
           >
             <div
               *ngFor="let artist of filteredArtists"
-              class="p-3 hover:bg-gray-200 cursor-pointer"
+              class="p-3 hover:bg-[#2d2d2d] cursor-pointer"
               (click)="addArtist(artist.id)"
             >
               {{ artist.name }}
@@ -278,7 +290,7 @@
             <div *ngIf="newAlbum.artist_ids.length > 0" class="space-y-2">
               <div
                 *ngFor="let artistId of newAlbum.artist_ids"
-                class="flex items-center justify-between bg-gray-200 p-2 rounded-xl"
+                class="flex items-center justify-between bg-[#3A3A3A] text-gray-200 p-2 rounded-xl"
               >
                 <span>{{ getArtistName(artistId) }}</span>
                 <button
@@ -301,7 +313,7 @@
 
         <!-- Song Selection -->
         <div>
-          <label for="song_search" class="block text-sm font-medium mb-2"
+          <label for="song_search" class="block text-gray-200 text-sm font-medium mb-2"
             >Songs</label
           >
           <input
@@ -310,17 +322,17 @@
             [(ngModel)]="songSearchTerm"
             (input)="searchSongs()"
             name="song_search"
-            class="w-full p-3 bg-gray-100 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Search songs..."
           />
 
           <div
             *ngIf="filteredSongs.length > 0"
-            class="mt-2 max-h-40 overflow-y-auto bg-gray-100 rounded-xl shadow-md"
+            class="mt-2 max-h-40 overflow-y-auto bg-[#3A3A3A] text-gray-200 rounded-xl shadow-md"
           >
             <div
               *ngFor="let song of filteredSongs"
-              class="p-3 hover:bg-gray-200 cursor-pointer"
+              class="p-3 hover:hover:bg-[#2d2d2d] cursor-pointer"
               (click)="addSong(song.id)"
             >
               {{ song.title }}
@@ -331,7 +343,7 @@
             <div *ngIf="newAlbum.song_ids.length > 0" class="space-y-2">
               <div
                 *ngFor="let songId of newAlbum.song_ids"
-                class="flex items-center justify-between bg-gray-200 p-2 rounded-xl"
+                class="flex items-center justify-between bg-[#3A3A3A] text-gray-200 p-2 rounded-xl"
               >
                 <span>{{ getSongTitle(songId) }}</span>
                 <button

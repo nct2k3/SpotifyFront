@@ -1,61 +1,330 @@
 <div class="p-5 rounded-lg w-full">
   <!-- Tiêu đề và thanh tìm kiếm -->
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-white font-bold text-lg">Manage Users</h2>
+  <div
+    class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8"
+  >
+    <h2 class="text-3xl font-bold text-white">Manage Users</h2>
 
-    <!-- Thanh tìm kiếm -->
-    <div class="relative flex items-center">
-      <span class="absolute left-3 text-gray-400">
-        <img 
-          src="https://img.icons8.com/?size=100&id=7695&format=png&color=000000" 
-          alt="Search" 
-          class="h-7 rounded-l-full hover:bg-gray-500"
+    <!-- Search Bar and Create Button -->
+    <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+      <!-- Search Bar -->
+      <div class="relative w-full max-w-sm">
+        <span class="absolute inset-y-0 left-4 flex items-center text-gray-400">
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search artists..."
+          class="h-11 pl-12 pr-4 bg-[#2A2A2A] text-gray-200 rounded-xl border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1DB954] focus:border-transparent transition-all duration-300 placeholder-gray-500"
         />
-      </span>
+      </div>
 
-      <input 
-        type="text" 
-        [(ngModel)]="searchTerm" 
-        placeholder="Search users..." 
-        class="font-bold h-12 bg-white text-black rounded-full pl-12 pr-10 py-2 focus:outline-none w-full"
-      />
+      <!-- Create Button -->
+      <button
+        class="bg-[#1DB954] text-black font-semibold text-sm rounded-full py-2 px-6 hover:bg-[#1ED760] transition-colors duration-300 shadow-md hover:shadow-lg"
+        (click)="openCreateModal()"
+      >
+        Create
+      </button>
+    </div>
+  </div>
+  <!-- Container với min-height để đảm bảo bảng chiếm đủ không gian -->
+  <div class="min-h-[calc(100vh-11rem)] flex flex-col mt-4 bg-zinc-900">
+    <!-- Bảng danh sách người dùng -->
+    <div class="rounded-lg shadow-lg overflow-hidden">
+      <table class="w-full table-fixed">
+        <thead class="bg-gray-800 text-white">
+          <tr>
+            <th class="py-3 text-center break-words">Username</th>
+            <th class="py-3 text-center break-words">Email</th>
+            <th class="py-3 text-center break-words">First name</th>
+            <th class="py-3 text-center break-words">Last name</th>
+            <th class="py-3 text-center break-words">Actions</th>
+          </tr>
+        </thead>
+      </table>
+
+      <!-- Scrollable body -->
+      <div class="max-h-[400px] overflow-y-auto">
+        <table class="w-full table-fixed">
+          <tbody class="bg-zinc-900">
+            <tr
+              *ngFor="let user of filteredUsers()"
+              class="hover:bg-zinc-700 transition-colors"
+            >
+              <td class="py-3 text-center text-white break-words w-12">
+                {{ user.username }}
+              </td>
+              <td class="py-3 text-center text-white break-words w-12">
+                {{ user.email }}
+              </td>
+              <td class="py-3 text-center text-white break-words w-12">
+                {{ user.first_name }}
+              </td>
+              <td class="py-3 text-center text-white break-words w-12">
+                {{ user.last_name }}
+              </td>
+              <td class="py-3 text-center text-white break-words w-12">
+                <button
+                  class="bg-green-600 text-white rounded-full hover:bg-green-800 p-2 transition-colors"
+                  (click)="editUser(user)"
+                >
+                  <i class="fa fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- Bảng danh sách người dùng -->
-  <table class="w-full table-fixed border-collapse mt-4">
-    <thead>
-      <tr class="bg-gray-800 text-white">
-        <th class="p-2 border break-words">Id</th>
-        <th class="p-2 border break-words">Username</th>
-        <th class="p-2 border break-words">Email</th>
-        <th class="p-2 border break-words">First name</th>
-        <th class="p-2 border break-words">Last name</th>
-        <th class="p-2 border break-words">Role</th>
-        <th class="p-2 border break-words">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of filteredUsers()">
-        <td class="p-2 border bg-white text-black break-words">{{ user.id }}</td>
-        <td class="p-2 border bg-white text-black break-words">{{ user.username }}</td>
-        <td class="p-2 border bg-white text-black break-words">{{ user.email }}</td>
-        <td class="p-2 border bg-white text-black break-words">{{ user.first_name }}</td>
-        <td class="p-2 border bg-white text-black break-words">{{ user.last_name }}</td>
-        <td class="p-2 border bg-white text-black break-words">{{ user.role }}</td>
-        <td class="p-2 border bg-white break-words">
-          <button 
-            class="bg-green-500 text-white rounded items-center hover:bg-green-700" 
-            (click)="editUser(user.id)">
-            <i class="fa fa-edit"></i>
+  <!-- Modal -->
+  <div
+    *ngIf="showModal"
+    class="fixed inset-0 flex items-center justify-center z-[1000] p-5"
+  >
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0 bg-black opacity-75"
+      (click)="closeModal()"
+    ></div>
+
+    <!-- Modal Content -->
+    <div
+      class="relative bg-[#2A2A2A] text-gray-200 rounded-xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl"
+    >
+      <!-- Close Button -->
+      <button
+        class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+        (click)="closeModal()"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      <!-- Modal Header -->
+      <h2 class="text-2xl font-semibold text-white mb-6">
+        {{ isEditMode ? "Edit User" : "Create New User" }}
+      </h2>
+
+      <!-- Modal Form -->
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <!-- Username -->
+        <div>
+          <label
+            class="block text-sm font-medium text-gray-200 mb-2"
+            for="username"
+            >Username</label
+          >
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 placeholder-gray-500"
+            placeholder="Enter username"
+            [ngClass]="{ 'border-red-500': showError('username') }"
+          />
+          <p *ngIf="showError('username')" class="text-red-500 text-sm mt-2">
+            Username is required
+          </p>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label
+            class="block text-sm font-medium text-gray-200 mb-2"
+            for="email"
+            >Email</label
+          >
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 placeholder-gray-500"
+            placeholder="Enter email"
+            [ngClass]="{ 'border-red-500': showError('email') }"
+          />
+          <p *ngIf="showError('email')" class="text-red-500 text-sm mt-2">
+            {{
+              userForm.get("email")?.hasError("required")
+                ? "Email is required"
+                : userForm.get("email")?.hasError("email")
+                ? "Invalid email format"
+                : ""
+            }}
+          </p>
+        </div>
+
+        <!-- First Name -->
+        <div>
+          <label
+            class="block text-sm font-medium text-gray-200 mb-2"
+            for="first_name"
+            >First Name</label
+          >
+          <input
+            id="first_name"
+            type="text"
+            formControlName="first_name"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 placeholder-gray-500"
+            placeholder="Enter first name"
+            [ngClass]="{ 'border-red-500': showError('first_name') }"
+          />
+          <p *ngIf="showError('first_name')" class="text-red-500 text-sm mt-2">
+            First name is required
+          </p>
+        </div>
+
+        <!-- Last Name -->
+        <div>
+          <label
+            class="block text-sm font-medium text-gray-200 mb-2"
+            for="last_name"
+            >Last Name</label
+          >
+          <input
+            id="last_name"
+            type="text"
+            formControlName="last_name"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 placeholder-gray-500"
+            placeholder="Enter last name"
+            [ngClass]="{ 'border-red-500': showError('last_name') }"
+          />
+          <p *ngIf="showError('last_name')" class="text-red-500 text-sm mt-2">
+            Last name is required
+          </p>
+        </div>
+
+        <!-- Password 1-->
+        <div *ngIf="!isEditMode">
+          <label
+            class="block text-sm font-medium text-gray-200 mb-2"
+            for="password"
+            >Password</label
+          >
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 placeholder-gray-500"
+            placeholder="Enter password"
+            [ngClass]="{ 'border-red-500': showError('password') }"
+          />
+          <p *ngIf="showError('password')" class="text-red-500 text-sm mt-2">
+            <ng-container
+              *ngIf="userForm.get('password')?.hasError('required')"
+            >
+              Password is required
+            </ng-container>
+            <ng-container
+              *ngIf="userForm.get('password')?.hasError('minlength')"
+            >
+              Password must be at least 8 characters long
+            </ng-container>
+            <ng-container
+              *ngIf="userForm.get('password')?.hasError('passwordStrength')"
+            >
+              Password must contain at least one letter and one number
+            </ng-container>
+            <ng-container
+              *ngIf="userForm.get('password')?.hasError('passwordNumeric')"
+            >
+              Password cannot be entirely numeric
+            </ng-container>
+          </p>
+        </div>
+
+        <!-- Password 2-->
+        <div *ngIf="!isEditMode">
+          <label
+            class="block text-sm font-medium text-gray-200 mb-2"
+            for="password"
+            >Password 2</label
+          >
+          <input
+            id="password2"
+            type="password"
+            formControlName="password2"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 placeholder-gray-500"
+            placeholder="Enter password"
+            [ngClass]="{ 'border-red-500': showError('password') }"
+          />
+          <p *ngIf="showError('password2')" class="text-red-500 text-sm mt-2">
+            Password confirmation is required
+          </p>
+          <p
+            *ngIf="userForm.hasError('passwordMismatch')"
+            class="text-red-500 text-sm mt-2"
+          >
+            Passwords must match
+          </p>
+        </div>
+
+        <!-- Role -->
+        <!-- <div>
+          <label class="block text-sm font-medium text-gray-200 mb-2" for="role"
+            >Role</label
+          >
+          <select
+            id="role"
+            formControlName="role"
+            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            [ngClass]="{ 'border-red-500': showError('role') }"
+          >
+            <option value="" disabled>Select a role</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+            <option value="editor">Editor</option>
+          </select>
+          <p *ngIf="showError('role')" class="text-red-500 text-sm mt-2">
+            Role is required
+          </p>
+        </div> -->
+
+        <!-- Buttons -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            class="bg-gray-600 text-gray-200 rounded-lg py-2 px-6 hover:bg-gray-700 transition-all duration-200"
+            (click)="closeModal()"
+          >
+            Cancel
           </button>
-          <button 
-            class="bg-red-500 text-white rounded items-center hover:bg-red-700" 
-            (click)="deleteUser(user.id)">
-            <i class="fa fa-trash"></i>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            [disabled]="userForm.invalid"
+          >
+            Save
           </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+<app-toast-message #toast></app-toast-message>

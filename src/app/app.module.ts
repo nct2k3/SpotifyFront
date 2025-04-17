@@ -34,6 +34,7 @@ import { RouterModule } from '@angular/router';
 import { ToastMessageComponent } from './shared/toast-message/toast-message.component';
 import { AdminArtistManagementComponent } from './admin-artist-management/admin-artist-management.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { ListAlbumComponent } from './list-album/list-album.component';
     FormsModule,
     MatSnackBarModule,
     BrowserAnimationsModule,
+    ReactiveFormsModule,
     RouterModule.forRoot([])
   ],
   providers: [],
