@@ -1,5 +1,5 @@
 export interface SongMetadata {
-    song_id: number;
+    id: string;
     title: string;
     artist_id: number;
     album_id: number;

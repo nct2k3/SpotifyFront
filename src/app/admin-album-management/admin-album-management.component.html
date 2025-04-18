@@ -1,6 +1,8 @@
 <div class="p-5 rounded-lg w-full">
   <!-- Tiêu đề và thanh tìm kiếm -->
-  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
+  <div
+    class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8"
+  >
     <h2 class="text-3xl font-bold text-white">Manage Albums</h2>
 
     <!-- Thanh tìm kiếm và Nút "Create" -->
@@ -48,9 +50,9 @@
     <table class="w-full table-fixed rounded-lg shadow-lg">
       <thead>
         <tr class="bg-gray-800 text-white">
-          <th class="p-3 text-center break-words">Title</th>
-          <th class="p-3 text-center break-words">Release Date</th>
-          <th class="p-3 text-center break-words rounded-tr-lg">Action</th>
+          <th class="p-3 text-left break-words">Title</th>
+          <th class="p-3 text-left break-words">Release Date</th>
+          <th class="p-3 text-left break-words rounded-tr-lg">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -58,13 +60,13 @@
           *ngFor="let album of albums; let i = index"
           class="hover:bg-zinc-700 transition-colors"
         >
-          <td class="p-3 text-center text-white break-words">
+          <td class="p-3 text-left text-white break-words">
             {{ album.title }}
           </td>
-          <td class="p-3 text-center text-white break-words">
+          <td class="p-3 text-left text-white break-words">
             {{ album.release_date | date : "dd/MM/yyyy" }}
           </td>
-          <td class="p-3 text-white break-words flex justify-center space-x-2">
+          <td class="p-3 text-white break-words flex justify-left space-x-2">
             <button
               (click)="selectAlbum(album)"
               class="text-blue-500 hover:text-blue-700 p-2 transition-colors"
@@ -134,12 +136,18 @@
             <div>
               <p><strong>Name:</strong> {{ artist.name }}</p>
               <p><strong>Year of launch:</strong> {{ artist.debut_year }}</p>
-              <p><strong>Bio:</strong> {{ artist.bio?.length > 150 ? (artist.bio | slice:0:150) + '...' : artist.bio }}</p>
+              <p>
+                <strong>Bio:</strong>
+                {{
+                  artist.bio?.length > 150
+                    ? (artist.bio | slice : 0 : 150) + "..."
+                    : artist.bio
+                }}
+              </p>
             </div>
           </li>
         </ul>
       </div>
-      
 
       <div>
         <h3 class="text-lg font-semibold mb-3">🎵 Song list:</h3>
@@ -194,19 +202,19 @@
         class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
         (click)="closeCreateModal()"
       >
-      <svg
-      class="w-6 h-6"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M6 18L18 6M6 6l12 12"
-      />
-    </svg>
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
       </button>
 
       <!-- Album Form -->
@@ -221,7 +229,9 @@
       >
         <!-- Title -->
         <div>
-          <label for="title" class="block text-sm text-gray-200 font-medium mb-2"
+          <label
+            for="title"
+            class="block text-sm text-gray-200 font-medium mb-2"
             >Title</label
           >
           <input
@@ -258,109 +268,129 @@
           </div>
         </div>
 
-        <!-- Artist Selection -->
-        <div>
-          <label for="artist_search" class="block text-gray-200 text-sm font-medium mb-2"
+        <!-- Artist Multi-select -->
+        <div class="mb-5">
+          <label
+            class="block text-sm font-medium text-gray-200 mb-2"
+            for="artists"
             >Artists</label
           >
-          <input
-            id="artist_search"
-            type="text"
-            [(ngModel)]="artistSearchTerm"
-            (input)="searchArtists()"
-            name="artist_search"
-            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Search artists..."
-          />
 
-          <div
-            *ngIf="filteredArtists.length > 0"
-            class="mt-2 max-h-40 overflow-y-auto bg-[#3A3A3A] text-gray-200 rounded-xl shadow-md"
-          >
-            <div
-              *ngFor="let artist of filteredArtists"
-              class="p-3 hover:bg-[#2d2d2d] cursor-pointer"
-              (click)="addArtist(artist.id)"
-            >
-              {{ artist.name }}
+          <div class="relative">
+            <div class="flex gap-2 mb-2">
+              <input
+                id="artist_search"
+                type="text"
+                [(ngModel)]="artistSearchTerm"
+                name="artistSearch"
+                placeholder="Search artists..."
+                (input)="onArtistInput($event)"
+                (focus)="onArtistFocus()"
+                class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+              />
             </div>
+
+            <!-- Artist suggestions -->
+            <ul
+              id="artist_dropdown"
+              *ngIf="showArtistDropdown && filteredArtists.length > 0"
+              class="absolute left-0 right-0 mt-1 bg-[#2d2d2d] border border-gray-500 rounded-lg shadow-lg max-h-48 overflow-y-auto z-50"
+            >
+              <li
+                *ngFor="let artist of filteredArtists"
+                (click)="addArtist(artist)"
+                class="px-4 py-2 text-gray-200 hover:bg-gray-600 cursor-pointer transition-colors duration-150"
+              >
+                {{ artist.name }}
+              </li>
+            </ul>
           </div>
 
-          <div class="mt-2">
-            <div *ngIf="newAlbum.artist_ids.length > 0" class="space-y-2">
-              <div
-                *ngFor="let artistId of newAlbum.artist_ids"
-                class="flex items-center justify-between bg-[#3A3A3A] text-gray-200 p-2 rounded-xl"
-              >
-                <span>{{ getArtistName(artistId) }}</span>
-                <button
-                  type="button"
-                  class="text-red-600 hover:text-red-800"
-                  (click)="removeArtist(artistId)"
-                >
-                  <i class="fa fa-times"></i>
-                </button>
-              </div>
-            </div>
-            <div
-              *ngIf="newAlbum.artist_ids.length === 0"
-              class="text-red-600 text-sm"
+          <!-- Selected artists -->
+          <div class="flex flex-wrap mt-3 gap-2">
+            <span
+              *ngFor="let artist of selectedArtists"
+              class="flex items-center bg-[#3A3A3A] text-white rounded-full px-3 py-1 text-sm"
             >
-              No artists selected.
-            </div>
+              {{ artist.name }}
+              <button
+                class="ml-2 hover:text-red-400 transition-colors"
+                (click)="removeArtist(artist)"
+                type="button"
+              >
+                ✕
+              </button>
+            </span>
+          </div>
+
+          <div
+            *ngIf="selectedArtists.length === 0"
+            class="text-red-600 text-sm mt-1"
+          >
+            Release date is required.
           </div>
         </div>
 
-        <!-- Song Selection -->
-        <div>
-          <label for="song_search" class="block text-gray-200 text-sm font-medium mb-2"
+        <!-- Song Multi-select -->
+        <div class="mt-8">
+          <label
+            for="songs"
+            class="block text-sm font-medium text-gray-200 mb-2"
             >Songs</label
           >
-          <input
-            id="song_search"
-            type="text"
-            [(ngModel)]="songSearchTerm"
-            (input)="searchSongs()"
-            name="song_search"
-            class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Search songs..."
-          />
 
-          <div
-            *ngIf="filteredSongs.length > 0"
-            class="mt-2 max-h-40 overflow-y-auto bg-[#3A3A3A] text-gray-200 rounded-xl shadow-md"
-          >
-            <div
-              *ngFor="let song of filteredSongs"
-              class="p-3 hover:hover:bg-[#2d2d2d] cursor-pointer"
-              (click)="addSong(song.id)"
-            >
-              {{ song.title }}
+          <div class="relative">
+            <div class="flex gap-2 mb-2">
+              <input
+                id="song_search"
+                type="text"
+                [(ngModel)]="songSearchTerm"
+                name="songSearch"
+                placeholder="Search songs..."
+                (input)="onSongInput($event)"
+                (focus)="onSongFocus()"
+                class="w-full p-3 bg-[#3A3A3A] text-gray-200 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+              />
             </div>
+
+            <!-- Song suggestions -->
+            <ul
+              id="song_dropdown"
+              *ngIf="showSongDropdown && filteredSongs.length > 0"
+              class="absolute left-0 right-0 mt-1 bg-[#2d2d2d] border border-gray-500 rounded-lg shadow-lg max-h-48 overflow-y-auto z-50"
+            >
+              <li
+                *ngFor="let song of filteredSongs"
+                (click)="addSong(song)"
+                class="px-4 py-2 text-gray-200 hover:bg-gray-600 cursor-pointer transition-colors duration-150"
+              >
+                {{ song.title }}
+              </li>
+            </ul>
           </div>
 
-          <div class="mt-2">
-            <div *ngIf="newAlbum.song_ids.length > 0" class="space-y-2">
-              <div
-                *ngFor="let songId of newAlbum.song_ids"
-                class="flex items-center justify-between bg-[#3A3A3A] text-gray-200 p-2 rounded-xl"
-              >
-                <span>{{ getSongTitle(songId) }}</span>
-                <button
-                  type="button"
-                  class="text-red-600 hover:text-red-800"
-                  (click)="removeSong(songId)"
-                >
-                  <i class="fa fa-times"></i>
-                </button>
-              </div>
-            </div>
-            <div
-              *ngIf="newAlbum.song_ids.length === 0"
-              class="text-red-600 text-sm"
+          <!-- Selected songs -->
+          <div class="flex flex-wrap mt-3 gap-2">
+            <span
+              *ngFor="let song of selectedSongs"
+              class="flex items-center bg-[#3A3A3A] text-white rounded-full px-3 py-1 text-sm"
             >
-              No songs selected.
-            </div>
+              {{ song.title }}
+              <button
+                class="ml-2 hover:text-red-400 transition-colors"
+                (click)="removeSong(song)"
+                type="button"
+              >
+                ✕
+              </button>
+            </span>
+          </div>
+
+          <div
+            *ngIf="selectedSongs.length === 0"
+            class="text-red-600 text-sm mt-1"
+          >
+            No songs selected.
           </div>
         </div>
 
@@ -376,7 +406,11 @@
           <button
             type="submit"
             class="bg-blue-600 text-white rounded-xl py-2 px-6 hover:bg-blue-800 transition"
-            [disabled]="!albumForm.valid || newAlbum.song_ids.length === 0 || newAlbum.artist_ids.length === 0"
+            [disabled]="
+              !albumForm.valid ||
+              newAlbum.song_ids.length === 0 ||
+              newAlbum.artist_ids.length === 0
+            "
           >
             {{ isEditing ? "Update" : "Create" }}
           </button>
