@@ -48,11 +48,11 @@
       <table class="w-full table-fixed">
         <thead class="bg-gray-800 text-white">
           <tr>
-            <th class="py-3 text-center break-words">Username</th>
-            <th class="py-3 text-center break-words">Email</th>
-            <th class="py-3 text-center break-words">First name</th>
-            <th class="py-3 text-center break-words">Last name</th>
-            <th class="py-3 text-center break-words">Actions</th>
+            <th class="py-3 px-3 text-left break-words">Username</th>
+            <th class="py-3 px-3 text-left break-words">Email</th>
+            <th class="py-3 px-3 text-left break-words">First name</th>
+            <th class="py-3 px-3 text-left break-words">Last name</th>
+            <th class="py-3 px-3 text-left break-words">Actions</th>
           </tr>
         </thead>
       </table>
@@ -65,19 +65,19 @@
               *ngFor="let user of filteredUsers()"
               class="hover:bg-zinc-700 transition-colors"
             >
-              <td class="py-3 text-center text-white break-words w-12">
+              <td class="py-3 px-3 text-left text-white break-words w-12">
                 {{ user.username }}
               </td>
-              <td class="py-3 text-center text-white break-words w-12">
+              <td class="py-3 px-3 text-left text-white break-words w-12">
                 {{ user.email }}
               </td>
-              <td class="py-3 text-center text-white break-words w-12">
+              <td class="py-3 px-3 text-left text-white break-words w-12">
                 {{ user.first_name }}
               </td>
-              <td class="py-3 text-center text-white break-words w-12">
+              <td class="py-3 px-3 text-left text-white break-words w-12">
                 {{ user.last_name }}
               </td>
-              <td class="py-3 text-center text-white break-words w-12">
+              <td class="py-3 px-3 text-left text-white break-words w-12">
                 <button
                   class="bg-green-600 text-white rounded-full hover:bg-green-800 p-2 transition-colors"
                   (click)="editUser(user)"

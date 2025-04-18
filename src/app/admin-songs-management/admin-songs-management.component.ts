@@ -59,10 +59,6 @@ export class AdminSongsManagementComponent implements OnInit {
     });
   }
 
-  toggleArtistDropdown() {
-    this.showArtistDropdown = !this.showArtistDropdown;
-  }
-
   // Mở modal khi bấm "Create"
   openCreateModal() {
     this.isModalOpen = true;
@@ -119,6 +115,10 @@ export class AdminSongsManagementComponent implements OnInit {
     });
   }
 
+  toggleArtistDropdown() {
+    this.showArtistDropdown = !this.showArtistDropdown;
+  }
+
   // Hàm chọn nghệ sĩ từ dropdown
   selectArtist(artist: ArtistResponse) {
     console.log(artist);
@@ -128,6 +128,7 @@ export class AdminSongsManagementComponent implements OnInit {
   }
 
   onArtistInput(event: any) {
+    this.showArtistDropdown = true;
     const value = event.target.value.toLowerCase();
     this.filteredArtists = this.artists.filter(
       (artist) =>
@@ -136,6 +137,10 @@ export class AdminSongsManagementComponent implements OnInit {
     );
     this.artistError = ''; // Xóa lỗi khi người dùng gõ lại
     this.newSong.artist_ids = []; // Reset id nếu chưa chọn từ danh sách
+  }
+
+  onArtistFocus() {
+    this.showArtistDropdown = true;
   }
 
   addArtist(artist: ArtistResponse) {
