@@ -53,7 +53,10 @@ export class AlbumComponent {
             this.album = data.songs || data.tracks || [];
             this.sharedService.updateSharedData(this.album); 
             this.name = data.title || data.name || 'Unknown Album';
-            this.image = data.image || data.artists[0]?.artist_photo  || 'assets/default-album-art.jpg';
+            if(data.Album_type === 2){
+              this.image = data.image || data.artists[0]?.artist_photo  || 'assets/default-album-art.jpg';
+            }
+            this.image = data.image || data.Album_photo || 'assets/default-album-art.jpg';
             this.NameArtiest = data.artist || data.artists?.[0]?.name || 'Unknown Artist';
             this.date = data.releaseDate || data.date || 'Unknown Date';
           }
@@ -61,6 +64,7 @@ export class AlbumComponent {
       }
     });
   }
+  
 
   @ViewChild(FooterComponent, { static: false }) footerComponent!: FooterComponent;
 

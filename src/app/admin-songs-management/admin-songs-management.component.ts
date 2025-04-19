@@ -3,6 +3,7 @@ import { SongsService } from '../services/Songs/songs.service';
 import { ArtistsService } from '../services/artists/artists.service';
 import { Artist, ArtistResponse } from '../Models/artists.model';
 import { ToastMessageComponent } from '../shared/toast-message/toast-message.component';
+
 @Component({
   selector: 'app-admin-songs-management',
   templateUrl: './admin-songs-management.component.html',
@@ -13,32 +14,37 @@ export class AdminSongsManagementComponent implements OnInit {
 
   state: string = 'void';
   songs: any[] = [];
-  searchTerm: string = ''; // search
-  isModalOpen: boolean = false; //create
-  isEditing: boolean = false; // update
+  searchTerm: string = '';
+  isModalOpen: boolean = false;
+  isEditing: boolean = false;
   idSongEdit: number = -1;
-  artistName: string = ''; //tên của nghệ sĩ
+  artistName: string = '';
   artistSearch: string = '';
   selectedArtists: ArtistResponse[] = [];
   showArtistDropdown: boolean = false;
+
+  // Lưu file tạm thời
+  selectedSongFile: File | null = null;
+  selectedImageFile: File | null = null;
+
   newSong = {
     title: '',
     artist_ids: [] as string[],
     genre: '',
-    duration: null,
+    duration: null as number | null,
     file_location: '',
     image_location: '',
     lyrics: '',
-  }; // Dữ liệu của bài hát mới
+  };
 
-  artists: ArtistResponse[] = []; // Danh sách tất cả các nghệ sĩ
-  filteredArtists: ArtistResponse[] = []; // Danh sách nghệ sĩ lọc theo tìm kiếm
+  artists: ArtistResponse[] = [];
+  filteredArtists: ArtistResponse[] = [];
 
-  fileError: string = ''; //kiểm tra file mp4
-  imageError: string = ''; //kiểm tra file ảnh
-  artistError: string = ''; //kiểm tra nhập đúng từ ds không
-  titleError: string = ''; //kiểm tra title đã nhập chưa
-  durationError: string = ''; //đảm bảo không âm
+  fileError: string = '';
+  imageError: string = '';
+  artistError: string = '';
+  titleError: string = '';
+  durationError: string = '';
 
   constructor(
     private songsService: SongsService,
@@ -46,38 +52,36 @@ export class AdminSongsManagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Lấy danh sách bài hát từ API
     this.songsService.getTrack().subscribe((data) => {
       console.log('Songs API data:', data);
-      this.songs = data; // Lưu dữ liệu vào biến songs từ API
+      this.songs = data;
     });
 
-    // Lấy danh sách nghệ sĩ từ API
     this.artistsService.getArtists().subscribe((data) => {
-      this.artists = data; // Lưu danh sách nghệ sĩ
-      this.filteredArtists = data; // Gán danh sách nghệ sĩ cho filteredArtists
+      this.artists = data;
+      this.filteredArtists = data;
     });
   }
 
-  // Mở modal khi bấm "Create"
   openCreateModal() {
     this.isModalOpen = true;
   }
 
-  // Đóng modal khi bấm "Cancel"
   closeModal() {
     this.isModalOpen = false;
     this.isEditing = false;
-    // Reset dữ liệu
     this.newSong = {
       title: '',
-      artist_ids: [] as string[],
+      artist_ids: [],
       genre: '',
       duration: null,
       file_location: '',
       image_location: '',
       lyrics: '',
     };
+    this.selectedSongFile = null;
+    this.selectedImageFile = null;
+    this.selectedArtists = [];
     this.idSongEdit = -1;
     this.artistError = '';
     this.durationError = '';
@@ -86,9 +90,8 @@ export class AdminSongsManagementComponent implements OnInit {
     this.titleError = '';
   }
 
-  // Mở modal và truyền dữ liệu bài hát vào
   openEditModal(id: number, song: any) {
-    this.isEditing = true; // Đang chỉnh sửa
+    this.isEditing = true;
     this.newSong = {
       title: song.title,
       artist_ids: song.artist,
@@ -98,33 +101,30 @@ export class AdminSongsManagementComponent implements OnInit {
       image_location: song.image_location,
       lyrics: song.lyrics,
     };
+    this.selectedArtists = song.artists || [];
     this.idSongEdit = id;
     this.isModalOpen = true;
   }
 
-  // Hàm lọc bài hát theo từ khóa tìm kiếm
   filteredSongs() {
-    return this.songs.filter((song) => {
-      return (
-        song.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        song.artists.some((artist: Artist) =>
-          artist.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-        ) ||
-        song.genre.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
-    });
+    return this.songs.filter((song) =>
+      song.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      song.artists.some((artist: Artist) =>
+        artist.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+      ) ||
+      song.genre.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
   }
 
   toggleArtistDropdown() {
     this.showArtistDropdown = !this.showArtistDropdown;
   }
 
-  // Hàm chọn nghệ sĩ từ dropdown
   selectArtist(artist: ArtistResponse) {
-    console.log(artist);
     this.artistName = artist.name;
-    this.newSong.artist_ids = [artist.id]; // Gán tên nghệ sĩ vào đối tượng newSong
-    this.filteredArtists = []; // Ẩn dropdown sau khi chọn
+    this.newSong.artist_ids = [artist.id];
+    this.filteredArtists = [];
+    this.showArtistDropdown = false;
   }
 
   onArtistInput(event: any) {
@@ -135,8 +135,8 @@ export class AdminSongsManagementComponent implements OnInit {
         artist.name.toLowerCase().includes(value) &&
         !this.selectedArtists.some((selected) => selected.id === artist.id)
     );
-    this.artistError = ''; // Xóa lỗi khi người dùng gõ lại
-    this.newSong.artist_ids = []; // Reset id nếu chưa chọn từ danh sách
+    this.artistError = '';
+    this.newSong.artist_ids = [];
   }
 
   onArtistFocus() {
@@ -145,7 +145,6 @@ export class AdminSongsManagementComponent implements OnInit {
 
   addArtist(artist: ArtistResponse) {
     this.selectedArtists.push(artist);
-    // Xóa khỏi danh sách gợi ý
     this.filteredArtists = this.filteredArtists.filter(
       (a) => a.id !== artist.id
     );
@@ -160,114 +159,85 @@ export class AdminSongsManagementComponent implements OnInit {
     this.filteredArtists.push(artist);
   }
 
-  // Hàm load lại danh sách bài hát từ API
   loadSongs() {
     this.songsService.getTrack().subscribe((data) => {
-      this.songs = data; // Cập nhật lại danh sách bài hát
+      this.songs = data;
     });
   }
 
-  // Helper method to extract file name from path
   getFileName(path: string): string {
     if (!path || path === '../') return 'N/A';
     const parts = path.split('/');
-    return parts[parts.length - 1]; // Returns the last part (file name)
+    return parts[parts.length - 1];
   }
 
-  // Chức năng xóa người dùng
   deleteSong(songId: string) {
     this.songsService.deleteSong(songId).subscribe(
-      (response) => {
-        console.log('Bài hát đã được xóa:', response);
-        this.toast.showMessage('Delete successful artists!', 'success');
+      () => {
+        this.toast.showMessage('Delete successful!', 'success');
         this.loadSongs();
       },
       (error) => {
         console.error('Lỗi khi xóa bài hát:', error);
-        this.toast.showMessage('Delete failed artists!', 'error');
+        this.toast.showMessage('Delete failed!', 'error');
       }
     );
   }
 
-  // Hàm lưu bài hoặc cập nhật bài hát
-  onSubmit() {
-    if (!this.validateForm()) {
-      return;
-    }
-
-    if (this.isEditing) {
-      // Thực hiện cập nhật bài hát nếu đang chỉnh sửa
-      console.log('Updating song:', this.newSong);
-      this.songsService.updateSong(this.idSongEdit, this.newSong).subscribe(
-        (res) => {
-          this.closeModal(); // Đóng modal sau khi lưu
-          this.toast.showMessage('Update successful artists!', 'success');
-          this.loadSongs();
-        },
-        (err) => {
-          console.error('Lỗi khi câp nhật bài hát:', err);
-          this.toast.showMessage('Update failed artists!', 'error');
-        }
-      );
-    } else {
-      // Thực hiện tạo bài hát mới
-      this.songsService.createSong(this.newSong).subscribe(
-        (res) => {
-          this.closeModal(); // Đóng modal sau khi tạo
-          this.toast.showMessage('Create successful artists!', 'success');
-          this.loadSongs();
-        },
-        (err) => {
-          console.error('Lỗi khi tạo bài hát:', err);
-          this.toast.showMessage('Create failed artists!', 'error');
-        }
-      );
-    }
-  }
-
-  // Xử lý khi người dùng chọn file (cả file âm thanh và hình ảnh)
   onFileSelected(event: any, field: string) {
     const file: File = event.target.files[0];
-    const fileName = file?.name || '';
+    if (!file) return;
+
+    const fileName = file.name;
     const extension = fileName.split('.').pop()?.toLowerCase();
+    const maxSongSize = 50 * 1024 * 1024; // 50MB
+    const maxImageSize = 5 * 1024 * 1024; // 5MB
 
-    if (file) {
-      if (field === 'file_location') {
-        this.fileError = ''; // Reset lỗi trước đó
-
-        if (extension === 'mp4' || extension === 'mp3') {
-          const relativePath = `../../assets/Songs/${fileName}`;
-          this.newSong.file_location = relativePath;
-        } else {
-          this.newSong.file_location = '';
-          this.fileError = 'Vui lòng chọn tệp .mp4 hợp lệ.';
-        }
-      } else if (field === 'image_location') {
-        const validImageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-        this.imageError = ''; // Reset lỗi trước đó
-
-        if (validImageExtensions.includes(extension || '')) {
-          const relativePath = `../../assets/Img/${fileName}`;
-          this.newSong.image_location = relativePath;
-        } else {
-          this.newSong.image_location = '';
-          this.imageError = 'Vui lòng chọn tệp hình ảnh (jpg, jpeg, png, gif).';
-        }
+    if (field === 'file_location') {
+      this.fileError = '';
+      if (!['mp3', 'mp4'].includes(extension || '')) {
+        this.fileError = 'Vui lòng chọn tệp .mp3 hoặc .mp4.';
+        this.newSong.file_location = '';
+        this.selectedSongFile = null;
+        return;
       }
+      if (file.size > maxSongSize) {
+        this.fileError = 'File bài hát vượt quá 50MB.';
+        this.newSong.file_location = '';
+        this.selectedSongFile = null;
+        return;
+      }
+      this.selectedSongFile = file;
+      this.newSong.file_location = fileName; // Tạm thời hiển thị tên file
+    } else if (field === 'image_location') {
+      this.imageError = '';
+      const validImageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+      if (!validImageExtensions.includes(extension || '')) {
+        this.imageError = 'Vui lòng chọn tệp hình ảnh (.jpg, .jpeg, .png, .gif).';
+        this.newSong.image_location = '';
+        this.selectedImageFile = null;
+        return;
+      }
+      if (file.size > maxImageSize) {
+        this.imageError = 'File ảnh vượt quá 5MB.';
+        this.newSong.image_location = '';
+        this.selectedImageFile = null;
+        return;
+      }
+      this.selectedImageFile = file;
+      this.newSong.image_location = fileName; // Tạm thời hiển thị tên file
     }
   }
 
-  //hàm kiểm tra hợp lệ của form
   validateForm(): boolean {
     let isValid = true;
 
-    // Reset lỗi trước đó
     this.titleError = '';
     this.fileError = '';
     this.imageError = '';
     this.artistError = '';
+    this.durationError = '';
 
-    // Validate title
     if (!this.newSong.title || this.newSong.title.trim() === '') {
       this.titleError = 'Vui lòng nhập tiêu đề bài hát.';
       isValid = false;
@@ -278,36 +248,72 @@ export class AdminSongsManagementComponent implements OnInit {
       isValid = false;
     }
 
-    // Validate artist
     if (this.selectedArtists.length === 0) {
       this.artistError = 'Vui lòng chọn ít nhất một nghệ sĩ từ danh sách.';
       isValid = false;
     } else {
-      this.artistError = ''; // Xóa lỗi nếu đã chọn
       this.newSong.artist_ids = this.selectedArtists.map((artist) => artist.id);
     }
 
-    // Validate song file
-    if (
-      !this.newSong.file_location ||
-      !this.newSong.file_location.endsWith('.mp4')
-    ) {
-      this.fileError = 'Vui lòng chọn tệp .mp4 hợp lệ.';
+    if (!this.isEditing && !this.selectedSongFile) {
+      this.fileError = 'Vui lòng chọn tệp .mp3 hoặc .mp4 hợp lệ.';
       isValid = false;
     }
 
-    // Validate image file
-    const validImageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-    if (
-      !this.newSong.image_location ||
-      !validImageExtensions.some((ext) =>
-        this.newSong.image_location.endsWith(ext)
-      )
-    ) {
-      this.imageError = 'Vui lòng chọn tệp hình ảnh (jpg, jpeg, png, gif).';
+    if (!this.isEditing && !this.selectedImageFile) {
+      this.imageError = 'Vui lòng chọn tệp hình ảnh (.jpg, .jpeg, .png, .gif).';
       isValid = false;
     }
 
     return isValid;
+  }
+  onSubmit() {
+    if (!this.validateForm()) {
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('title', this.newSong.title);
+    formData.append('artist_ids', this.newSong.artist_ids.toString()); 
+    formData.append('genre', this.newSong.genre);
+    formData.append('duration', this.newSong.duration?.toString() || '');
+    formData.append('lyrics', this.newSong.lyrics);
+  
+    if (this.selectedSongFile) {
+      formData.append('song_file', this.selectedSongFile, this.selectedSongFile.name);
+    }
+  
+    if (this.selectedImageFile) {
+      formData.append('image_file', this.selectedImageFile, this.selectedImageFile.name);
+    }
+  
+    const action = this.isEditing
+      ? this.songsService.updateSong(this.idSongEdit, formData)
+      : this.songsService.createSong(formData);
+  
+    action.subscribe(
+      (res: any) => {
+        this.newSong.file_location = res.file_location;
+        this.newSong.image_location = res.image_location;
+        this.closeModal();
+        this.toast.showMessage(
+          this.isEditing ? 'Update successful!' : 'Create successful!',
+          'success'
+        );
+        this.loadSongs();
+      },
+      (err) => {
+        console.error('Error:', err);
+        let errorMessage = this.isEditing ? 'Update failed!' : 'Create failed!';
+        if (err.status === 413) {
+          errorMessage = 'File is too large. Please select a smaller file.';
+        } else if (err.status === 400) {
+          errorMessage = err.error.message || 'Invalid data.';
+        } else if (err.status === 401) {
+          errorMessage = 'Unauthorized. Please check your token.';
+        }
+        this.toast.showMessage(errorMessage, 'error');
+      }
+    );
   }
 }

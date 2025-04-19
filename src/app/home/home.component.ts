@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
   username: string | null = '';
   email: string | null = '';
   userId: string | null = ''; 
+  albumcustom: any[] = [];
   
 
   constructor(private songsService: SongsService, private albumService: AlbumService,
@@ -42,6 +43,7 @@ export class HomeComponent implements OnInit {
     });
     this.albumService.getAlbum().subscribe((data: any) => {
       this.album = data;
+      this.albumcustom = data.filter((item: any) => item.Album_type === 1);
     });
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe((data: any) => {

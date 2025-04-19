@@ -13,31 +13,34 @@ import { SongMetadata } from '../Models/song-metadata.model';
 })
 export class AdminAlbumManagementComponent implements OnInit {
   @ViewChild('toast') toast!: ToastMessageComponent;
-  originalAlbums: any[] = []; //lưu ds album gốc
-  albums: any[] = []; //ds album
-  selectedAlbum: any = null; //những nghệ sĩ đã được chọn
-  searchTerm: string = ''; //tìm kiếm
-  isModalOpen: boolean = false; //bật modal xem chi tiết album
-  isEditing: boolean = false; //flag edit
-  showModal: boolean = false; //
+  originalAlbums: any[] = [];
+  albums: any[] = [];
+  selectedAlbum: any = null;
+  searchTerm: string = '';
+  isModalOpen: boolean = false;
+  isEditing: boolean = false;
+  showModal: boolean = false;
   albumToEdit: any = null;
 
-  availableSongs: any[] = []; //dữ liệu của các bài hát
-  filteredSongs: any[] = []; // For search results
-  songSearchTerm: string = ''; // Search term for songs
-  showSongDropdown: boolean = false; // mở ds songs
+  availableSongs: any[] = [];
+  filteredSongs: any[] = [];
+  songSearchTerm: string = '';
+  showSongDropdown: boolean = false;
   selectedSongs: any[] = [];
 
-  availableArtists: any[] = []; //dữ liệu của nghệ sĩ
-  filteredArtists: any[] = []; // For search results
-  artistSearchTerm: string = ''; // Search term for artists
+  availableArtists: any[] = [];
+  filteredArtists: any[] = [];
+  artistSearchTerm: string = '';
   selectedArtists: ArtistResponse[] = [];
   showArtistDropdown: boolean = false;
+
   newAlbum: any = {
     title: '',
     artist_ids: [],
     song_ids: [],
     release_date: '',
+    Album_type: '', // Add Album_type
+    image_file: null,
   };
 
   constructor(
@@ -50,7 +53,6 @@ export class AdminAlbumManagementComponent implements OnInit {
     this.loadAlbums();
     this.loadSongs();
     this.loadArtists();
-
     document.addEventListener('click', this.handleClickOutside.bind(this));
   }
 
@@ -62,7 +64,7 @@ export class AdminAlbumManagementComponent implements OnInit {
     this.albumService.getAlbum().subscribe({
       next: (res) => {
         this.albums = res;
-        this.originalAlbums = res; // lưu bản gốc
+        this.originalAlbums = res;
       },
       error: (err) => console.error('Lỗi tải album:', err),
     });
@@ -72,8 +74,7 @@ export class AdminAlbumManagementComponent implements OnInit {
     this.songService.getTrack().subscribe({
       next: (res) => {
         this.availableSongs = res;
-        this.filteredSongs = res; // Initialize filtered songs
-        console.log('Loaded songs:', this.availableSongs);
+        this.filteredSongs = res;
       },
       error: (err) => console.error('Lỗi tải songs:', err),
     });
@@ -83,8 +84,7 @@ export class AdminAlbumManagementComponent implements OnInit {
     this.artistsService.getArtists().subscribe({
       next: (res) => {
         this.availableArtists = res;
-        this.filteredArtists = res; // Initialize filtered artists
-        console.log('Loaded artists:', this.availableArtists);
+        this.filteredArtists = res;
       },
       error: (err) => console.error('Lỗi tải artists:', err),
     });
@@ -104,7 +104,7 @@ export class AdminAlbumManagementComponent implements OnInit {
   searchAlbums(): void {
     const term = this.searchTerm.toLowerCase().trim();
     if (!term) {
-      this.albums = this.originalAlbums; // reset lại danh sách
+      this.albums = this.originalAlbums;
       return;
     }
     this.albums = this.originalAlbums.filter((album) =>
@@ -120,39 +120,54 @@ export class AdminAlbumManagementComponent implements OnInit {
   editAlbum(album: any) {
     this.isEditing = true;
     this.albumToEdit = album;
-
     this.newAlbum = {
       title: album.title,
-      release_date: album.release_date?.substring(0, 10), // cắt lấy yyyy-mm-dd
+      release_date: album.release_date?.substring(0, 10),
+      Album_type: album.Album_type.toString(), // Convert to string for select
       artist_ids: album.artists.map((a: any) => a.id),
       song_ids: album.songs.map((s: any) => s.id),
+      image_file: null,
     };
-
-    // Nếu cần, reset search terms
+    this.selectedArtists = album.artists;
+    this.selectedSongs = album.songs;
     this.artistSearchTerm = '';
     this.songSearchTerm = '';
-
     this.openCreateModal();
   }
 
   updateAlbum() {
     if (!this.albumToEdit) return;
 
-    const updatedAlbum = {
-      ...this.albumToEdit,
-      ...this.newAlbum,
-    };
+    const formData = new FormData();
+    formData.append('title', this.newAlbum.title);
+    formData.append('release_date', this.newAlbum.release_date);
+    formData.append('Album_type', this.newAlbum.Album_type);
+    if (this.newAlbum.artist_ids.length > 0) {
+      this.newAlbum.artist_ids.forEach((id: string, index: number) => {
+        formData.append(`artist_ids[${index}]`, id);
+      });
+    }
+    if (this.newAlbum.song_ids.length > 0) {
+      this.newAlbum.song_ids.forEach((id: string, index: number) => {
+        formData.append(`song_ids[${index}]`, id);
+      });
+    }
+    if (this.newAlbum.image_file) {
+      formData.append('image_file', this.newAlbum.image_file);
+    }
 
-    // Gửi updatedAlbum đến API update
-    this.albumService.updateAlbum(updatedAlbum.id, updatedAlbum).subscribe({
+    this.albumService.updateAlbum(this.albumToEdit.id, formData).subscribe({
       next: (res) => {
-        this.loadAlbums(); // load lại danh sách album
-        this.closeCreateModal(); // đóng form
-        this.toast.showMessage('Update successful artists!', 'success');
+        this.loadAlbums();
+        this.closeCreateModal();
+        this.toast.showMessage('Update successful!', 'success');
       },
       error: (err) => {
         console.error('Update failed', err);
-        this.toast.showMessage('Update failed artists!', 'error');
+        this.toast.showMessage(
+          'Update failed: ' + (err.error?.image_file || 'Unknown error'),
+          'error'
+        );
       },
     });
   }
@@ -163,11 +178,11 @@ export class AdminAlbumManagementComponent implements OnInit {
         next: () => {
           this.albums = this.albums.filter((a) => a.id !== id);
           if (this.selectedAlbum?.id === id) this.selectedAlbum = null;
-          this.toast.showMessage('Delete successful artists!', 'success');
+          this.toast.showMessage('Delete successful!', 'success');
         },
         error: (err) => {
-          console.error('Lỗi xóa album:', err),
-            this.toast.showMessage('Delete failed artists!', 'error');
+          console.error('Lỗi xóa album:', err);
+          this.toast.showMessage('Delete failed!', 'error');
         },
       });
     }
@@ -178,25 +193,38 @@ export class AdminAlbumManagementComponent implements OnInit {
     const song_dropdown = document.getElementById('song_dropdown');
     const artist_input = document.getElementById('artist_search');
     const artist_dropdown = document.getElementById('artist_dropdown');
-  
+
     if (
-      song_input && !song_input.contains(event.target as Node) &&
-      song_dropdown && !song_dropdown.contains(event.target as Node)
+      song_input &&
+      !song_input.contains(event.target as Node) &&
+      song_dropdown &&
+      !song_dropdown.contains(event.target as Node)
     ) {
       this.showSongDropdown = false;
     }
-    else if  (
-      artist_input && !artist_input.contains(event.target as Node) &&
-      artist_dropdown && !artist_dropdown.contains(event.target as Node)
+    if (
+      artist_input &&
+      !artist_input.contains(event.target as Node) &&
+      artist_dropdown &&
+      !artist_dropdown.contains(event.target as Node)
     ) {
       this.showArtistDropdown = false;
+    }
+  }
+
+  onImageFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.newAlbum.image_file = file;
+    } else {
+      this.newAlbum.image_file = null;
     }
   }
 
   onArtistInput(event: any) {
     this.showArtistDropdown = true;
     const value = event.target.value.toLowerCase();
-    this.filteredArtists = this.availableArtists.filter(
+    this.filteredArtists = this.filteredArtists.filter(
       (artist) =>
         artist.name.toLowerCase().includes(value) &&
         !this.selectedArtists.some((selected) => selected.id === artist.id)
@@ -210,8 +238,6 @@ export class AdminAlbumManagementComponent implements OnInit {
   addArtist(artist: ArtistResponse) {
     this.selectedArtists.push(artist);
     this.newAlbum.artist_ids.push(artist.id);
-
-    // Xóa khỏi danh sách gợi ý
     this.filteredArtists = this.filteredArtists.filter(
       (a) => a.id !== artist.id
     );
@@ -223,16 +249,16 @@ export class AdminAlbumManagementComponent implements OnInit {
     this.selectedArtists = this.selectedArtists.filter(
       (a) => a.id !== artist.id
     );
-    this.filteredArtists.push(artist);
     this.newAlbum.artist_ids = this.newAlbum.artist_ids.filter(
       (id: string) => id !== artist.id
     );
+    this.filteredArtists.push(artist);
   }
 
   onSongInput(event: any) {
     this.showSongDropdown = true;
     const term = this.songSearchTerm.toLowerCase();
-    this.filteredSongs = this.availableSongs.filter(
+    this.filteredSongs = this.filteredSongs.filter(
       (song) =>
         song.title.toLowerCase().includes(term) &&
         !this.selectedSongs.some((s) => s.id === song.id)
@@ -243,49 +269,40 @@ export class AdminAlbumManagementComponent implements OnInit {
     this.showSongDropdown = true;
   }
 
-  // Add song to selected list
   addSong(song: SongMetadata): void {
-    console.log(this.newAlbum)
-    console.log(song)
     this.selectedSongs.push(song);
     this.newAlbum.song_ids.push(song.id);
-    // Xóa khỏi danh sách gợi ý
     this.filteredSongs = this.filteredSongs.filter(
       (a) => a.id !== song.id
     );
-    this.songSearchTerm = ''; // Clear search input
+    this.songSearchTerm = '';
     this.showSongDropdown = false;
   }
 
-  // Remove song from selected list
   removeSong(song: SongMetadata): void {
     this.selectedSongs = this.selectedSongs.filter(
       (a) => a.id !== song.id
     );
-    this.filteredArtists.push(song);
     this.newAlbum.song_ids = this.newAlbum.song_ids.filter(
       (id: string) => id !== song.id
     );
-  }
-
-  toggleSongDropdown() {
-    this.showSongDropdown = !this.showSongDropdown;
-  }
-
-  // Get artist name by ID
-  getArtistName(artistId: string): string {
-    const artist = this.availableArtists.find((a) => a.id === artistId);
-    return artist ? artist.name : 'Unknown';
-  }
-
-  // Get song title by ID
-  getSongTitle(songId: string): string {
-    const song = this.availableSongs.find((s) => s.id === songId);
-    return song ? song.title : 'Unknown';
+    this.filteredSongs.push(song);
   }
 
   openCreateModal() {
     this.isModalOpen = true;
+    this.newAlbum = {
+      title: '',
+      artist_ids: [],
+      song_ids: [],
+      release_date: '',
+      Album_type: '',
+      image_file: null,
+    };
+    this.selectedArtists = [];
+    this.selectedSongs = [];
+    this.filteredArtists = [...this.availableArtists];
+    this.filteredSongs = [...this.availableSongs];
   }
 
   closeCreateModal() {
@@ -294,34 +311,51 @@ export class AdminAlbumManagementComponent implements OnInit {
       artist_ids: [],
       song_ids: [],
       release_date: '',
+      Album_type: '',
+      image_file: null,
     };
-    this.filteredArtists = this.availableArtists;
-    this.filteredSongs = this.availableSongs;
+    this.selectedArtists = [];
+    this.selectedSongs = [];
+    this.filteredArtists = [...this.availableArtists];
+    this.filteredSongs = [...this.availableSongs];
     this.artistSearchTerm = '';
     this.songSearchTerm = '';
     this.isModalOpen = false;
+    this.isEditing = false;
+    this.albumToEdit = null;
   }
 
   createAlbum() {
-    const albumPayload = {
-      title: this.newAlbum.title,
-      artist_ids: this.newAlbum.artist_ids,
-      song_ids: this.newAlbum.song_ids,
-      release_date: this.newAlbum.release_date,
-    };
+    const formData = new FormData();
+    formData.append('title', this.newAlbum.title);
+    formData.append('release_date', this.newAlbum.release_date);
+    formData.append('Album_type', this.newAlbum.Album_type);
+    if (this.newAlbum.artist_ids.length > 0) {
+      this.newAlbum.artist_ids.forEach((id: string, index: number) => {
+        formData.append(`artist_ids[${index}]`, id);
+      });
+    }
+    if (this.newAlbum.song_ids.length > 0) {
+      this.newAlbum.song_ids.forEach((id: string, index: number) => {
+        formData.append(`song_ids[${index}]`, id);
+      });
+    }
+    if (this.newAlbum.image_file) {
+      formData.append('image_file', this.newAlbum.image_file);
+    }
 
-    console.log(albumPayload);
-
-    this.albumService.createAlbum(albumPayload).subscribe({
+    this.albumService.createAlbum(formData).subscribe({
       next: (res) => {
         this.albums.push(res);
         this.closeCreateModal();
-
-        this.toast.showMessage('Create successful artists!', 'success');
+        this.toast.showMessage('Album created successfully!', 'success');
       },
       error: (err) => {
         console.error('Lỗi tạo album:', err);
-        this.toast.showMessage('Create failed artists!', 'error');
+        this.toast.showMessage(
+          'Create failed: ' + (err.error?.image_file || err.error?.Album_type || 'Unknown error'),
+          'error'
+        );
       },
     });
   }

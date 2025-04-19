@@ -13,7 +13,7 @@
   
       <main class="flex-1 bg-[#121212] mx-2 px-6">
     
-        <header class="flex items-center gap-4 mb-6 sticky top-[70px] z-40  py-2">
+        <header class="flex items-center gap-4 mb-6 sticky top-[70px] z-40  py-2 bg-[#121212]">
             <div
               (click)="navigateToHome()"
               class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
@@ -52,11 +52,22 @@
           </div>
         </section>
     
-        <section  class="p-2">
+        <section class="p-2">
           <div class="grid grid-cols-4 gap-6">
-            <div *ngFor="let item of album" class="bg-[#181818] rounded-lg m-2 p-4 hover:bg-[#282828] transition-colors cursor-pointer">
-              <img (click)="navigateToAlbum(item.id)"  [src]="
-                    item.artists[0]?.artist_photo || '/assets/Img/imgsptf.jpg'" alt="Discover Weekly" class="w-full h-40 object-cover rounded-lg mb-4">
+            <div
+              *ngFor="let item of album"
+              class="bg-[#181818] rounded-lg m-2 p-4 hover:bg-[#282828] transition-colors cursor-pointer"
+            >
+              <img
+                (click)="navigateToAlbum(item.id)"
+                [src]="
+                  item.Album_type === 1
+                    ? (item.Album_photo || '/assets/Img/imgsptf.jpg')
+                    : (item.artists[0]?.artist_photo || '/assets/Img/imgsptf.jpg')
+                "
+                alt="{{ item.title }}"
+                class="w-full h-40 object-cover rounded-lg mb-4"
+              />
               <h3 class="text-lg font-semibold">{{ item.title }}</h3>
               <p class="text-gray-400 text-sm">Các album phổ biến nhất hiện nay.</p>
             </div>
@@ -64,6 +75,10 @@
         </section>
   
        </main>
+    </div>
+    <div class="h-[75px]">
+      
+
     </div>
   </body>
   

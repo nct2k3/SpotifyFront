@@ -10,9 +10,9 @@
     <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
 
     <!-- Main Content -->
-    <main class="flex-1 px-6 bg-gradient-to-r from-green-950 to-black rounded-xl m-1">
+    <main class="flex-1 px-6 bg-gradient-to-r from-yellow-950 to-black rounded-xl m-1">
       <!-- Header Tabs -->
-      <header class="flex items-center gap-4 mb-6 mt-2 sticky top-[70px] z-40 bg-gradient-to-r from-green-950 to-black py-2">
+      <header class="flex items-center gap-4 mb-6 mt-2 sticky top-[70px] z-40 bg-gradient-to-r from-yellow-950 to-black py-2">
         <div
           class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
@@ -50,7 +50,7 @@
           </div>
           <div class="flex flex-wrap gap-6">
             <div
-              *ngFor="let item of songs.slice(0, 4)"
+              *ngFor="let item of songs.slice(0, 5)"
               class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200 group"
             >
               <div class="w-44 h-44 relative">
@@ -121,7 +121,7 @@
           <h2
             class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
           >
-            Music worth listening to
+          Popular music
           </h2>
           <a
             class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
@@ -130,25 +130,31 @@
           </a>
         </div>
         <div class="flex flex-wrap gap-6">
-          <div
-            class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200"
-          >
-            <div class="w-44 h-44 relative">
-              <img
-                src="https://photo-zmp3.zadn.vn/avatars/0/9/e/c/09ec67133c4ff1e7c49e79aea4980ede.jpg"
-                alt="Your Library"
-                class="rounded-xl w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
-              />
-            </div>
-            <div class="text-sm text-gray-200 text-center mt-3">
-              Dòng chảy của rap Việt luôn cuồn cuộn.
+          <div *ngFor="let item of albumcustom.slice(0, 5)">
+            <div
+              (click)="navigateToAlbum(item.id)"
+              id="{{ item.id }}"
+              class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200"
+            >
+              <div class="w-44 h-44 relative vinyl-container bg-gray-800 p-2 rounded-full">
+                <div class="w-40 h-40 bg-gray-700 p-2 rounded-full">
+                <img
+                  [src]="item.Album_photo || '/assets/Img/imgsptf.jpg'"
+                  [alt]="item.title"
+                  class="rounded-full w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200 "
+                />
+                </div>
+              </div>
+              <div class="text-sm text-gray-200 text-center mt-3">
+                {{ item.title }}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Spacer -->
-      <div class="h-[80px]"></div>
+      <div class="h-[100px]"></div>
     </main>
   </div>
 </body>
