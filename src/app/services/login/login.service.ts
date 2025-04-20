@@ -7,10 +7,6 @@ import { Observable } from 'rxjs';
 })
 export class LoginService {
   private baseUrl = 'http://127.0.0.1:8000/api/auth'; // URL của API
-  private token: string = '';
-  private user: string = '';
-  private email: string = '';
-  private userId: number = 0;
 
   constructor(private http: HttpClient) {}
 
@@ -20,11 +16,15 @@ export class LoginService {
   }
 
   // Lưu thông tin đăng nhập
-  setAuthData(token: string, user: string, email: string, user_id: number): void {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', user);
-    localStorage.setItem('email', email);
-    localStorage.setItem('user_id', user_id.toString());
+  setAuthData(response: any): void {
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('user', response.username);
+    localStorage.setItem('email', response.email);
+    localStorage.setItem('user_id', response.user_id.toString());
+    if (response.is_staff.toString() == 'true') {
+      localStorage.setItem('is_staff', response.is_staff.toString());
+      localStorage.setItem('is_superuser', response.is_superuser.toString());
+    }
   }
 
   // Hàm logout
@@ -33,6 +33,8 @@ export class LoginService {
     localStorage.removeItem('user');
     localStorage.removeItem('email');
     localStorage.removeItem('user_id');
+    localStorage.removeItem('is_staff');
+    localStorage.removeItem('is_superuser');
     return this.http.post(`${this.baseUrl}/logout`, {});
   }
 }
