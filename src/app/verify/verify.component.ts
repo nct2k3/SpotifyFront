@@ -6,20 +6,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./verify.component.css'],
 })
 export class VerifyComponent implements OnInit {
-  token: string = '';
   user: string = '';
-  email: string = '';
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.token = localStorage.getItem('token') || '';
-    this.user = localStorage.getItem('user') || '';
-    this.email = localStorage.getItem('email') || '';
-
-    if (this.token && this.user && this.email) {
-      // Đảm bảo các giá trị đã được tải trước khi điều hướng nên dùng window.location.href
-      window.location.href = '/home'; 
+    if (localStorage.getItem('token')) {
+      if (localStorage.getItem('is_staff') == 'true') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = '/home';
+      }
     } else {
       this.router.navigate(['/login']);
     }

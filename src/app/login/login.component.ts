@@ -13,7 +13,6 @@ export class LoginComponent {
     // Kiểm tra nếu đã có token trong localStorage
     const token = localStorage.getItem('token');
     if (token) {
-      console.log('Đã đăng nhập, chuyển hướng đến trang /home');
       this.router.navigate(['/home']); // Chuyển hướng đến trang /home
     }
   }
@@ -29,7 +28,7 @@ export class LoginComponent {
       this.loginService.login(credentials).subscribe(
         (response: any) => {
           // Lưu thông tin vào LoginService
-          this.loginService.setAuthData(response.token, response.username, response.email, response.user_id);
+          this.loginService.setAuthData(response);
 
           // Chuyển hướng đến trang /verify
           this.router.navigate(['/verify']);

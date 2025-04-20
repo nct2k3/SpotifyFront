@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ProfileService {
-  private baseUrl = 'http://127.0.0.1:8000/api/auth/user/';
+  private baseUrl = 'http://127.0.0.1:8000/api/auth/users/';
   private userId: string = '';
   private token: string = '';
 
