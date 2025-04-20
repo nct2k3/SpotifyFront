@@ -17,14 +17,17 @@ export class ListAlbumComponent {
   email: string | null = '';
   userId: string | null = '';
   sidebarVisible = true;
+  isLoading: boolean = false;
   constructor(private songsService: SongsService,private router: Router,private albumService: AlbumService  ) {}
 
   ngOnInit() {
   this.username = localStorage.getItem('user');
   this.email = localStorage.getItem('email');
   this.userId = localStorage.getItem('user_id');
+  this.isLoading = true;
   this.albumService.getAlbum().subscribe((data: any) => {
     this.album = data;
+    this.isLoading = false;
   });
   this.songsService.getTrack().subscribe((data: any) => {
     this.songs = data;
@@ -39,6 +42,7 @@ export class ListAlbumComponent {
         console.error('Error fetching playlist:', error);
       }
     });
+    
   }
   }
   @ViewChild(FooterComponent, { static: false }) footerComponent!: FooterComponent;

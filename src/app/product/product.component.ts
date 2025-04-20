@@ -19,14 +19,17 @@ export class ProductComponent {
   userId: string | null = '';
   sidebarVisible = true;
   isSong=true;
+  isLoading: boolean = false;
   constructor(private songsService: SongsService,private router: Router, private albumService: AlbumService ) {}
 
   ngOnInit() {
   this.username = localStorage.getItem('user');
   this.email = localStorage.getItem('email');
   this.userId = localStorage.getItem('user_id');
+  this.isLoading = true;
   this.albumService.getAlbum().subscribe((data: any) => {
     this.album = data;
+    this.isLoading = false;
   });
 
   if (this.userId) {

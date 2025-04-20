@@ -10,74 +10,108 @@
     <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
 
     <!-- Main Content -->
-    <main class="flex-1 px-6 bg-gradient-to-r from-yellow-950 to-black rounded-xl m-1">
+    <main class="flex-1 px-6 bg-gradient-to-r from-yellow-950 to-black rounded-xl m-1 relative">
+      <!-- Spinner loading cho toàn bộ nội dung -->
+      <div
+        *ngIf="isLoading"
+        class="absolute inset-0 flex items-center justify-center bg-gradient-to-r opacity-50 bg-black bg-opacity-75 z-50 rounded-xl"
+      >
+        <div class="flex flex-col items-center">
+          <svg
+            class="w-12 h-12 text-green-500 animate-spin"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p class="text-white mt-4">Loading content...</p>
+        </div>
+      </div>
+
       <!-- Header Tabs -->
-      <header class="flex items-center gap-4 mb-6 mt-2 sticky top-[70px] z-40 bg-gradient-to-r from-yellow-950 to-black py-2">
+      <header class="flex items-center gap-4 mb-6 mt-2 sticky top-[70px] z-40 bg-gradient-to-r from-yellow-950 to-black py-2" [ngClass]="{ 'opacity-50': isLoading }">
         <div
           class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          [class.pointer-events-none]="isLoading"
         >
           All
         </div>
         <div
-        (click)="navigateToListSong()"
-          class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          (click)="navigateToListSong()"
+          class="opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          [class.pointer-events-none]="isLoading"
         >
           Song
         </div>
         <div
-        (click)="navigateToMylistalbum()"
-          class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          (click)="navigateToMylistalbum()"
+          class="opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          [class.pointer-events-none]="isLoading"
         >
           Album
         </div>
       </header>
 
       <!-- Recommended for you -->
-           
-        <section class="mt-8">
-          <div class="flex justify-between items-center mb-4">
-            <h2
-              class="p-2 text-2xl font-bold text-gray-100  transition-colors duration-200"
-            >
-              Recommended for you
-            </h2>
-            <a
+      <section class="mt-8" [ngClass]="{ 'opacity-50': isLoading }">
+        <div class="flex justify-between items-center mb-4">
+          <h2
+            class="p-2 text-2xl font-bold text-gray-100 transition-colors duration-200"
+          >
+            Recommended for you
+          </h2>
+          <a
             (click)="navigateToListSong()"
-              class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
-            >
-              Show All
-            </a>
-          </div>
-          <div class="flex flex-wrap gap-6">
-            <div
-              *ngFor="let item of songs.slice(0, 5)"
-              class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200 group"
-            >
-              <div class="w-44 h-44 relative">
+            class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+            [class.pointer-events-none]="isLoading"
+          >
+            Show All
+          </a>
+        </div>
+        <div class="flex flex-wrap gap-6">
+          <div
+            *ngFor="let item of songs.slice(0, 5)"
+            class="rounded-lg w-44 h-auto flex flex-col items-center transition-colors duration-200 group"
+            [class.pointer-events-none]="isLoading"
+          >
+            <div class="w-44 h-44 relative">
+              <img
+                [src]="item.image_location || 'https://static1.anpoimages.com/wordpress/wp-content/uploads/2024/04/spotify-feature-image.jpg'"
+                [alt]="item.title || 'No title available'"
+                class="rounded-xl w-full h-full object-cover shadow-md hover:scale-110 transition-transform duration-300"
+                (click)="navigateToDetail(item.id)"
+              />
+              <!-- Play button: Visible only on hover, positioned at bottom-right -->
+              <div class="absolute top-[120px] right-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <img
-                  [src]="item.image_location || 'https://static1.anpoimages.com/wordpress/wp-content/uploads/2024/04/spotify-feature-image.jpg'"
-                  [alt]="item.title || 'No title available'"
-                  class="rounded-xl w-full h-full object-cover shadow-md hover:scale-110 transition-transform duration-300"
-                  (click)="navigateToDetail(item.id)"
+                  src="https://img.icons8.com/?size=100&id=59862&format=png&color=ffffff"
+                  (click)="nextTrack(item)"
+                  alt="Play"
+                  class="h-12 w-12 p-3 bg-[#1DB954] rounded-full hover:scale-110 cursor-pointer transition-transform duration-200"
                 />
-                <!-- Play button: Visible only on hover, positioned at bottom-right -->
-                <div class="absolute top-[120px] right-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <img
-                    src="https://img.icons8.com/?size=100&id=59862&format=png&color=ffffff"
-                    (click)="nextTrack(item)"
-                    alt="Play"
-                    class="h-12 w-12 p-3 bg-[#1DB954] rounded-full hover:scale-110 cursor-pointer transition-transform duration-200"/>
-                </div>
-              </div>
-              <div class="text-sm text-gray-200 text-center mt-3">
-                {{ item.title || 'Unknown Title' }}
               </div>
             </div>
+            <div class="text-sm text-gray-200 text-center mt-3">
+              {{ item.title || 'Unknown Title' }}
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
       <!-- Artist albums -->
-      <section class="mt-10">
+      <section class="mt-10" [ngClass]="{ 'opacity-50': isLoading }">
         <div class="flex justify-between items-center mb-4">
           <h2
             class="p-2 text-2xl font-bold text-gray-100 transition-colors duration-200"
@@ -87,12 +121,16 @@
           <a
             (click)="navigateToMylistalbum()"
             class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+            [class.pointer-events-none]="isLoading"
           >
             Show All
           </a>
         </div>
         <div class="flex flex-wrap gap-6">
-          <div *ngFor="let item of album.slice(0, 5)">
+          <div
+            *ngFor="let item of album.slice(0, 5)"
+            [class.pointer-events-none]="isLoading"
+          >
             <div
               (click)="navigateToAlbum(item.id)"
               id="{{ item.id }}"
@@ -116,21 +154,25 @@
       </section>
 
       <!-- Music worth listening to -->
-      <section class="mt-10">
+      <section class="mt-10" [ngClass]="{ 'opacity-50': isLoading }">
         <div class="flex justify-between items-center mb-4">
           <h2
             class="p-2 text-2xl font-bold text-gray-100 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
           >
-          Popular music
+            Popular music
           </h2>
           <a
             class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+            [class.pointer-events-none]="isLoading"
           >
             Show All
           </a>
         </div>
         <div class="flex flex-wrap gap-6">
-          <div *ngFor="let item of albumcustom.slice(0, 5)">
+          <div
+            *ngFor="let item of albumcustom.slice(0, 5)"
+            [class.pointer-events-none]="isLoading"
+          >
             <div
               (click)="navigateToAlbum(item.id)"
               id="{{ item.id }}"
@@ -138,11 +180,11 @@
             >
               <div class="w-44 h-44 relative vinyl-container bg-gray-800 p-2 rounded-full">
                 <div class="w-40 h-40 bg-gray-700 p-2 rounded-full">
-                <img
-                  [src]="item.Album_photo || '/assets/Img/imgsptf.jpg'"
-                  [alt]="item.title"
-                  class="rounded-full w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200 "
-                />
+                  <img
+                    [src]="item.Album_photo || '/assets/Img/imgsptf.jpg'"
+                    [alt]="item.title"
+                    class="rounded-full w-full h-full object-cover shadow-md hover:scale-105 transition-transform duration-200"
+                  />
                 </div>
               </div>
               <div class="text-sm text-gray-200 text-center mt-3">

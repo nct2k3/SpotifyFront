@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
   userId: string | null = ''; 
   albumcustom: any[] = [];
   
+  isLoading: boolean = false; 
 
   constructor(private songsService: SongsService, private albumService: AlbumService,
     private router: Router , private SharedService:SharedService
@@ -36,7 +37,7 @@ export class HomeComponent implements OnInit {
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
-
+    this.isLoading = true;
     this.songsService.getTrack().subscribe((data: any) => {
       this.songs = data;
       this.SharedService.updateSharedData(this.songs)
@@ -44,6 +45,7 @@ export class HomeComponent implements OnInit {
     this.albumService.getAlbum().subscribe((data: any) => {
       this.album = data;
       this.albumcustom = data.filter((item: any) => item.Album_type === 1);
+      this.isLoading = false;
     });
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe((data: any) => {

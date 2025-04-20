@@ -12,11 +12,8 @@ export class AlbumService {
   constructor(private http: HttpClient) {}
 
   getAlbum(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Token ${token}`,
-    });
-    return this.http.get<any>(this.apiUrl, { headers }).pipe(
+  
+    return this.http.get<any>(this.apiUrl).pipe(
       tap((data) => console.log('Albums data:', data.results)),
       map((data) => data.results)
     );

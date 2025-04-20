@@ -1,11 +1,17 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+export interface Notification {
+  id: string;
+  title: string;
+  user: string;
+  created_at: string;
+}
 @Injectable({
   providedIn: 'root'
 })
+
 export class SongsService {
   private apiUrl = 'http://127.0.0.1:8000/api/songs/';
   private apiUrlArtist = 'https://f14c4be8-2a85-4630-a08b-e8cde023ae41.mock.pstmn.io/songsArtiest';
@@ -92,7 +98,7 @@ export class SongsService {
   }
 
   getMyplayListAll(userId: string): Observable<any[]> {
-    return this.http.get<any>(this.apiUrlMyplaylist).pipe(
+    return this.http.get<any>(this.apiUrls).pipe(
       map(data => {
         const playlists = (data.results || data).filter((item: any) => item.user === userId);
         return playlists;
@@ -100,9 +106,43 @@ export class SongsService {
     );
   }
 
-  // Lấy album theo id
   getAlbum(id: string): Observable<any> {
     const url = `${this.apiUrlArtist}/${id}`;
     return this.http.get<any>(url);
   }
+
+  getMyNotification(userId: string): Observable<any[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrls}notifications/`, { headers }).pipe(
+      map(data => {
+        const notifications = (data.results || data).filter((item: any) => item.user === userId);
+        console.log('Thông báo:', notifications);
+        return notifications;
+        
+      })
+    );
+  }
+  createNotification(userId: string, title: string): Observable<Notification> {
+    const payload = {
+      title: title,
+      user: userId,
+    };
+    const headers = this.getAuthHeaders();
+    return this.http.post<Notification>(`${this.apiUrls}notifications/`, payload,{ headers }).pipe(
+      catchError((error) => {
+        console.error('Lỗi khi tạo thông báo:', error);
+        return throwError(() => new Error('Không thể tạo thông báo, vui lòng thử lại.'));
+      })
+    );
+  }
+  deleteNotification(notificationId: string): Observable<void> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete<void>(`${this.apiUrls}notifications/${notificationId}/`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Lỗi khi xóa thông báo:', error);
+        return throwError(() => new Error('Không thể xóa thông báo, vui lòng thử lại.'));
+      })
+    );
+  }
+
 }

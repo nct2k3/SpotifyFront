@@ -3,7 +3,14 @@ import { SongsService } from '../services/Songs/songs.service';
 import { ArtistsService } from '../services/artists/artists.service';
 import { Artist, ArtistResponse } from '../Models/artists.model';
 import { ToastMessageComponent } from '../shared/toast-message/toast-message.component';
+import { UsersService } from '../services/users/users.service';
 
+export interface Notification {
+  id: string;
+  title: string;
+  user: string;
+  created_at: string;
+}
 @Component({
   selector: 'app-admin-songs-management',
   templateUrl: './admin-songs-management.component.html',
@@ -22,6 +29,11 @@ export class AdminSongsManagementComponent implements OnInit {
   artistSearch: string = '';
   selectedArtists: ArtistResponse[] = [];
   showArtistDropdown: boolean = false;
+  users: any[] = [];
+
+
+  isLoading: boolean = false; 
+  isSubmitting: boolean = false; 
 
   // Lưu file tạm thời
   selectedSongFile: File | null = null;
@@ -48,18 +60,43 @@ export class AdminSongsManagementComponent implements OnInit {
 
   constructor(
     private songsService: SongsService,
-    private artistsService: ArtistsService
+    private artistsService: ArtistsService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit(): void {
-    this.songsService.getTrack().subscribe((data) => {
-      console.log('Songs API data:', data);
-      this.songs = data;
+    this.loadData();
+    this.usersService.getTrack().subscribe((data) => {
+      this.users = data;
     });
+  }
 
-    this.artistsService.getArtists().subscribe((data) => {
-      this.artists = data;
-      this.filteredArtists = data;
+  loadData(): void {
+    this.isLoading = true;
+    this.songsService.getTrack().subscribe({
+      next: (data) => {
+        console.log('Songs API data:', data);
+        this.songs = data;
+      },
+      error: (err) => {
+        console.error('Lỗi tải bài hát:', err);
+        this.toast.showMessage('Lỗi tải bài hát!', 'error');
+      },
+      complete: () => {
+        this.artistsService.getArtists().subscribe({
+          next: (data) => {
+            this.artists = data;
+            this.filteredArtists = data;
+          },
+          error: (err) => {
+            console.error('Lỗi tải nghệ sĩ:', err);
+            this.toast.showMessage('Lỗi tải nghệ sĩ!', 'error');
+          },
+          complete: () => {
+            this.isLoading = false;
+          },
+        });
+      },
     });
   }
 
@@ -70,6 +107,7 @@ export class AdminSongsManagementComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.isEditing = false;
+    this.isSubmitting = false; // Reset trạng thái submitting
     this.newSong = {
       title: '',
       artist_ids: [],
@@ -107,12 +145,13 @@ export class AdminSongsManagementComponent implements OnInit {
   }
 
   filteredSongs() {
-    return this.songs.filter((song) =>
-      song.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      song.artists.some((artist: Artist) =>
-        artist.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-      ) ||
-      song.genre.toLowerCase().includes(this.searchTerm.toLowerCase())
+    return this.songs.filter(
+      (song) =>
+        song.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        song.artists.some((artist: Artist) =>
+          artist.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        ) ||
+        song.genre.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
 
@@ -160,8 +199,18 @@ export class AdminSongsManagementComponent implements OnInit {
   }
 
   loadSongs() {
-    this.songsService.getTrack().subscribe((data) => {
-      this.songs = data;
+    this.isLoading = true;
+    this.songsService.getTrack().subscribe({
+      next: (data) => {
+        this.songs = data;
+      },
+      error: (err) => {
+        console.error('Lỗi tải bài hát:', err);
+        this.toast.showMessage('Lỗi tải bài hát!', 'error');
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
     });
   }
 
@@ -172,16 +221,16 @@ export class AdminSongsManagementComponent implements OnInit {
   }
 
   deleteSong(songId: string) {
-    this.songsService.deleteSong(songId).subscribe(
-      () => {
+    this.songsService.deleteSong(songId).subscribe({
+      next: () => {
         this.toast.showMessage('Delete successful!', 'success');
         this.loadSongs();
       },
-      (error) => {
+      error: (error) => {
         console.error('Lỗi khi xóa bài hát:', error);
         this.toast.showMessage('Delete failed!', 'error');
-      }
-    );
+      },
+    });
   }
 
   onFileSelected(event: any, field: string) {
@@ -208,7 +257,7 @@ export class AdminSongsManagementComponent implements OnInit {
         return;
       }
       this.selectedSongFile = file;
-      this.newSong.file_location = fileName; // Tạm thời hiển thị tên file
+      this.newSong.file_location = fileName;
     } else if (field === 'image_location') {
       this.imageError = '';
       const validImageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
@@ -225,7 +274,7 @@ export class AdminSongsManagementComponent implements OnInit {
         return;
       }
       this.selectedImageFile = file;
-      this.newSong.image_location = fileName; // Tạm thời hiển thị tên file
+      this.newSong.image_location = fileName;
     }
   }
 
@@ -267,14 +316,17 @@ export class AdminSongsManagementComponent implements OnInit {
 
     return isValid;
   }
+
   onSubmit() {
     if (!this.validateForm()) {
       return;
     }
   
+    this.isSubmitting = true;
+  
     const formData = new FormData();
     formData.append('title', this.newSong.title);
-    formData.append('artist_ids', this.newSong.artist_ids.toString()); 
+    formData.append('artist_ids', this.newSong.artist_ids.toString());
     formData.append('genre', this.newSong.genre);
     formData.append('duration', this.newSong.duration?.toString() || '');
     formData.append('lyrics', this.newSong.lyrics);
@@ -291,10 +343,33 @@ export class AdminSongsManagementComponent implements OnInit {
       ? this.songsService.updateSong(this.idSongEdit, formData)
       : this.songsService.createSong(formData);
   
-    action.subscribe(
-      (res: any) => {
+    action.subscribe({
+      next: (res: any) => {
         this.newSong.file_location = res.file_location;
         this.newSong.image_location = res.image_location;
+  
+       
+        if (!this.isEditing) {
+          this.users.forEach(user => {
+            const notification: Notification = {
+              id: '',
+              title: `Nhạc mới vừa được thêm: ${this.newSong.title}`, 
+              user: user.id, // ID của user nhận thông báo
+              created_at: new Date().toISOString() 
+            };
+  
+            this.songsService.createNotification(user.id, notification.title).subscribe({
+              next: (res) => {
+                console.log(`Notification sent to user ${user.id}:`, res);
+              },
+              error: (err) => {
+                console.error(`Error sending notification to user ${user.id}:`, err);
+                this.toast.showMessage(`Không thể gửi thông báo cho user ${user.id}`, 'error');
+              }
+            });
+          });
+        }
+  
         this.closeModal();
         this.toast.showMessage(
           this.isEditing ? 'Update successful!' : 'Create successful!',
@@ -302,7 +377,7 @@ export class AdminSongsManagementComponent implements OnInit {
         );
         this.loadSongs();
       },
-      (err) => {
+      error: (err) => {
         console.error('Error:', err);
         let errorMessage = this.isEditing ? 'Update failed!' : 'Create failed!';
         if (err.status === 413) {
@@ -313,7 +388,10 @@ export class AdminSongsManagementComponent implements OnInit {
           errorMessage = 'Unauthorized. Please check your token.';
         }
         this.toast.showMessage(errorMessage, 'error');
-      }
-    );
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      },
+    });
   }
 }

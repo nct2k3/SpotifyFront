@@ -36,6 +36,7 @@ import { AdminArtistManagementComponent } from './admin-artist-management/admin-
 import { ListAlbumComponent } from './list-album/list-album.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AdminDashboardManagementComponent } from './admin-dashboard-management/admin-dashboard-management.component';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { AdminDashboardManagementComponent } from './admin-dashboard-management/
     AdminArtistManagementComponent,
     ProfileComponent,
     ListAlbumComponent,
-    AdminDashboardManagementComponent
+    AdminDashboardManagementComponent,
+    NotificationsComponent
   ],
   imports: [
     BrowserModule,

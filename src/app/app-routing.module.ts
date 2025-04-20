@@ -15,6 +15,7 @@ import { GeneralChatComponent } from './general-chat/general-chat.component';
 import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
+import { NotificationsComponent } from './notifications/notifications.component';
 const routes: Routes = [
   { path: 'login', component:LoginComponent  },
   { path: 'register', component: RegisterComponent },
@@ -27,11 +28,13 @@ const routes: Routes = [
   {path:'video',component:VideoComponent},
   {path:'search',component:SearchComponent},
   {path:'allAlbum', component:ListAlbumComponent},
+  { path: 'notifications', component: NotificationsComponent },
   // { path: '**', redirectTo: 'home' },
   { path: 'verify', component: VerifyComponent },
   { path: 'profile', component: ProfileComponent },
   { path: '**', redirectTo: 'home' },
-  { path: 'register', component: RegisterComponent }
+  { path: 'register', component: RegisterComponent },
+  
 ];
 
 @NgModule({

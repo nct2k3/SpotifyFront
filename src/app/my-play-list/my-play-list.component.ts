@@ -18,6 +18,8 @@ export class MyPlayListComponent {
   myplaylist: any[] = [];
 
   myplaylistAll: any[] = [];
+  
+  isLoading: boolean = false;
 
 
   constructor(private songsService: SongsService, private sharedService: SharedService,private router: Router) {}
@@ -32,7 +34,7 @@ export class MyPlayListComponent {
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
- 
+    this.isLoading = true;
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe({
         next: (data: any) => {
@@ -54,6 +56,8 @@ export class MyPlayListComponent {
           console.error('Error fetching playlist:', error);
         }
       })
+      this.isLoading = false;
+      
     } else {
       this.router.navigate(['/login']); 
     }

@@ -1,0 +1,14 @@
+/* Đảm bảo phong cách đồng bộ với HomeComponent */
+main {
+    min-height: calc(100vh - 70px);
+  }
+  
+  /* Tùy chỉnh nếu cần */
+  input:focus {
+    border-color: #a855f7; /* purple-500 */
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }

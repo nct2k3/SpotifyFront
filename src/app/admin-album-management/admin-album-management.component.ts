@@ -34,6 +34,10 @@ export class AdminAlbumManagementComponent implements OnInit {
   selectedArtists: ArtistResponse[] = [];
   showArtistDropdown: boolean = false;
 
+  // Biến trạng thái loading
+  isLoading: boolean = false; // Cho việc tải dữ liệu ban đầu
+  isSubmitting: boolean = false; // Cho việc tạo/cập nhật
+
   newAlbum: any = {
     title: '',
     artist_ids: [],
@@ -50,9 +54,7 @@ export class AdminAlbumManagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadAlbums();
-    this.loadSongs();
-    this.loadArtists();
+    this.loadData();
     document.addEventListener('click', this.handleClickOutside.bind(this));
   }
 
@@ -60,7 +62,9 @@ export class AdminAlbumManagementComponent implements OnInit {
     document.removeEventListener('click', this.handleClickOutside.bind(this));
   }
 
-  loadAlbums(): void {
+  loadData(): void {
+    this.isLoading = true;
+    // Tải albums
     this.albumService.getAlbum().subscribe({
       next: (res) => {
         this.albums = res;
@@ -69,6 +73,52 @@ export class AdminAlbumManagementComponent implements OnInit {
       error: (err) => {
         console.error('Lỗi tải album:', err);
         this.toast.showMessage('Lỗi tải album!', 'error');
+      },
+      complete: () => {
+        // Tải songs
+        this.songService.getTrack().subscribe({
+          next: (res) => {
+            this.availableSongs = res;
+            this.filteredSongs = res;
+          },
+          error: (err) => {
+            console.error('Lỗi tải songs:', err);
+            this.toast.showMessage('Lỗi tải songs!', 'error');
+          },
+          complete: () => {
+            // Tải artists
+            this.artistsService.getArtists().subscribe({
+              next: (res) => {
+                this.availableArtists = res;
+                this.filteredArtists = res;
+              },
+              error: (err) => {
+                console.error('Lỗi tải artists:', err);
+                this.toast.showMessage('Lỗi tải artists!', 'error');
+              },
+              complete: () => {
+                this.isLoading = false; // Tắt trạng thái loading khi hoàn tất
+              },
+            });
+          },
+        });
+      },
+    });
+  }
+
+  loadAlbums(): void {
+    this.isLoading = true;
+    this.albumService.getAlbum().subscribe({
+      next: (res) => {
+        this.albums = res;
+        this.originalAlbums = res;
+      },
+      error: (err) => {
+        console.error('Lỗi tải album:', err);
+        this.toast.showMessage('Lỗi tải album!', 'error');
+      },
+      complete: () => {
+        this.isLoading = false;
       },
     });
   }
@@ -167,6 +217,8 @@ export class AdminAlbumManagementComponent implements OnInit {
       return;
     }
 
+    this.isSubmitting = true; // Bật trạng thái submitting
+
     const formData = new FormData();
     formData.append('title', this.newAlbum.title);
     formData.append('release_date', this.newAlbum.release_date);
@@ -186,9 +238,8 @@ export class AdminAlbumManagementComponent implements OnInit {
     if (this.newAlbum.image_file) {
       formData.append('image_file', this.newAlbum.image_file);
     } else if (this.albumToEdit.image_location) {
-      formData.append('image_location', this.albumToEdit.image_location); // Retain existing image
+      formData.append('image_location', this.albumToEdit.image_location);
     }
-
 
     this.albumService.updateAlbum(this.albumToEdit.id, formData).subscribe({
       next: (res) => {
@@ -209,6 +260,9 @@ export class AdminAlbumManagementComponent implements OnInit {
           }
         }
         this.toast.showMessage(`Cập nhật thất bại: ${errorMessage}`, 'error');
+      },
+      complete: () => {
+        this.isSubmitting = false; // Tắt trạng thái submitting
       },
     });
   }
@@ -357,6 +411,7 @@ export class AdminAlbumManagementComponent implements OnInit {
     this.songSearchTerm = '';
     this.isModalOpen = false;
     this.isEditing = false;
+    this.isSubmitting = false; // Reset trạng thái submitting
     this.albumToEdit = null;
   }
 
@@ -375,6 +430,8 @@ export class AdminAlbumManagementComponent implements OnInit {
       this.toast.showMessage('Vui lòng chọn hình ảnh cho album!', 'error');
       return;
     }
+
+    this.isSubmitting = true; // Bật trạng thái submitting
 
     const formData = new FormData();
     formData.append('title', this.newAlbum.title);
@@ -398,6 +455,9 @@ export class AdminAlbumManagementComponent implements OnInit {
         console.error('Lỗi tạo album:', err);
         let errorMessage = err.error?.message || err.error?.image_file || err.error?.Album_type || 'Lỗi không xác định';
         this.toast.showMessage(`Tạo album thất bại: ${errorMessage}`, 'error');
+      },
+      complete: () => {
+        this.isSubmitting = false; // Tắt trạng thái submitting
       },
     });
   }
