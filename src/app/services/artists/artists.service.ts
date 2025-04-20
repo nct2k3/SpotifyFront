@@ -1,11 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
-import {
-  ApiResponseArtist,
-  Artist,
-  ArtistResponse,
-} from 'src/app/Models/artists.model';
+import { map, Observable } from 'rxjs';
+import { ApiResponseArtist, ArtistResponse } from 'src/app/Models/artists.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,43 +13,34 @@ export class ArtistsService {
 
   getArtists(): Observable<ArtistResponse[]> {
     return this.http.get<ApiResponseArtist>(this.apiUrl).pipe(
-      map((response) => response.results) // Trả về mảng các nghệ sĩ từ trường results
+      map((response) => response.results)
     );
   }
 
-  // Tạo mới một nghệ sĩ
-  createArtist(artistData: any): Observable<any> {
+  createArtist(formData: FormData): Observable<any> {
     const token = localStorage.getItem('token');
-    console.log(token);
-
     const headers = new HttpHeaders({
       Authorization: `Token ${token}`,
     });
 
-    return this.http.post<any>(this.apiUrl, artistData, {headers}); // Gửi dữ liệu nghệ sĩ mới lên server
+    return this.http.post<any>(this.apiUrl, formData, { headers });
   }
 
-  // Cập nhật thông tin nghệ sĩ
-  updateArtist(artistId: string, artistData: any): Observable<any> {
+  updateArtist(artistId: string, formData: FormData): Observable<any> {
     const token = localStorage.getItem('token');
-    console.log(token);
-
     const headers = new HttpHeaders({
       Authorization: `Token ${token}`,
     });
 
-    return this.http.put<any>(`${this.apiUrl}${artistId}/`, artistData, {headers}); // Cập nhật thông tin nghệ sĩ
+    return this.http.put<any>(`${this.apiUrl}${artistId}/`, formData, { headers });
   }
 
-  // Xóa một nghệ sĩ theo ID
   deleteArtist(artistId: string): Observable<any> {
     const token = localStorage.getItem('token');
-    console.log(token);
-
     const headers = new HttpHeaders({
       Authorization: `Token ${token}`,
     });
 
-    return this.http.delete<any>(`${this.apiUrl}${artistId}/`, {headers}); // Xóa nghệ sĩ theo ID
+    return this.http.delete<any>(`${this.apiUrl}${artistId}/`, { headers });
   }
 }

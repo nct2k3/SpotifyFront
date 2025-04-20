@@ -22,14 +22,14 @@ export class AdminAlbumManagementComponent implements OnInit {
   showModal: boolean = false;
   albumToEdit: any = null;
 
-  availableSongs: any[] = [];
-  filteredSongs: any[] = [];
+  availableSongs: SongMetadata[] = [];
+  filteredSongs: SongMetadata[] = [];
   songSearchTerm: string = '';
   showSongDropdown: boolean = false;
-  selectedSongs: any[] = [];
+  selectedSongs: SongMetadata[] = [];
 
-  availableArtists: any[] = [];
-  filteredArtists: any[] = [];
+  availableArtists: ArtistResponse[] = [];
+  filteredArtists: ArtistResponse[] = [];
   artistSearchTerm: string = '';
   selectedArtists: ArtistResponse[] = [];
   showArtistDropdown: boolean = false;
@@ -39,7 +39,7 @@ export class AdminAlbumManagementComponent implements OnInit {
     artist_ids: [],
     song_ids: [],
     release_date: '',
-    Album_type: '', // Add Album_type
+    Album_type: '',
     image_file: null,
   };
 
@@ -66,7 +66,10 @@ export class AdminAlbumManagementComponent implements OnInit {
         this.albums = res;
         this.originalAlbums = res;
       },
-      error: (err) => console.error('Lỗi tải album:', err),
+      error: (err) => {
+        console.error('Lỗi tải album:', err);
+        this.toast.showMessage('Lỗi tải album!', 'error');
+      },
     });
   }
 
@@ -76,7 +79,10 @@ export class AdminAlbumManagementComponent implements OnInit {
         this.availableSongs = res;
         this.filteredSongs = res;
       },
-      error: (err) => console.error('Lỗi tải songs:', err),
+      error: (err) => {
+        console.error('Lỗi tải songs:', err);
+        this.toast.showMessage('Lỗi tải songs!', 'error');
+      },
     });
   }
 
@@ -86,7 +92,10 @@ export class AdminAlbumManagementComponent implements OnInit {
         this.availableArtists = res;
         this.filteredArtists = res;
       },
-      error: (err) => console.error('Lỗi tải artists:', err),
+      error: (err) => {
+        console.error('Lỗi tải artists:', err);
+        this.toast.showMessage('Lỗi tải artists!', 'error');
+      },
     });
   }
 
@@ -118,12 +127,16 @@ export class AdminAlbumManagementComponent implements OnInit {
   }
 
   editAlbum(album: any) {
+    if (!album) {
+      this.toast.showMessage('Lỗi: Không có album để chỉnh sửa!', 'error');
+      return;
+    }
     this.isEditing = true;
     this.albumToEdit = album;
     this.newAlbum = {
       title: album.title,
-      release_date: album.release_date?.substring(0, 10),
-      Album_type: album.Album_type.toString(), // Convert to string for select
+      release_date: album.release_date?.substring(0, 10) || '',
+      Album_type: album.Album_type.toString(),
       artist_ids: album.artists.map((a: any) => a.id),
       song_ids: album.songs.map((s: any) => s.id),
       image_file: null,
@@ -132,42 +145,70 @@ export class AdminAlbumManagementComponent implements OnInit {
     this.selectedSongs = album.songs;
     this.artistSearchTerm = '';
     this.songSearchTerm = '';
+    this.filteredArtists = [...this.availableArtists];
+    this.filteredSongs = [...this.availableSongs];
     this.openCreateModal();
   }
 
   updateAlbum() {
-    if (!this.albumToEdit) return;
+    if (!this.albumToEdit) {
+      this.toast.showMessage('Lỗi: Không có album để cập nhật!', 'error');
+      return;
+    }
+
+    // Validate required fields
+    if (!this.newAlbum.title || !this.newAlbum.release_date || !this.newAlbum.Album_type) {
+      this.toast.showMessage('Vui lòng điền đầy đủ các trường bắt buộc!', 'error');
+      return;
+    }
+
+    if (this.newAlbum.artist_ids.length === 0 || this.newAlbum.song_ids.length === 0) {
+      this.toast.showMessage('Phải chọn ít nhất một nghệ sĩ và một bài hát!', 'error');
+      return;
+    }
 
     const formData = new FormData();
     formData.append('title', this.newAlbum.title);
     formData.append('release_date', this.newAlbum.release_date);
     formData.append('Album_type', this.newAlbum.Album_type);
-    if (this.newAlbum.artist_ids.length > 0) {
-      this.newAlbum.artist_ids.forEach((id: string, index: number) => {
-        formData.append(`artist_ids[${index}]`, id);
-      });
-    }
-    if (this.newAlbum.song_ids.length > 0) {
-      this.newAlbum.song_ids.forEach((id: string, index: number) => {
-        formData.append(`song_ids[${index}]`, id);
-      });
-    }
+
+    // Append artist_ids
+    this.newAlbum.artist_ids.forEach((id: string, index: number) => {
+      formData.append(`artist_ids[${index}]`, id);
+    });
+
+    // Append song_ids
+    this.newAlbum.song_ids.forEach((id: string, index: number) => {
+      formData.append(`song_ids[${index}]`, id);
+    });
+
+    // Handle image_file
     if (this.newAlbum.image_file) {
       formData.append('image_file', this.newAlbum.image_file);
+    } else if (this.albumToEdit.image_location) {
+      formData.append('image_location', this.albumToEdit.image_location); // Retain existing image
     }
+
 
     this.albumService.updateAlbum(this.albumToEdit.id, formData).subscribe({
       next: (res) => {
         this.loadAlbums();
         this.closeCreateModal();
-        this.toast.showMessage('Update successful!', 'success');
+        this.toast.showMessage('Cập nhật album thành công!', 'success');
       },
       error: (err) => {
-        console.error('Update failed', err);
-        this.toast.showMessage(
-          'Update failed: ' + (err.error?.image_file || 'Unknown error'),
-          'error'
-        );
+        console.error('Cập nhật thất bại:', err);
+        let errorMessage = 'Lỗi không xác định';
+        if (err.error) {
+          if (err.error.message) {
+            errorMessage = err.error.message;
+          } else if (err.error.image_file) {
+            errorMessage = err.error.image_file;
+          } else if (err.error.errors) {
+            errorMessage = Object.values(err.error.errors).join(', ');
+          }
+        }
+        this.toast.showMessage(`Cập nhật thất bại: ${errorMessage}`, 'error');
       },
     });
   }
@@ -178,35 +219,35 @@ export class AdminAlbumManagementComponent implements OnInit {
         next: () => {
           this.albums = this.albums.filter((a) => a.id !== id);
           if (this.selectedAlbum?.id === id) this.selectedAlbum = null;
-          this.toast.showMessage('Delete successful!', 'success');
+          this.toast.showMessage('Xóa album thành công!', 'success');
         },
         error: (err) => {
           console.error('Lỗi xóa album:', err);
-          this.toast.showMessage('Delete failed!', 'error');
+          this.toast.showMessage('Xóa album thất bại!', 'error');
         },
       });
     }
   }
 
   handleClickOutside(event: MouseEvent) {
-    const song_input = document.getElementById('song_search');
-    const song_dropdown = document.getElementById('song_dropdown');
-    const artist_input = document.getElementById('artist_search');
-    const artist_dropdown = document.getElementById('artist_dropdown');
+    const songInput = document.getElementById('song_search');
+    const songDropdown = document.getElementById('song_dropdown');
+    const artistInput = document.getElementById('artist_search');
+    const artistDropdown = document.getElementById('artist_dropdown');
 
     if (
-      song_input &&
-      !song_input.contains(event.target as Node) &&
-      song_dropdown &&
-      !song_dropdown.contains(event.target as Node)
+      songInput &&
+      !songInput.contains(event.target as Node) &&
+      songDropdown &&
+      !songDropdown.contains(event.target as Node)
     ) {
       this.showSongDropdown = false;
     }
     if (
-      artist_input &&
-      !artist_input.contains(event.target as Node) &&
-      artist_dropdown &&
-      !artist_dropdown.contains(event.target as Node)
+      artistInput &&
+      !artistInput.contains(event.target as Node) &&
+      artistDropdown &&
+      !artistDropdown.contains(event.target as Node)
     ) {
       this.showArtistDropdown = false;
     }
@@ -214,17 +255,13 @@ export class AdminAlbumManagementComponent implements OnInit {
 
   onImageFileChange(event: any) {
     const file = event.target.files[0];
-    if (file) {
-      this.newAlbum.image_file = file;
-    } else {
-      this.newAlbum.image_file = null;
-    }
+    this.newAlbum.image_file = file || null;
   }
 
   onArtistInput(event: any) {
     this.showArtistDropdown = true;
     const value = event.target.value.toLowerCase();
-    this.filteredArtists = this.filteredArtists.filter(
+    this.filteredArtists = this.availableArtists.filter(
       (artist) =>
         artist.name.toLowerCase().includes(value) &&
         !this.selectedArtists.some((selected) => selected.id === artist.id)
@@ -238,27 +275,25 @@ export class AdminAlbumManagementComponent implements OnInit {
   addArtist(artist: ArtistResponse) {
     this.selectedArtists.push(artist);
     this.newAlbum.artist_ids.push(artist.id);
-    this.filteredArtists = this.filteredArtists.filter(
-      (a) => a.id !== artist.id
+    this.filteredArtists = this.availableArtists.filter(
+      (a) => !this.selectedArtists.some((selected) => selected.id === a.id)
     );
     this.artistSearchTerm = '';
     this.showArtistDropdown = false;
   }
 
   removeArtist(artist: ArtistResponse) {
-    this.selectedArtists = this.selectedArtists.filter(
-      (a) => a.id !== artist.id
+    this.selectedArtists = this.selectedArtists.filter((a) => a.id !== artist.id);
+    this.newAlbum.artist_ids = this.newAlbum.artist_ids.filter((id: string) => id !== artist.id);
+    this.filteredArtists = [...this.availableArtists].filter(
+      (a) => !this.selectedArtists.some((selected) => selected.id === a.id)
     );
-    this.newAlbum.artist_ids = this.newAlbum.artist_ids.filter(
-      (id: string) => id !== artist.id
-    );
-    this.filteredArtists.push(artist);
   }
 
   onSongInput(event: any) {
     this.showSongDropdown = true;
     const term = this.songSearchTerm.toLowerCase();
-    this.filteredSongs = this.filteredSongs.filter(
+    this.filteredSongs = this.availableSongs.filter(
       (song) =>
         song.title.toLowerCase().includes(term) &&
         !this.selectedSongs.some((s) => s.id === song.id)
@@ -272,35 +307,35 @@ export class AdminAlbumManagementComponent implements OnInit {
   addSong(song: SongMetadata): void {
     this.selectedSongs.push(song);
     this.newAlbum.song_ids.push(song.id);
-    this.filteredSongs = this.filteredSongs.filter(
-      (a) => a.id !== song.id
+    this.filteredSongs = this.availableSongs.filter(
+      (a) => !this.selectedSongs.some((s) => s.id === a.id)
     );
     this.songSearchTerm = '';
     this.showSongDropdown = false;
   }
 
   removeSong(song: SongMetadata): void {
-    this.selectedSongs = this.selectedSongs.filter(
-      (a) => a.id !== song.id
+    this.selectedSongs = this.selectedSongs.filter((a) => a.id !== song.id);
+    this.newAlbum.song_ids = this.newAlbum.song_ids.filter((id: string) => id !== song.id);
+    this.filteredSongs = [...this.availableSongs].filter(
+      (a) => !this.selectedSongs.some((s) => s.id === a.id)
     );
-    this.newAlbum.song_ids = this.newAlbum.song_ids.filter(
-      (id: string) => id !== song.id
-    );
-    this.filteredSongs.push(song);
   }
 
   openCreateModal() {
     this.isModalOpen = true;
-    this.newAlbum = {
-      title: '',
-      artist_ids: [],
-      song_ids: [],
-      release_date: '',
-      Album_type: '',
-      image_file: null,
-    };
-    this.selectedArtists = [];
-    this.selectedSongs = [];
+    if (!this.isEditing) {
+      this.newAlbum = {
+        title: '',
+        artist_ids: [],
+        song_ids: [],
+        release_date: '',
+        Album_type: '',
+        image_file: null,
+      };
+      this.selectedArtists = [];
+      this.selectedSongs = [];
+    }
     this.filteredArtists = [...this.availableArtists];
     this.filteredSongs = [...this.availableSongs];
   }
@@ -326,36 +361,43 @@ export class AdminAlbumManagementComponent implements OnInit {
   }
 
   createAlbum() {
+    if (!this.newAlbum.title || !this.newAlbum.release_date || !this.newAlbum.Album_type) {
+      this.toast.showMessage('Vui lòng điền đầy đủ các trường bắt buộc!', 'error');
+      return;
+    }
+
+    if (this.newAlbum.artist_ids.length === 0 || this.newAlbum.song_ids.length === 0) {
+      this.toast.showMessage('Phải chọn ít nhất một nghệ sĩ và một bài hát!', 'error');
+      return;
+    }
+
+    if (!this.newAlbum.image_file) {
+      this.toast.showMessage('Vui lòng chọn hình ảnh cho album!', 'error');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('title', this.newAlbum.title);
     formData.append('release_date', this.newAlbum.release_date);
     formData.append('Album_type', this.newAlbum.Album_type);
-    if (this.newAlbum.artist_ids.length > 0) {
-      this.newAlbum.artist_ids.forEach((id: string, index: number) => {
-        formData.append(`artist_ids[${index}]`, id);
-      });
-    }
-    if (this.newAlbum.song_ids.length > 0) {
-      this.newAlbum.song_ids.forEach((id: string, index: number) => {
-        formData.append(`song_ids[${index}]`, id);
-      });
-    }
-    if (this.newAlbum.image_file) {
-      formData.append('image_file', this.newAlbum.image_file);
-    }
+    this.newAlbum.artist_ids.forEach((id: string, index: number) => {
+      formData.append(`artist_ids[${index}]`, id);
+    });
+    this.newAlbum.song_ids.forEach((id: string, index: number) => {
+      formData.append(`song_ids[${index}]`, id);
+    });
+    formData.append('image_file', this.newAlbum.image_file);
 
     this.albumService.createAlbum(formData).subscribe({
       next: (res) => {
         this.albums.push(res);
         this.closeCreateModal();
-        this.toast.showMessage('Album created successfully!', 'success');
+        this.toast.showMessage('Tạo album thành công!', 'success');
       },
       error: (err) => {
         console.error('Lỗi tạo album:', err);
-        this.toast.showMessage(
-          'Create failed: ' + (err.error?.image_file || err.error?.Album_type || 'Unknown error'),
-          'error'
-        );
+        let errorMessage = err.error?.message || err.error?.image_file || err.error?.Album_type || 'Lỗi không xác định';
+        this.toast.showMessage(`Tạo album thất bại: ${errorMessage}`, 'error');
       },
     });
   }

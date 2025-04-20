@@ -56,7 +56,7 @@
         <div class="flex items-center space-x-4 mb-4">
           <!-- Artist Image -->
           <img
-            [src]="artist.artist_photo || 'assets/Img/default-avatar.png'"
+            [src]="artist.artist_photo "
             alt="{{ artist.name }}"
             class="w-20 h-20 rounded-full object-cover border-2 border-gray-600 shadow-sm"
           />
@@ -145,7 +145,7 @@
 
       <!-- Form Header -->
       <h2 class="text-2xl font-semibold text-white mb-6">
-        {{ isEditMode ? "Edit Artist" : "Create New Artist" }}
+        {{ isEditMode ? 'Edit Artist' : 'Create New Artist' }}
       </h2>
 
       <!-- Form -->
@@ -159,8 +159,9 @@
           <label
             for="artist_name"
             class="block text-sm font-medium text-gray-200 mb-2"
-            >Name</label
           >
+            Name
+          </label>
           <input
             id="artist_name"
             type="text"
@@ -171,7 +172,7 @@
             placeholder="Enter artist name"
             required
           />
-          <div *ngIf="nameInput.invalid" class="text-red-600 text-sm mt-1">
+          <div *ngIf="nameInput.touched && nameInput.invalid" class="text-red-600 text-sm mt-1">
             Name is required.
           </div>
         </div>
@@ -181,69 +182,71 @@
           <label
             for="debut_year"
             class="block text-sm font-medium text-gray-200 mb-2"
-            >Debut Year</label
           >
-          <div class="flex space-x-2">
-            <select
-              [(ngModel)]="currentArtist.debut_year"
-              name="debut_year_select"
-              #yearSelect="ngModel"
-              required
-              class="w-full p-3 bg-[#2A2A2A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
-            >
-              <option value="" disabled>Select a year</option>
-              <option *ngFor="let year of years" [value]="year">
-                {{ year }}
-              </option>
-            </select>
-          </div>
-          <div *ngIf="yearSelect.invalid" class="text-red-600 text-sm mt-1">
-            Select release year.
+            Debut Year
+          </label>
+          <select
+            [(ngModel)]="currentArtist.debut_year"
+            name="debut_year"
+            #yearInput="ngModel"
+            required
+            class="w-full p-3 bg-[#2A2A2A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+          >
+            <option value="" disabled>Select a year</option>
+            <option *ngFor="let year of years" [value]="year">
+              {{ year }}
+            </option>
+          </select>
+          <div *ngIf="yearInput.touched && yearInput.invalid" class="text-red-600 text-sm mt-1">
+            Debut year is required.
           </div>
         </div>
 
         <!-- Bio -->
         <div>
-          <label for="bio" class="block text-sm font-medium text-gray-200 mb-2"
-            >Bio</label
-          >
+          <label for="bio" class="block text-sm font-medium text-gray-200 mb-2">
+            Bio
+          </label>
           <textarea
             id="bio"
             [(ngModel)]="currentArtist.bio"
             name="bio"
             #bioInput="ngModel"
+            required
             class="w-full p-3 bg-[#2A2A2A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
             placeholder="Enter artist bio"
             rows="4"
-            required
           ></textarea>
-          <div *ngIf="bioInput.invalid" class="text-red-600 text-sm mt-1">
+          <div *ngIf="bioInput.touched && bioInput.invalid" class="text-red-600 text-sm mt-1">
             Bio is required.
           </div>
         </div>
 
-        <!-- Artist Photo (File Upload) -->
+       <!-- Artist Photo -->
         <div>
           <label
             for="artist_photo"
             class="block text-sm font-medium text-gray-200 mb-2"
-            >Artist Photo</label
           >
+            Artist Photo
+          </label>
           <input
             id="artist_photo"
             type="file"
             (change)="onFileSelected($event)"
             accept="image/*"
+            name="artist_photo"
+            #photoInput="ngModel"
+            ngModel
             class="w-full p-3 bg-[#2A2A2A] text-gray-200 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200"
+            [required]="!isEditMode"
           />
-          <!-- Hiển thị lỗi nếu chưa chọn ảnh -->
           <div
-            *ngIf="currentArtist.artist_photo === ''"
+            *ngIf="!isEditMode && photoInput.touched && !currentArtist.artist_photo"
             class="text-red-600 text-sm mt-1"
           >
-            Vui lòng chọn ảnh nghệ sĩ.
+            Please select an artist photo.
           </div>
-          <!-- Preview Image -->
           <div *ngIf="previewImage" class="mt-2">
             <img
               [src]="previewImage"
@@ -252,7 +255,6 @@
             />
           </div>
         </div>
-
         <!-- Buttons -->
         <div class="flex justify-end space-x-4">
           <button
@@ -264,10 +266,10 @@
           </button>
           <button
             type="submit"
-            [disabled]="artistForm.invalid"
+            [disabled]="artistForm.invalid || (!isEditMode && !currentArtist.artist_photo)"
             class="bg-blue-600 text-white rounded-lg py-2 px-6 hover:bg-blue-700 transition-all duration-200"
           >
-            {{ isEditMode ? "Update" : "Create" }}
+            {{ isEditMode ? 'Update' : 'Create' }}
           </button>
         </div>
       </form>
@@ -277,7 +279,6 @@
 <app-toast-message #toast></app-toast-message>
 
 <style>
-  /* Fade-in animation for artist cards */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -293,7 +294,6 @@
     animation: fadeIn 0.5s ease-out forwards;
   }
 
-  /* Line clamp for bio text */
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
