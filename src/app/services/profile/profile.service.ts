@@ -24,4 +24,18 @@ export class ProfileService {
 
     return this.http.get(`${this.baseUrl}${this.userId}/`, { headers });
   }
+   // Cập nhật thông tin người dùng
+   updateUserProfile(updatedProfile: any): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Token ${this.token}`,
+      'Content-Type': 'application/json',
+    });
+  
+   // console.log('Token gửi đi:', this.token);
+  
+    return this.http.put(`${this.baseUrl}${this.userId}/`, updatedProfile, { headers });
+  }
+ 
+  
+
 }

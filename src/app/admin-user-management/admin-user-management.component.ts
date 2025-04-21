@@ -33,6 +33,8 @@ export class AdminUserManagementComponent {
         email: ['', [Validators.required, Validators.email]],
         first_name: ['', Validators.required],
         last_name: ['', Validators.required],
+        is_staff: ['', Validators.required],
+        is_superuser: ['', Validators.required],
         // role: ['', Validators.required],
         password: [
           '',
@@ -90,6 +92,8 @@ export class AdminUserManagementComponent {
       email: [user.email, [Validators.required, Validators.email]],
       first_name: [user.first_name, Validators.required],
       last_name: [user.last_name, Validators.required],
+      is_staff: [user.is_staff, Validators.required],
+      is_superuser: [user.is_superuser, Validators.required],
       // Không bao gồm password nếu là edit
     });
   }
