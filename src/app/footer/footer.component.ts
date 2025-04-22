@@ -49,7 +49,7 @@ export class FooterComponent implements OnInit {
     this.sharedService.sharedData$.subscribe((data) => {
       this.sharedData = data;
       if (this.sharedData.length === 0) {
-        console.log('Không có dữ liệu trong sharedData');
+        //console.log('Không có dữ liệu trong sharedData');
       }
     });
   }

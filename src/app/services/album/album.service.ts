@@ -14,7 +14,7 @@ export class AlbumService {
   getAlbum(): Observable<any> {
   
     return this.http.get<any>(this.apiUrl).pipe(
-      tap((data) => console.log('Albums data:', data.results)),
+  
       map((data) => data.results)
     );
   }

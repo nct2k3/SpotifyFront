@@ -12,7 +12,7 @@ export class SharedService {
   constructor(private songsService: SongsService) {
     this.songsService.getTrack().subscribe((data: any[]) => {
       this.sharedDataSubject.next(data);
-      console.log('share',data);
+      //console.log('share',data);
     });
   }
 

@@ -34,7 +34,7 @@ export class ProfileService {
     
     return this.http.get(this.baseUrl, { headers }).pipe(
       map(response => {
-        console.log('Raw users API response:', response);
+        
         
         // Handle different response formats
         if (Array.isArray(response)) {

@@ -1,5 +1,4 @@
 import { Component, ElementRef, ViewChild, AfterViewChecked, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { GeminiApiService } from '../services/Gemini-chat/gemini-api.service';
 import { Conversation } from '../Models/chat.model';
 import { WebSocketService } from '../services/Websocket/web-socket.service';
 
@@ -32,7 +31,6 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges {
   @ViewChild('inputField') inputRef!: ElementRef;
 
   constructor(
-    private geminiApiService: GeminiApiService,
     private webSocketService: WebSocketService
   ) {
     this.userId = localStorage.getItem('user_id');
@@ -48,7 +46,6 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges {
       console.log('Selected conversation changed:', this.selectedConversation);
       
       // Check if this is a new conversation that has just been created
-      // The ID should no longer start with 'new-' if it was properly created
       if (typeof this.selectedConversation.id === 'string' && this.selectedConversation.id.startsWith('new-')) {
         // This is a new conversation that hasn't been properly created yet
         this.messages = [
@@ -60,7 +57,7 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges {
         ];
         this.isLoading = false;
       } else {
-        // This is an existing conversation with a valid MongoDB ID, load chat history
+        // This is an existing conversation with a valid ID, load chat history
         this.loadChatHistory(this.selectedConversation.id);
       }
     }
@@ -137,27 +134,11 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges {
     this.inputValue = '';
     this.isLoading = true;
 
-    // If we have a valid chat ID, send the message through the API
-    if (this.chatId && !this.chatId.startsWith('new-')) {
+    // Send the message through the service
+    if (this.chatId) {
       this.sendMessageToChat(this.chatId, userPrompt);
     } else {
-      // For now, just simulate a response
-      setTimeout(() => {
-        const aiMessage: Message = {
-          text: `I received your message: "${userPrompt}"`,
-          isUser: false,
-          timestamp: new Date()
-        };
-        this.messages = [...this.messages, aiMessage];
-        this.isLoading = false;
-
-        // Update conversation details
-        if (this.selectedConversation) {
-          this.selectedConversation.lastMessage = userPrompt;
-          this.selectedConversation.timestamp = new Date();
-          this.selectedConversation.unread = false;
-        }
-      }, 1000);
+      this.isLoading = false;
     }
   }
 
@@ -168,14 +149,13 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges {
       next: (response) => {
         console.log('Message sent successfully:', response);
         
-        // In a real app, the message might come back through the WebSocket
-        // For now, let's simulate a response
-        const aiMessage: Message = {
-          text: `Message sent successfully. Waiting for reply...`,
+        // Add the response to the messages
+        const replyMessage: Message = {
+          text: `Message received: "${message}"`,
           isUser: false,
           timestamp: new Date()
         };
-        this.messages = [...this.messages, aiMessage];
+        this.messages = [...this.messages, replyMessage];
         this.isLoading = false;
 
         // Update conversation details
