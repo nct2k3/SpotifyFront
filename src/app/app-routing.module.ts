@@ -16,6 +16,9 @@ import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { UserListComponent } from './user-list/user-list.component';
+import { ChatListComponent } from './chat-list/chat-list.component';
+import { ChatDetailComponent } from './chat-detail/chat-detail.component';
 const routes: Routes = [
   { path: 'login', component:LoginComponent  },
   { path: 'register', component: RegisterComponent },
@@ -29,7 +32,9 @@ const routes: Routes = [
   {path:'search',component:SearchComponent},
   {path:'allAlbum', component:ListAlbumComponent},
   { path: 'notifications', component: NotificationsComponent },
-  // { path: '**', redirectTo: 'home' },
+  { path: 'listChat', component: UserListComponent },
+  { path: 'chats', component: ChatListComponent },
+  { path: 'chat/:chatId', component: ChatDetailComponent },
   { path: 'verify', component: VerifyComponent },
   { path: 'profile', component: ProfileComponent },
   { path: '**', redirectTo: 'home' },

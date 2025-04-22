@@ -1,0 +1,10 @@
+<div class="chat-detail">
+    <h2>Cuộc trò chuyện</h2>
+    <div class="messages">
+      <div *ngFor="let message of messages" class="message">
+        <p><strong>{{ message.sender }}:</strong> {{ message.content }}</p>
+        <small>{{ message.timestamp }}</small>
+      </div>
+    </div>
+    <app-message-form (sendMessage)="sendMessage($event)"></app-message-form>
+  </div>

@@ -1,0 +1,11 @@
+<div class="user-list">
+    <h2>Danh sách người dùng</h2>
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+    <div *ngFor="let user of users" class="user-item">
+      <p>{{ user.first_name }} {{ user.last_name }} ({{ user.username }})</p>
+      <p>Email: {{ user.email }}</p>
+      <button (click)="startChat(user)">Bắt đầu chat</button>
+    </div>
+  </div>

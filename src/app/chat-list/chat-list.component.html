@@ -1,0 +1,11 @@
+<div class="chat-list">
+    <h2>Các cuộc trò chuyện</h2>
+    <div *ngFor="let chat of chats" class="chat-item">
+      <a [routerLink]="['/chat', chat.id]">
+        <p>User: {{ chat.other_user_id }}</p>
+        <p *ngIf="chat.last_message">
+          Last message: {{ chat.last_message.content }} ({{ chat.last_message.timestamp }})
+        </p>
+      </a>
+    </div>
+  </div>

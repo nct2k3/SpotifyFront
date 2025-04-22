@@ -20,7 +20,7 @@ export class ProfileComponent implements OnInit {
 
   // Gọi API để lấy thông tin người dùng
   loadUserProfile(): void {
-    this.profileService.getUserProfile().subscribe(
+    this.profileService.getUserProfiles().subscribe(
       (response) => {
         this.username = response.username;
         this.email = response.email;
