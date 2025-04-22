@@ -1,14 +1,12 @@
-import { Component, ElementRef, ViewChild, AfterViewChecked, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
-
-import { Subscription } from 'rxjs';
+import { Component, ElementRef, ViewChild, AfterViewChecked, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { GeminiApiService } from '../services/Gemini-chat/gemini-api.service';
+import { Conversation } from '../Models/chat.model';
 import { WebSocketService } from '../services/Websocket/web-socket.service';
-import { ChatMessage, Conversation } from '../Models/chat.model';
 
 interface Message {
   text: string;
   isUser: boolean;
   timestamp: Date;
-  sender: string;
 }
 
 @Component({
@@ -16,7 +14,7 @@ interface Message {
   templateUrl: './general-chat.component.html',
   styleUrls: ['./general-chat.component.css']
 })
-export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnDestroy {
+export class GeneralChatComponent implements AfterViewChecked, OnChanges {
   @Input() selectedConversation: Conversation | null = null;
   @Output() close = new EventEmitter<void>();
 
@@ -27,87 +25,83 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnDest
   inputValue: string = '';
   messages: Message[] = [];
   isLoading: boolean = false;
-  private messageSubscription: Subscription | null = null;
-  
   userId: string | null = '';
-  otherUserId: string = '';
+  chatId: string | null = null;
 
   @ViewChild('messagesEnd') messagesEndRef!: ElementRef;
   @ViewChild('inputField') inputRef!: ElementRef;
 
-  constructor(private webSocketService: WebSocketService) {
+  constructor(
+    private geminiApiService: GeminiApiService,
+    private webSocketService: WebSocketService
+  ) {
     this.userId = localStorage.getItem('user_id');
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selectedConversation'] && this.selectedConversation) {
-      this.isLoading = true;
+      // Reset messages
       this.messages = [];
+      this.isLoading = true;
+      this.chatId = this.selectedConversation.id;
       
-      // Clean up previous subscription
-      if (this.messageSubscription) {
-        this.messageSubscription.unsubscribe();
-        this.webSocketService.disconnect();
-      }
+      console.log('Selected conversation changed:', this.selectedConversation);
       
-      // Find the other user in the conversation
-      this.otherUserId = this.selectedConversation.participants.find(
-        id => id !== this.userId
-      ) || '';
-      
-      // Load chat history
-      this.loadChatHistory();
-      
-      // Connect to WebSocket for this conversation
-      if (this.userId && this.otherUserId) {
-        this.webSocketService.connect(this.userId, this.otherUserId);
-        
-        // Subscribe to incoming messages
-        this.messageSubscription = this.webSocketService.getMessages().subscribe(
-          (data: ChatMessage) => {
-            const newMessage: Message = {
-              text: data.message,
-              isUser: data.sender === this.userId,
-              timestamp: new Date(data.timestamp),
-              sender: data.sender
-            };
-            this.messages.push(newMessage);
+      // Check if this is a new conversation that has just been created
+      // The ID should no longer start with 'new-' if it was properly created
+      if (typeof this.selectedConversation.id === 'string' && this.selectedConversation.id.startsWith('new-')) {
+        // This is a new conversation that hasn't been properly created yet
+        this.messages = [
+          {
+            text: `Start a new conversation with ${this.selectedConversation.name}`,
+            isUser: false,
+            timestamp: new Date()
           }
-        );
+        ];
+        this.isLoading = false;
+      } else {
+        // This is an existing conversation with a valid MongoDB ID, load chat history
+        this.loadChatHistory(this.selectedConversation.id);
       }
     }
   }
 
-  ngOnDestroy() {
-    if (this.messageSubscription) {
-      this.messageSubscription.unsubscribe();
-    }
-    this.webSocketService.disconnect();
-  }
-
-  loadChatHistory() {
-    if (!this.selectedConversation) return;
+  loadChatHistory(chatId: string): void {
+    console.log(`Loading chat history for chat ID: ${chatId}`);
     
-    this.webSocketService.getChatHistory(this.selectedConversation.id).subscribe({
-      next: (data) => {
-        // Process chat history
-        this.messages = data.messages.map((msg: any) => ({
-          text: msg.content,
-          isUser: msg.sender === this.userId,
-          timestamp: new Date(msg.timestamp),
-          sender: msg.sender
-        }));
+    this.webSocketService.getChatHistory(chatId).subscribe({
+      next: (chatData) => {
+        console.log('Chat history loaded:', chatData);
+        
+        if (chatData.messages && chatData.messages.length > 0) {
+          // Convert chat messages to our Message format
+          this.messages = chatData.messages.map((msg: any) => ({
+            text: msg.content,
+            isUser: msg.sender === this.userId,
+            timestamp: new Date(msg.timestamp)
+          }));
+        } else {
+          // No messages yet
+          this.messages = [
+            {
+              text: `Start your conversation with ${this.selectedConversation?.name}`,
+              isUser: false,
+              timestamp: new Date()
+            }
+          ];
+        }
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading chat history:', error);
+        this.messages = [
+          {
+            text: 'Could not load chat history. Please try again later.',
+            isUser: false,
+            timestamp: new Date()
+          }
+        ];
         this.isLoading = false;
-        this.messages = [{
-          text: 'Could not load chat history. Please try again.',
-          isUser: false,
-          timestamp: new Date(),
-          sender: 'system'
-        }];
       }
     });
   }
@@ -120,7 +114,7 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnDest
   }
 
   toggleChat() {
-    this.close.emit(); // Emit close event to parent
+    this.close.emit(); // Close chat
   }
 
   handleInputChange(event: Event) {
@@ -130,30 +124,79 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnDest
 
   handleSubmit(event: Event) {
     event.preventDefault();
-    if (!this.inputValue.trim()) return;
+    if (!this.inputValue.trim() || !this.selectedConversation) return;
 
-    const message = this.inputValue.trim();
-    this.inputValue = '';
-    
-    // Send message through WebSocket
-    this.webSocketService.sendMessage(message);
-    
-    // Optimistically add message to UI
-    // The actual message will be added when received from WebSocket
+    const userPrompt = this.inputValue.trim();
     const userMessage: Message = {
-      text: message,
+      text: userPrompt,
       isUser: true,
-      timestamp: new Date(),
-      sender: this.userId || ''
+      timestamp: new Date()
     };
-    
-    this.messages.push(userMessage);
-    
-    // Update last message in conversation
-    if (this.selectedConversation) {
-      this.selectedConversation.lastMessage = message;
-      this.selectedConversation.timestamp = new Date();
+
+    this.messages = [...this.messages, userMessage];
+    this.inputValue = '';
+    this.isLoading = true;
+
+    // If we have a valid chat ID, send the message through the API
+    if (this.chatId && !this.chatId.startsWith('new-')) {
+      this.sendMessageToChat(this.chatId, userPrompt);
+    } else {
+      // For now, just simulate a response
+      setTimeout(() => {
+        const aiMessage: Message = {
+          text: `I received your message: "${userPrompt}"`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        this.messages = [...this.messages, aiMessage];
+        this.isLoading = false;
+
+        // Update conversation details
+        if (this.selectedConversation) {
+          this.selectedConversation.lastMessage = userPrompt;
+          this.selectedConversation.timestamp = new Date();
+          this.selectedConversation.unread = false;
+        }
+      }, 1000);
     }
+  }
+
+  private sendMessageToChat(chatId: string, message: string): void {
+    console.log(`Sending message to chat ${chatId}: ${message}`);
+    
+    this.webSocketService.sendMessageHttp(chatId, message).subscribe({
+      next: (response) => {
+        console.log('Message sent successfully:', response);
+        
+        // In a real app, the message might come back through the WebSocket
+        // For now, let's simulate a response
+        const aiMessage: Message = {
+          text: `Message sent successfully. Waiting for reply...`,
+          isUser: false,
+          timestamp: new Date()
+        };
+        this.messages = [...this.messages, aiMessage];
+        this.isLoading = false;
+
+        // Update conversation details
+        if (this.selectedConversation) {
+          this.selectedConversation.lastMessage = message;
+          this.selectedConversation.timestamp = new Date();
+          this.selectedConversation.unread = false;
+        }
+      },
+      error: (error) => {
+        console.error('Error sending message:', error);
+        
+        const errorMessage: Message = {
+          text: 'Could not send message. Please try again later.',
+          isUser: false,
+          timestamp: new Date()
+        };
+        this.messages = [...this.messages, errorMessage];
+        this.isLoading = false;
+      }
+    });
   }
 
   private scrollToBottom() {

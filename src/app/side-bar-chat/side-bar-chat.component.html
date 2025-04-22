@@ -12,7 +12,7 @@
   >
     <!-- Header -->
     <div class="bg-gradient-to-r from-black to-green-600 text-white px-4 py-3 flex justify-between items-center h-14">
-      <span class="font-sans font-semibold text-base">Messages</span>
+      <span class="font-sans font-semibold text-base">Messages & Contacts</span>
       <button
         (click)="toggleChat()"
         class="w-8 h-8 flex items-center justify-center rounded-full text-xl font-bold hover:bg-[#282828] transition-colors"
@@ -26,7 +26,7 @@
         type="text"
         [(ngModel)]="searchQuery"
         (input)="handleSearchChange($event)"
-        placeholder="Search conversations..."
+        placeholder="Search users and conversations..."
         class="w-full p-2 bg-[#282828] text-white border border-[#3E3E3E] rounded-full focus:outline-none focus:ring-2 focus:ring-[#1DB954] text-sm font-sans transition-all"
       />
     </div>
@@ -35,11 +35,15 @@
     <div class="overflow-y-auto" style="height: calc(100% - 112px);">
       <!-- Empty state -->
       <div *ngIf="filteredConversations.length === 0" class="flex flex-col items-center justify-center h-32">
-        <p class="text-gray-400 text-sm">No conversations found</p>
-        <!-- Start new chat button could be added here -->
+        <p class="text-gray-400 text-sm">No users or conversations found</p>
       </div>
       
-      <!-- Conversations -->
+      <!-- Recent Chats Section -->
+      <div *ngIf="hasExistingConversations()" class="px-4 pt-4 pb-2">
+        <h3 class="text-xs uppercase text-gray-500 font-semibold tracking-wider">Recent Conversations</h3>
+      </div>
+      
+      <!-- Existing Conversations -->
       <div
         *ngFor="let conversation of filteredConversations"
         (click)="selectConversation(conversation)"
@@ -85,7 +89,13 @@
             class="text-sm font-sans truncate"
             [ngClass]="{'text-gray-300': conversation.unread, 'text-[#B3B3B3]': !conversation.unread}"
           >
-            {{ conversation.lastMessage }}
+            <!-- Show appropriate message for new vs existing conversations -->
+            <span *ngIf="isNewConversation(conversation)" class="text-[#1DB954]">
+              Start a new conversation
+            </span>
+            <span *ngIf="!isNewConversation(conversation)">
+              {{ conversation.lastMessage }}
+            </span>
           </div>
         </div>
       </div>
