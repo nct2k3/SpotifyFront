@@ -31,11 +31,11 @@ export class ProfileService {
   // Lấy tất cả người dùng
   getAllUsers(): Observable<any> {
     const headers = this.getHeaders();
-    
+
     return this.http.get(this.baseUrl, { headers }).pipe(
       map(response => {
-        
-        
+
+
         // Handle different response formats
         if (Array.isArray(response)) {
           return response;
@@ -45,11 +45,26 @@ export class ProfileService {
             return (response as any).results;
           }
         }
-        
+
         // If we can't determine the format, return an empty array
         console.error('Unexpected response format from users API:', response);
         return [];
       })
     );
   }
+
+   // Cập nhật thông tin người dùng
+   updateUserProfile(updatedProfile: any): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Token ${this.token}`,
+      'Content-Type': 'application/json',
+    });
+
+   // console.log('Token gửi đi:', this.token);
+
+    return this.http.put(`${this.baseUrl}${this.userId}/`, updatedProfile, { headers });
+  }
+
+
+
 }
