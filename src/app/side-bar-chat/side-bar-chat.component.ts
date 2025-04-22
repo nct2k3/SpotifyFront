@@ -1,97 +1,113 @@
-import { Component, ElementRef, ViewChild, AfterViewChecked, EventEmitter, Output } from '@angular/core';
-
-interface Conversation {
-  id: number;
-  name: string;
-  profilePicture?: string;
-  lastMessage: string;
-  timestamp: Date;
-  unread: boolean;
-}
+import { Component, ElementRef, ViewChild, AfterViewChecked, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Conversation } from '../Models/chat.model';
+import { WebSocketService } from '../services/Websocket/web-socket.service';
 
 @Component({
   selector: 'app-side-bar-chat',
   templateUrl: './side-bar-chat.component.html',
   styleUrls: ['./side-bar-chat.component.css']
 })
-export class SideBarChatComponent implements AfterViewChecked {
+export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy {
   isOpen: boolean = false;
   searchQuery: string = '';
-  selectedConversation: Conversation | null = null; // Track the selected conversation
-
-  conversations: Conversation[] = [
-    {
-      id: 1,
-      name: 'Hằng Mai',
-      profilePicture: 'https://example.com/hangmai.jpg',
-      lastMessage: 'Bạn: ❤️',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      unread: false
-    },
-    {
-      id: 2,
-      name: 'Nhí sư đệ',
-      lastMessage: 'Thì đỏ. ❤️',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      unread: true
-    },
-    {
-      id: 3,
-      name: 'Nhien Nguyen',
-      profilePicture: 'https://example.com/nhiennguyen.jpg',
-      lastMessage: 'Bạn: đã bốc xương',
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
-      unread: false
-    },
-    {
-      id: 4,
-      name: 'Nguyen Khanh',
-      lastMessage: 't xem voi',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      unread: true
-    },
-    {
-      id: 5,
-      name: 'Ban Căn sự các lớp K19 - K...',
-      profilePicture: 'https://example.com/group.jpg',
-      lastMessage: 'DCT1221 - Trận Gia Ngu...',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      unread: false
-    },
-    {
-      id: 6,
-      name: 'Lê Minh Thuận',
-      profilePicture: 'https://example.com/leminhthuan.jpg',
-      lastMessage: 'oke chưa nè, cảm ơn nha',
-      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      unread: false
-    }
-  ];
+  userId: string | null = '';
   username: string | null = '';
   email: string | null = '';
-  userId: string | null = '';
+  
+  conversations: Conversation[] = [];
+  filteredConversations: Conversation[] = [];
+  private chatSubscription: Subscription | null = null;
+
+  @Output() conversationSelected = new EventEmitter<Conversation>();
+  @ViewChild('conversationsEnd') conversationsEndRef!: ElementRef;
+
+  constructor(private webSocketService: WebSocketService) {}
 
   ngOnInit() {
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
+    
+    if (this.userId) {
+      this.loadConversations();
+    }
   }
 
-  @ViewChild('conversationsEnd') conversationsEndRef!: ElementRef;
-
-  ngAfterViewChecked() {
-    this.scrollToBottom();
+  ngOnDestroy() {
+    if (this.chatSubscription) {
+      this.chatSubscription.unsubscribe();
+    }
   }
 
+  loadConversations() {
+    this.webSocketService.getUserChats().subscribe({
+      next: (chats) => {
+        // Transform chat data into conversation objects
+        this.conversations = chats.map((chat: any) => {
+          const otherUser = chat.participants.find((id: string) => id !== this.userId);
+          const otherUserName = this.getUserName(otherUser) || 'Unknown User';
+          
+          return {
+            id: chat.chat_id,
+            name: otherUserName,
+            profilePicture: undefined, // You might want to fetch user profiles separately
+            lastMessage: chat.messages.length > 0 
+              ? chat.messages[chat.messages.length - 1].content 
+              : 'No messages yet',
+            timestamp: chat.messages.length > 0 
+              ? new Date(chat.messages[chat.messages.length - 1].timestamp) 
+              : new Date(chat.created_at),
+            unread: this.hasUnreadMessages(chat.messages),
+            participants: chat.participants
+          };
+        });
+        
+        this.filteredConversations = [...this.conversations];
+      },
+      error: (error) => {
+        console.error('Error loading conversations:', error);
+      }
+    });
+  }
+
+  // Helper function to check for unread messages
+  private hasUnreadMessages(messages: any[]): boolean {
+    if (!messages.length) return false;
+    
+    // Check if the last message is from the other user and not read yet
+    const lastMessage = messages[messages.length - 1];
+    return lastMessage.sender !== this.userId;
+  }
+
+  // Helper function to get user name (placeholder - you'll need user data)
+  private getUserName(userId: string): string {
+    // In a real app, you might fetch user data from a service
+    return `User ${userId}`;
+  }
 
   handleSearchChange(event: Event) {
     const input = event.target as HTMLInputElement;
     this.searchQuery = input.value;
+    
+    if (this.searchQuery.trim() === '') {
+      this.filteredConversations = [...this.conversations];
+    } else {
+      this.filteredConversations = this.conversations.filter(conv => 
+        conv.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        conv.lastMessage.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    }
   }
 
   handleImageError(event: Event) {
     const imgElement = event.target as HTMLImageElement;
     imgElement.style.display = 'none';
+    // Show initials or fallback avatar instead
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
 
   private scrollToBottom() {
@@ -114,20 +130,19 @@ export class SideBarChatComponent implements AfterViewChecked {
       return `${diffInDays} ngày`;
     }
   }
-  @Output() conversationSelected = new EventEmitter<Conversation>();
 
   selectConversation(conversation: Conversation) {
-    this.selectedConversation = conversation; // Lưu hội thoại được chọn
-    this.conversationSelected.emit(conversation); // Phát sự kiện
-    this.isOpen = false; // Đóng sidebar sau khi chọn
+    // Mark conversation as read
+    conversation.unread = false;
+    
+    // Emit event to parent component
+    this.conversationSelected.emit(conversation);
+    
+    // Close sidebar after selection
+    this.isOpen = false;
   }
 
   toggleChat() {
     this.isOpen = !this.isOpen;
-    if (!this.isOpen && !this.selectedConversation) {
-      this.selectedConversation = null; // Chỉ reset nếu không có hội thoại được chọn
-    }
   }
-  
-
 }

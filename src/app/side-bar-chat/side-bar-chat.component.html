@@ -1,4 +1,3 @@
-
 <button *ngIf="!isOpen && userId" (click)="toggleChat()" class="fixed top-4 right-[140px] z-50">
   <img
     class="h-10 w-10 p-1 rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
@@ -13,7 +12,7 @@
   >
     <!-- Header -->
     <div class="bg-gradient-to-r from-black to-green-600 text-white px-4 py-3 flex justify-between items-center h-14">
-      <span class="font-sans font-semibold text-base">Đoạn chat</span>
+      <span class="font-sans font-semibold text-base">Messages</span>
       <button
         (click)="toggleChat()"
         class="w-8 h-8 flex items-center justify-center rounded-full text-xl font-bold hover:bg-[#282828] transition-colors"
@@ -27,26 +26,25 @@
         type="text"
         [(ngModel)]="searchQuery"
         (input)="handleSearchChange($event)"
-        placeholder="Tìm kiếm trên Messenger"
+        placeholder="Search conversations..."
         class="w-full p-2 bg-[#282828] text-white border border-[#3E3E3E] rounded-full focus:outline-none focus:ring-2 focus:ring-[#1DB954] text-sm font-sans transition-all"
       />
     </div>
 
-    <div class="flex px-4 py-2 border-b border-[#3E3E3E]">
-      <button class="flex-1 text-center py-2 text-sm font-sans text-white border-b-2 border-[#1DB954]">
-        Hộp thư
-      </button>
-      <button class="flex-1 text-center py-2 text-sm font-sans text-[#B3B3B3]">
-        Cộng đồng
-      </button>
-    </div>
-
     <!-- Conversation list -->
-    <div class="overflow-y-auto" style="height:100%; width: 100%;">
+    <div class="overflow-y-auto" style="height: calc(100% - 112px);">
+      <!-- Empty state -->
+      <div *ngIf="filteredConversations.length === 0" class="flex flex-col items-center justify-center h-32">
+        <p class="text-gray-400 text-sm">No conversations found</p>
+        <!-- Start new chat button could be added here -->
+      </div>
+      
+      <!-- Conversations -->
       <div
-        *ngFor="let conversation of conversations"
+        *ngFor="let conversation of filteredConversations"
         (click)="selectConversation(conversation)"
-        class="flex items-center px-4 py-3 hover:bg-[#282828] cursor-pointer"
+        class="flex items-center px-4 py-3 hover:bg-[#282828] cursor-pointer transition-all duration-200"
+        [ngClass]="{'bg-[#1DB95420]': conversation.unread}"
       >
         <!-- Profile picture -->
         <div class="relative">
@@ -61,26 +59,32 @@
             *ngIf="!conversation.profilePicture"
             class="w-12 h-12 rounded-full mr-3 bg-[#3E3E3E] flex items-center justify-center text-white text-lg font-sans"
           >
-            {{ conversation.name.charAt(0) }}
+            {{ conversation.name.charAt(0).toUpperCase() }}
           </div>
           <!-- Unread indicator -->
           <div
             *ngIf="conversation.unread"
-            class="absolute bottom-0 right-3 w-5 h-5 bg-[#1DB954] rounded-full border-2 border-[#121212]"
+            class="absolute bottom-0 right-3 w-4 h-4 bg-[#1DB954] rounded-full border-2 border-[#121212]"
           ></div>
         </div>
 
         <!-- Conversation info -->
         <div class="flex-1 min-w-0">
           <div class="flex justify-between items-baseline">
-            <span class="text-sm font-sans font-medium text-white truncate">
+            <span 
+              class="font-sans truncate"
+              [ngClass]="{'font-semibold text-white': conversation.unread, 'text-gray-300': !conversation.unread}"
+            >
               {{ conversation.name }}
             </span>
-            <span class="text-xs font-sans text-[#B3B3B3]">
+            <span class="text-xs font-sans text-[#B3B3B3] ml-2 whitespace-nowrap">
               {{ formatTime(conversation.timestamp) }}
             </span>
           </div>
-          <div class="text-sm font-sans text-[#B3B3B3] truncate">
+          <div 
+            class="text-sm font-sans truncate"
+            [ngClass]="{'text-gray-300': conversation.unread, 'text-[#B3B3B3]': !conversation.unread}"
+          >
             {{ conversation.lastMessage }}
           </div>
         </div>
@@ -89,4 +93,3 @@
     </div>
   </div>
 </div>
-<app-general-chat></app-general-chat>
