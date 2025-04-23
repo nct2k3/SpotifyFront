@@ -1,3 +1,4 @@
+<!-- src/app/general-chat/general-chat.component.html -->
 <div class="fixed bottom-12 right-12 z-50">
   <div
     class="absolute bottom-0 right-0 mb-16 bg-gray-900 rounded-xl shadow-2xl w-96 transition-all duration-300 transform"
@@ -7,6 +8,8 @@
     <div class="bg-gradient-to-r from-black to-green-600 text-white px-4 py-3 flex justify-between items-center rounded-t-xl h-14">
       <span class="font-sans font-semibold text-base flex items-center">
         <span *ngIf="isLoading" class="mr-2 inline-block h-3 w-3 rounded-full bg-white animate-pulse"></span>
+        <span *ngIf="isConnected" class="mr-2 inline-block h-3 w-3 rounded-full bg-green-400"></span>
+        <span *ngIf="!isConnected && !isLoading" class="mr-2 inline-block h-3 w-3 rounded-full bg-red-400"></span>
         {{ selectedConversation?.name || 'Chat' }}
       </span>
       <button

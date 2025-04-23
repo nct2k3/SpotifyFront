@@ -1,8 +1,18 @@
+// src/app/side-bar-chat/side-bar-chat.component.ts
 import { Component, ElementRef, ViewChild, AfterViewChecked, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Conversation, ChatMessage } from '../Models/chat.model';
+import { Conversation } from '../Models/chat.model';
 import { WebSocketService } from '../services/Websocket/web-socket.service';
 import { ProfileService } from '../services/profile/profile.service';
+
+interface UserProfile {
+  id: string;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  profile_picture?: string;
+  [key: string]: any;
+}
 
 @Component({
   selector: 'app-side-bar-chat',
@@ -18,7 +28,7 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
   
   conversations: Conversation[] = [];
   filteredConversations: Conversation[] = [];
-  allUsers: any[] = [];
+  allUsers: UserProfile[] = [];
   private chatSubscription: Subscription | null = null;
   private messageSubscription: Subscription | null = null;
 
@@ -39,12 +49,37 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
       // First load users, then load conversations
       this.loadUsers();
       
-      // Subscribe to WebSocket messages to update conversation list
-      this.messageSubscription = this.webSocketService.getMessages().subscribe(
-        (message: ChatMessage) => {
-          this.handleIncomingMessage(message);
+      // Subscribe to new messages to update conversation list
+      this.messageSubscription = this.webSocketService.getMessages().subscribe(message => {
+        // Find the conversation this message belongs to
+        const conversationIndex = this.conversations.findIndex(
+          conv => conv.id === message.chat
+        );
+        
+        if (conversationIndex >= 0) {
+          // Update the conversation with new message info
+          const updatedConversation = { ...this.conversations[conversationIndex] };
+          updatedConversation.lastMessage = message.content || '';
+          updatedConversation.timestamp = new Date(message.timestamp || new Date());
+          updatedConversation.unread = message.sender !== this.userId;
+          
+          // Create a new array to trigger change detection
+          const updatedConversations = [...this.conversations];
+          updatedConversations[conversationIndex] = updatedConversation;
+          
+          // Sort by most recent message
+          this.conversations = updatedConversations.sort(
+            (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+          );
+          
+          // Update filtered conversations if search is active
+          if (this.searchQuery.trim() !== '') {
+            this.filterConversations();
+          } else {
+            this.filteredConversations = [...this.conversations];
+          }
         }
-      );
+      });
     }
   }
 
@@ -58,46 +93,18 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
     }
   }
 
-  // Handle incoming WebSocket messages
-  handleIncomingMessage(message: ChatMessage) {
-    // Find the conversation for this message
-    const conversation = this.conversations.find(c => c.id === message.chat_id);
-    
-    if (conversation) {
-      // Update the last message
-      conversation.lastMessage = message.message;
-      conversation.timestamp = new Date(message.timestamp);
-      
-      // Mark as unread if it's from another user
-      if (message.sender !== this.userId) {
-        conversation.unread = true;
-      }
-      
-      // Re-sort conversations by timestamp (most recent first)
-      this.conversations.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-      
-      // Update filtered conversations list
-      this.filteredConversations = [...this.conversations];
-      
-      // Apply search filter if search term exists
-      if (this.searchQuery.trim() !== '') {
-        this.handleSearchChange({ target: { value: this.searchQuery }} as unknown as Event);
-      }
-    }
-  }
-
   loadUsers() {
     this.profileService.getAllUsers().subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Users API response:', response);
         
         // Handle different response formats
-        let users = [];
+        let users: UserProfile[] = [];
         if (Array.isArray(response)) {
           users = response;
         } else if (response && typeof response === 'object') {
           // Check if response has a results property (common in REST APIs)
-          if (Array.isArray(response.results)) {
+          if (response.results && Array.isArray(response.results)) {
             users = response.results;
           } else {
             // Convert object to array if needed
@@ -107,10 +114,10 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
         
         // Filter out the current user if users is an array
         if (Array.isArray(users)) {
-          this.allUsers = users.filter((user: any) => user && user.id && user.id !== this.userId);
+          this.allUsers = users.filter((user: UserProfile) => user && user.id && user.id !== this.userId);
           
           // Create conversation objects for each user
-          const userConversations = this.allUsers.map((user: any) => {
+          const userConversations = this.allUsers.map((user: UserProfile) => {
             return {
               id: `new-${user.id}`, // Use a prefix to identify new conversations (not an ObjectId yet)
               name: user.username || `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Unknown User',
@@ -140,7 +147,7 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
 
   loadConversations() {
     this.webSocketService.getUserChats().subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Chats API response:', response);
         
         // Handle different response formats
@@ -149,7 +156,7 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
           chats = response;
         } else if (response && typeof response === 'object') {
           // Check if response has a results property (common in REST APIs)
-          if (Array.isArray(response.results)) {
+          if (response.results && Array.isArray(response.results)) {
             chats = response.results;
           } else {
             // Convert object to array if needed
@@ -181,9 +188,6 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
           } else if (chat.other_user_id) {
             // If the API returns a different structure with other_user_id
             participants = [this.userId || '', chat.other_user_id];
-          } else if (chat.sender && chat.receiver) {
-            // If the API uses sender/receiver model
-            participants = [chat.sender, chat.receiver];
           }
           
           if (participants.length === 0) {
@@ -192,7 +196,7 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
           }
           
           const otherUser = participants.find((id: string) => id !== this.userId) || '';
-          const otherUserInfo = this.allUsers.find((user: any) => user.id == otherUser);
+          const otherUserInfo = this.allUsers.find((user: UserProfile) => user.id == otherUser);
           
           // Determine the name of the other user
           const otherUserName = otherUserInfo ? 
@@ -269,7 +273,10 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
   handleSearchChange(event: Event) {
     const input = event.target as HTMLInputElement;
     this.searchQuery = input.value;
-    
+    this.filterConversations();
+  }
+  
+  filterConversations() {
     if (this.searchQuery.trim() === '') {
       this.filteredConversations = [...this.conversations];
     } else {
@@ -303,11 +310,11 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
     const diffInDays = Math.floor(diffInHours / 24);
 
     if (diffInHours < 1) {
-      return `${Math.floor(diffInMs / (1000 * 60))} phút`;
+      return `${Math.floor(diffInMs / (1000 * 60))} min`;
     } else if (diffInHours < 24) {
-      return `${diffInHours} giờ`;
+      return `${diffInHours} h`;
     } else {
-      return `${diffInDays} ngày`;
+      return `${diffInDays} d`;
     }
   }
 
@@ -364,7 +371,7 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
   toggleChat() {
     this.isOpen = !this.isOpen;
     
-    // If opening the sidebar, refresh the conversations list
+    // When opening the chat sidebar, refresh the conversation list
     if (this.isOpen && this.userId) {
       this.loadConversations();
     }

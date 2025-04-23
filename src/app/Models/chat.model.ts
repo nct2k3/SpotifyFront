@@ -1,5 +1,6 @@
+// src/app/Models/chat.model.ts
 export interface Conversation {
-  id: string;  // This is a MongoDB ObjectId or a temporary "new-{userId}" format
+  id: string;  // MongoDB ObjectId as string or temporary ID (new-* or temp-*)
   name: string;
   profilePicture?: string;
   lastMessage: string;
@@ -18,16 +19,20 @@ export interface Chat {
 }
 
 export interface Message {
-  id?: string;
-  chat?: string;
+  id: string;
+  chat: string;
   sender: string;
   content: string;
   timestamp: string;
 }
 
 export interface ChatMessage {
-  message: string;
-  sender: string;
-  chat_id: string;
-  timestamp: string;
+  id?: string;
+  chat?: string;
+  chat_id?: string;
+  sender?: string;  // Changed from string | null to string | undefined
+  content?: string;
+  message?: string;  // Alternative field name for content
+  timestamp?: string;
+  created_at?: string; // Alternative field name for timestamp
 }

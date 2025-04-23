@@ -1,8 +1,27 @@
+// src/app/services/Websocket/web-socket.service.ts
 import { Injectable } from '@angular/core';
-import { Observable, Subject, map, of, catchError, BehaviorSubject } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, Subject, map, of, catchError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChatMessage } from 'src/app/Models/chat.model';
 import { environment } from 'src/app/environment';
+
+// Define interfaces for API responses
+interface ChatHistoryResponse {
+  id?: string;
+  messages?: any[];
+  participants?: string[];
+  created_at?: string;
+  [key: string]: any; // Allow other properties
+}
+
+interface MessageResponse {
+  id?: string;
+  content?: string;
+  sender?: string;
+  chat?: string;
+  timestamp?: string;
+  [key: string]: any; // Allow other properties
+}
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +29,9 @@ import { environment } from 'src/app/environment';
 export class WebSocketService {
   private socket: WebSocket | null = null;
   private messageSubject = new Subject<ChatMessage>();
-  private activeChat = new BehaviorSubject<string>('');
-  private userId: string | null = null;
+  private messageCache = new Set<string>(); // Cache to track message IDs
   
-  constructor(private http: HttpClient) {
-    this.userId = localStorage.getItem('user_id');
-  }
+  constructor(private http: HttpClient) {}
 
   // Get authentication headers
   private getAuthHeaders(): HttpHeaders {
@@ -31,28 +47,43 @@ export class WebSocketService {
     const headers = this.getAuthHeaders();
     console.log(`Getting chat history for chat ID: ${chatId}`);
     
+    // Reset message cache when loading a new chat
+    this.messageCache.clear();
+    
     // Check if the chatId is in a valid format for MongoDB
     if (!this.isValidObjectId(chatId)) {
       console.log(`ID format not valid for MongoDB: ${chatId}`);
+      const userId = localStorage.getItem('user_id') || '';
       return of({
         id: chatId,
-        participants: [localStorage.getItem('user_id'), 'unknown_user'],
+        participants: [userId, 'unknown_user'],
         messages: [],
         created_at: new Date().toISOString()
       });
     }
     
-    return this.http.get(`${environment.apiUrl}/chat/${chatId}/`, { headers }).pipe(
-      map(response => {
+    return this.http.get<any>(`${environment.apiUrl}/chat/${chatId}/`, { headers }).pipe(
+      map((response: any) => {
         console.log('Chat history response:', response);
+        
+        // Add existing message IDs to cache
+        if (response?.messages && Array.isArray(response.messages)) {
+          response.messages.forEach((msg: any) => {
+            if (msg.id) {
+              this.messageCache.add(msg.id);
+            }
+          });
+        }
+        
         return response;
       }),
       catchError(error => {
         console.error(`Error fetching chat ${chatId}:`, error);
         // Return a mock response on error for testing purposes
+        const userId = localStorage.getItem('user_id') || '';
         return of({
           id: chatId,
-          participants: [localStorage.getItem('user_id'), 'unknown_user'],
+          participants: [userId, 'unknown_user'],
           messages: [],
           created_at: new Date().toISOString()
         });
@@ -61,12 +92,12 @@ export class WebSocketService {
   }
 
   // Get all chats for current user
-  getUserChats(): Observable<any> {
+  getUserChats(): Observable<any[]> {
     const headers = this.getAuthHeaders();
     console.log('Getting user chats with headers:', headers);
     
-    return this.http.get(`${environment.apiUrl}/chat/`, { headers }).pipe(
-      map(response => {
+    return this.http.get<any>(`${environment.apiUrl}/chat/`, { headers }).pipe(
+      map((response: any) => {
         console.log('Raw chats API response:', response);
         
         // Handle different response formats
@@ -74,8 +105,8 @@ export class WebSocketService {
           return response;
         } else if (response && typeof response === 'object') {
           // Check if response has a results property (common in REST APIs with pagination)
-          if (Array.isArray((response as any).results)) {
-            return (response as any).results;
+          if (Array.isArray(response.results)) {
+            return response.results;
           }
         }
         
@@ -91,22 +122,23 @@ export class WebSocketService {
     );
   }
 
-  // Create a new chat - using GET instead of POST based on the API error
+  // Create a new chat
   createChat(otherUserId: string): Observable<any> {
     const headers = this.getAuthHeaders();
-    const payload = { receiver_id: otherUserId }; // Match your API's expected format
+    const payload = { participant_id: otherUserId }; 
   
     console.log(`Creating chat with user ID: ${otherUserId} using POST method`);
-    return this.http.post(`${environment.apiUrl}/chat/create/`, payload, { headers }).pipe(
+    return this.http.post<any>(`${environment.apiUrl}/chat/`, payload, { headers }).pipe(
       map(response => {
         console.log('Create chat response:', response);
         return response;
       }),
       catchError(error => {
         console.error('Error creating chat:', error);
+        const userId = localStorage.getItem('user_id') || '';
         return of({
           id: this.generateTempObjectId(),
-          participants: [localStorage.getItem('user_id'), otherUserId],
+          participants: [userId, otherUserId],
           messages: [],
           created_at: new Date().toISOString()
         });
@@ -114,31 +146,24 @@ export class WebSocketService {
     );
   }
 
-  // Set active chat ID
-  setActiveChat(chatId: string): void {
-    this.activeChat.next(chatId);
-    this.connect(this.userId || '', chatId);
-  }
-
-  // Get active chat ID as observable
-  getActiveChat(): Observable<string> {
-    return this.activeChat.asObservable();
-  }
-
   // Connect to WebSocket
-  connect(userId: string, chatId: string): void {
-    // Close existing connection if any
-    this.disconnect();
+  connect(userId: string, chatId: string): boolean {
+    if (!this.isValidObjectId(chatId)) {
+      console.error(`Cannot connect WebSocket with invalid chat ID: ${chatId}`);
+      return false;
+    }
     
-    if (!userId || !chatId) {
-      console.error('Cannot connect WebSocket: missing userId or chatId');
-      return;
+    // Close existing connection if one exists
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.close();
     }
     
     try {
-      // Format the WebSocket URL based on your Django Channels routing
-      // This should match the route in your routing.py
-      const wsUrl = `${environment.wsUrl}/ws/chat/${userId}/${chatId}/`;
+      // For production:
+      // const wsUrl = `${environment.wsUrl}/ws/chat/${userId}/${chatId}/`;
+      
+      // For local testing:
+      const wsUrl = `ws://127.0.0.1:8000/ws/chat/${userId}/${chatId}/`;
       
       console.log(`Connecting to WebSocket URL: ${wsUrl}`);
       
@@ -153,17 +178,27 @@ export class WebSocketService {
         try {
           const data = JSON.parse(event.data);
           
-          // Log message details for debugging
-          console.log('Message details:', {
-            sender: data.sender,
-            currentUser: this.userId,
-            chatId: data.chat_id,
-            activeChat: this.activeChat.getValue()
-          });
+          // Extract message ID - try various possible structures
+          let messageId;
+          if (data.id) {
+            messageId = data.id;
+          } else if (data.message && data.message.id) {
+            messageId = data.message.id;
+          } else {
+            // If no ID, generate one based on content and timestamp
+            const content = data.content || (data.message && data.message.content) || '';
+            const timestamp = data.timestamp || (data.message && data.message.timestamp) || new Date().toISOString();
+            messageId = `${content}-${timestamp}`;
+          }
           
-          // Always emit the message to messageSubject, regardless of active chat
-          // The components will filter based on their needs
-          this.messageSubject.next(data);
+          // Check if this message is already processed
+          if (messageId && !this.messageCache.has(messageId)) {
+            // Add to cache and process message
+            this.messageCache.add(messageId);
+            this.messageSubject.next(data);
+          } else {
+            console.log('Skipping duplicate message:', messageId);
+          }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
         }
@@ -176,8 +211,11 @@ export class WebSocketService {
       this.socket.onclose = () => {
         console.log('WebSocket connection closed');
       };
+      
+      return true;
     } catch (error) {
-      console.error('Error creating WebSocket connection:', error);
+      console.error('Failed to create WebSocket connection:', error);
+      return false;
     }
   }
   
@@ -185,16 +223,13 @@ export class WebSocketService {
   sendMessage(message: string): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       console.log(`Sending message via WebSocket: ${message}`);
-      // Format the message as expected by your Django Channels ChatConsumer
-      this.socket.send(JSON.stringify({ 
-        message: message 
-      }));
+      this.socket.send(JSON.stringify({ message }));
     } else {
       console.error('WebSocket is not connected');
     }
   }
 
-  // Send message via HTTP API
+  // Send message via HTTP API and handle local update for immediate display
   sendMessageHttp(chatId: string, message: string): Observable<any> {
     if (!this.isValidObjectId(chatId)) {
       console.error(`Cannot send message to invalid chat ID: ${chatId}`);
@@ -205,26 +240,49 @@ export class WebSocketService {
     }
     
     const headers = this.getAuthHeaders();
+    const userId = localStorage.getItem('user_id') || '';
     const payload = {
-      content: message
+      content: message,
+      chat_id: chatId
     };
+    
+    // Generate a unique ID for this message
+    const tempId = this.generateTempObjectId();
+    
+    // Create local message for immediate display
+    const localMessage: ChatMessage = {
+      id: tempId,
+      content: message,
+      sender: userId,
+      chat: chatId,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Add to cache to prevent duplicates
+    this.messageCache.add(tempId);
+    
+    // Emit the message locally for immediate display
+    this.messageSubject.next(localMessage);
     
     console.log(`Sending message via HTTP to chat ${chatId}: ${message}`);
     
-    return this.http.post(`${environment.apiUrl}/chat/${chatId}/messages/`, payload, { headers }).pipe(
-      map(response => {
+    // Send message via HTTP
+    return this.http.post<any>(`${environment.apiUrl}/chat/${chatId}/messages/`, payload, { headers }).pipe(
+      map((response: any) => {
         console.log('Send message response:', response);
-        // Don't manually emit a message here - wait for WebSocket
+        
+        // If the server returned a different ID, add it to the cache too
+        if (response?.id && response.id !== tempId) {
+          this.messageCache.add(response.id);
+        }
+        
         return response;
       }),
       catchError(error => {
         console.error('Error sending message with POST:', error);
         
-        // For testing purposes, return a mock success response
-        return of({
-          success: false,
-          error: 'Failed to send message'
-        });
+        // For testing purposes, return the local message
+        return of(localMessage);
       })
     );
   }
@@ -256,26 +314,5 @@ export class WebSocketService {
     const processId = Math.floor(Math.random() * 65536).toString(16).padStart(4, '0');
     const counter = Math.floor(Math.random() * 16777216).toString(16).padStart(6, '0');
     return timestamp + machineId + processId + counter;
-  }
-  
-  /**
-   * This function can be used for testing WebSocket connections
-   */
-  testWebSocketConnection(userId: string, chatId: string): void {
-    console.log('Testing WebSocket connection');
-    
-    // Connect to WebSocket
-    this.connect(userId, chatId);
-    
-    // Wait for connection to establish
-    setTimeout(() => {
-      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-        console.log('WebSocket connection successful, sending test message');
-        // Send a test message
-        this.sendMessage('Test message sent at ' + new Date().toISOString());
-      } else {
-        console.error('WebSocket connection failed or not ready');
-      }
-    }, 1000);
   }
 }
