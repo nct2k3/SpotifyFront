@@ -1,5 +1,5 @@
 export interface Conversation {
-  id: string;  // Note: here id is defined as string
+  id: string;  // This is a MongoDB ObjectId or a temporary "new-{userId}" format
   name: string;
   profilePicture?: string;
   lastMessage: string;
@@ -18,8 +18,8 @@ export interface Chat {
 }
 
 export interface Message {
-  id: string;
-  chat: string;
+  id?: string;
+  chat?: string;
   sender: string;
   content: string;
   timestamp: string;
