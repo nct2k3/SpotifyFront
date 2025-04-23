@@ -98,13 +98,13 @@ export class SongsService {
   }
 
   getMyplayListAll(userId: string): Observable<any[]> {
-    return this.http.get<any>(this.apiUrls).pipe(
-      map(data => {
-        const playlists = (data.results || data).filter((item: any) => item.user === userId);
-        return playlists;
-      })
+    return this.http.get<any>(this.apiUrlMyplaylist).pipe(
+        map(data => {
+            const playlists = (data.results || data).filter((item: any) => item.user === userId);
+            return playlists;
+        })
     );
-  }
+}
 
   getAlbum(id: string): Observable<any> {
     const url = `${this.apiUrlArtist}/${id}`;
