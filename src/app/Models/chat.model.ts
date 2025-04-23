@@ -30,9 +30,10 @@ export interface ChatMessage {
   id?: string;
   chat?: string;
   chat_id?: string;
-  sender?: string;  // Changed from string | null to string | undefined
+  sender?: string;
   content?: string;
   message?: string;  // Alternative field name for content
   timestamp?: string;
   created_at?: string; // Alternative field name for timestamp
+  type?: string; // Type of message (e.g., 'ping', 'connection_established')
 }
