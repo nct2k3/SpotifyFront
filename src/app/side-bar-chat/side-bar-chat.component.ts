@@ -31,7 +31,6 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
   allUsers: UserProfile[] = [];
   private chatSubscription: Subscription | null = null;
   private messageSubscription: Subscription | null = null;
-  private refreshInterval: any = null;
 
   @Output() conversationSelected = new EventEmitter<Conversation>();
   @ViewChild('conversationsEnd') conversationsEndRef!: ElementRef;
@@ -52,66 +51,35 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
       
       // Subscribe to new messages to update conversation list
       this.messageSubscription = this.webSocketService.getMessages().subscribe(message => {
-        this.handleNewMessage(message);
+        // Find the conversation this message belongs to
+        const conversationIndex = this.conversations.findIndex(
+          conv => conv.id === message.chat
+        );
+        
+        if (conversationIndex >= 0) {
+          // Update the conversation with new message info
+          const updatedConversation = { ...this.conversations[conversationIndex] };
+          updatedConversation.lastMessage = message.content || '';
+          updatedConversation.timestamp = new Date(message.timestamp || new Date());
+          updatedConversation.unread = message.sender !== this.userId;
+          
+          // Create a new array to trigger change detection
+          const updatedConversations = [...this.conversations];
+          updatedConversations[conversationIndex] = updatedConversation;
+          
+          // Sort by most recent message
+          this.conversations = updatedConversations.sort(
+            (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+          );
+          
+          // Update filtered conversations if search is active
+          if (this.searchQuery.trim() !== '') {
+            this.filterConversations();
+          } else {
+            this.filteredConversations = [...this.conversations];
+          }
+        }
       });
-      
-      // Setup periodic refresh of conversation list
-      this.startRefreshInterval();
-    }
-  }
-  
-  // Start a periodic refresh of the conversation list
-  private startRefreshInterval(): void {
-    // Clear any existing interval
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-    }
-    
-    // Refresh conversation list every 30 seconds
-    this.refreshInterval = setInterval(() => {
-      if (this.isOpen) {
-        console.log('Refreshing conversation list...');
-        this.loadConversations();
-      }
-    }, 30000); // 30 seconds
-  }
-
-  // Handle a new message that arrives via WebSocket
-  private handleNewMessage(message: any): void {
-    console.log('Message received in sidebar:', message);
-    
-    // Find the conversation this message belongs to
-    const conversationIndex = this.conversations.findIndex(
-      conv => conv.id === (message.chat_id || message.chat)
-    );
-    
-    if (conversationIndex >= 0) {
-      // Update the conversation with new message info
-      const updatedConversation = { ...this.conversations[conversationIndex] };
-      updatedConversation.lastMessage = message.content || message.message || '';
-      updatedConversation.timestamp = new Date(message.timestamp || message.created_at || new Date());
-      updatedConversation.unread = message.sender !== this.userId;
-      
-      // Create a new array to trigger change detection
-      const updatedConversations = [...this.conversations];
-      updatedConversations[conversationIndex] = updatedConversation;
-      
-      // Sort by most recent message
-      this.conversations = updatedConversations.sort(
-        (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
-      );
-      
-      // Update filtered conversations if search is active
-      if (this.searchQuery.trim() !== '') {
-        this.filterConversations();
-      } else {
-        this.filteredConversations = [...this.conversations];
-      }
-    } else {
-      // If conversation not found, it might be a new conversation
-      // Reload all conversations to get the latest
-      console.log('Message for unknown conversation, reloading conversations...');
-      this.loadConversations();
     }
   }
 
@@ -122,10 +90,6 @@ export class SideBarChatComponent implements OnInit, AfterViewChecked, OnDestroy
     
     if (this.messageSubscription) {
       this.messageSubscription.unsubscribe();
-    }
-    
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
     }
   }
 

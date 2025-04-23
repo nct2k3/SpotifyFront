@@ -30,11 +30,6 @@ export class WebSocketService {
   private socket: WebSocket | null = null;
   private messageSubject = new Subject<ChatMessage>();
   private messageCache = new Set<string>(); // Cache to track message IDs
-  private pingInterval: any = null;
-  
-  // Store the last connection parameters for reconnection
-  private lastUserId: string | null = null;
-  private lastChatId: string | null = null;
   
   constructor(private http: HttpClient) {}
 
@@ -153,16 +148,14 @@ export class WebSocketService {
 
   // Connect to WebSocket
   connect(userId: string, chatId: string): boolean {
-    // Store parameters for potential reconnection
-    this.lastUserId = userId;
-    this.lastChatId = chatId;
-    
-    // Properly close existing connection if one exists
-    this.disconnect();
-    
     if (!this.isValidObjectId(chatId)) {
       console.error(`Cannot connect WebSocket with invalid chat ID: ${chatId}`);
       return false;
+    }
+    
+    // Close existing connection if one exists
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.close();
     }
     
     try {
@@ -177,21 +170,13 @@ export class WebSocketService {
       this.socket = new WebSocket(wsUrl);
       
       this.socket.onopen = () => {
-        console.log('WebSocket connection established successfully');
-        // Start ping interval to keep connection alive
-        this.startPingInterval();
+        console.log('WebSocket connection established');
       };
       
       this.socket.onmessage = (event) => {
         console.log('WebSocket message received:', event.data);
         try {
           const data = JSON.parse(event.data);
-          
-          // Skip ping messages
-          if (data.type === 'ping_response') {
-            console.log('Received ping response');
-            return;
-          }
           
           // Extract message ID - try various possible structures
           let messageId;
@@ -201,8 +186,8 @@ export class WebSocketService {
             messageId = data.message.id;
           } else {
             // If no ID, generate one based on content and timestamp
-            const content = data.content || data.message || '';
-            const timestamp = data.timestamp || new Date().toISOString();
+            const content = data.content || (data.message && data.message.content) || '';
+            const timestamp = data.timestamp || (data.message && data.message.timestamp) || new Date().toISOString();
             messageId = `${content}-${timestamp}`;
           }
           
@@ -219,58 +204,19 @@ export class WebSocketService {
         }
       };
       
-      // Set up automatic reconnection
-      this.setupReconnection();
+      this.socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+      
+      this.socket.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
       
       return true;
     } catch (error) {
       console.error('Failed to create WebSocket connection:', error);
       return false;
     }
-  }
-  
-  // Setup reconnection logic
-  private setupReconnection(): void {
-    if (!this.socket) return;
-    
-    this.socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-    
-    this.socket.onclose = (event) => {
-      console.log('WebSocket connection closed with code:', event.code);
-      
-      // Clear ping interval
-      if (this.pingInterval) {
-        clearInterval(this.pingInterval);
-        this.pingInterval = null;
-      }
-      
-      // Don't attempt to reconnect if this was an intentional closure (code 1000)
-      if (event.code !== 1000) {
-        console.log('Attempting to reconnect in 3 seconds...');
-        setTimeout(() => {
-          if (this.lastUserId && this.lastChatId) {
-            this.connect(this.lastUserId, this.lastChatId);
-          }
-        }, 3000);
-      }
-    };
-  }
-  
-  // Keep WebSocket connection alive with periodic pings
-  private startPingInterval(): void {
-    // Clear any existing interval
-    if (this.pingInterval) {
-      clearInterval(this.pingInterval);
-    }
-    
-    // Send a ping every 30 seconds to keep the connection alive
-    this.pingInterval = setInterval(() => {
-      if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-        this.socket.send(JSON.stringify({ type: 'ping' }));
-      }
-    }, 30000); // 30 seconds
   }
   
   // Send message through WebSocket
@@ -280,21 +226,6 @@ export class WebSocketService {
       this.socket.send(JSON.stringify({ message }));
     } else {
       console.error('WebSocket is not connected');
-      
-      // Attempt to reconnect if socket is closed or closing
-      if (this.socket && (this.socket.readyState === WebSocket.CLOSED || this.socket.readyState === WebSocket.CLOSING)) {
-        console.log('Socket is closed or closing, attempting to reconnect...');
-        if (this.lastUserId && this.lastChatId) {
-          this.connect(this.lastUserId, this.lastChatId);
-          
-          // Retry sending message after a short delay
-          setTimeout(() => {
-            if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-              this.socket.send(JSON.stringify({ message }));
-            }
-          }, 1000);
-        }
-      }
     }
   }
 
@@ -324,7 +255,6 @@ export class WebSocketService {
       content: message,
       sender: userId,
       chat: chatId,
-      chat_id: chatId,
       timestamp: new Date().toISOString()
     };
     
@@ -359,21 +289,9 @@ export class WebSocketService {
   
   // Close WebSocket connection
   disconnect(): void {
-    // Clear ping interval
-    if (this.pingInterval) {
-      clearInterval(this.pingInterval);
-      this.pingInterval = null;
-    }
-    
     if (this.socket) {
       console.log('Disconnecting WebSocket');
-      
-      // Remove event handlers to prevent reconnection attempts
-      this.socket.onclose = null;
-      this.socket.onerror = null;
-      
-      // Close with code 1000 (normal closure) to indicate intentional disconnect
-      this.socket.close(1000, 'Intentional disconnect');
+      this.socket.close();
       this.socket = null;
     }
   }
