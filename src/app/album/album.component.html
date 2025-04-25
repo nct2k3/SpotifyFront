@@ -60,8 +60,8 @@
                     <p class="text-gray-400 text-sm">{{ getTranslation('album.basedon') }}</p>
                  
                         <div class="mt-4 space-y-4" *ngFor="let item of randomSongs">
-                            <div
-                              class="flex items-center justify-between border-b border-gray-800 pb-2"
+                            <div (click)="nextTrack(item)"
+                              class="flex items-center justify-between border-b border-gray-800 pb-2 hover: cursor-pointer "
                             >
                               <div class="flex items-center space-x-4">
                                 <div class="w-12 h-12 relative">
@@ -80,7 +80,7 @@
                                 (click)="addNewPlaylist(item.id)"
                                 class="border border-white rounded-full px-4 py-1 text-white hover:bg-green-500 hover:text-black transition-colors duration-200"  
                               >
-                                {{ getTranslation('myplaylist.add') }}
+                                {{ getTranslation('album.add') }}
                               </button>
                             </div>
                           </div>
