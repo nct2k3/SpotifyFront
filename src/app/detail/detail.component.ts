@@ -3,6 +3,7 @@ import { SongsService } from '../services/Songs/songs.service';
 import { FooterComponent } from '../footer/footer.component';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { TranslationsService } from '../services/Translations/TranslationsService';
 
 @Component({
   selector: 'app-detail',
@@ -17,17 +18,25 @@ export class DetailComponent {
   song: any = null; 
   myplaylist: any[] = [];
   randomSongs: any[] = []; 
+  language: number = 0;
+  translations: { [key: string]: string } = {};
+  
   constructor(
     private songsService: SongsService,
-    private route: ActivatedRoute
-    , private router: Router
+    private route: ActivatedRoute,
+    private router: Router,
+    private translationsService: TranslationsService
   ) {}
 
   ngOnInit() {
-
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
+    this.language = parseInt(localStorage.getItem('language') || '0');
+    
+    // Load translations
+    this.translations = this.translationsService.getPageTranslations('detail', this.language);
+    
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe({
         next: (data: any) => {
@@ -49,14 +58,17 @@ export class DetailComponent {
         });
       }
     });
+    
     this.songsService.getTrack().subscribe((data: any) => {
       this.randomSongs = this.getRandomSongs(data, 5); 
     });
   }
+  
   private getRandomSongs(songs: any[], count: number): any[] {
     const shuffled = songs.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, Math.min(count, songs.length));
   }
+  
   addNewPlaylist(songId: string): void {
     if (!songId) {
       console.error('Không có bài hát được chọn');
@@ -75,7 +87,7 @@ export class DetailComponent {
         console.error('Error adding playlist:', error);
       }
     });
-}
+  }
 
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible;
@@ -96,5 +108,10 @@ export class DetailComponent {
     } else {
       console.error('FooterComponent chưa được khởi tạo');
     }
+  }
+  
+  // Helper method to get translations
+  getTranslation(key: string): string {
+    return this.translations[key] || key;
   }
 }

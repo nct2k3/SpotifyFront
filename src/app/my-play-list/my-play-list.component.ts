@@ -3,6 +3,7 @@ import { SongsService } from '../services/Songs/songs.service';
 import { FooterComponent } from '../footer/footer.component';
 import { SharedService } from '../services/shared/shared.service';
 import { Router } from '@angular/router';
+import { TranslationsService } from  '../services/Translations/TranslationsService';
 
 @Component({
   selector: 'app-my-play-list',
@@ -17,28 +18,41 @@ export class MyPlayListComponent {
   songs: any[] = [];
   myplaylist: any[] = [];
   randomSongs: any[] = [];
-
   myplaylistAll: any[] = [];
-  
   isLoading: boolean = false;
+  language: number = 0;
+  translations: { [key: string]: string } = {};
 
-
-  constructor(private songsService: SongsService, private sharedService: SharedService,private router: Router) {}
+  constructor(
+    private songsService: SongsService, 
+    private sharedService: SharedService,
+    private router: Router,
+    private translationsService: TranslationsService
+  ) {}
 
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible;
     console.log('Sidebar visibility:', this.sidebarVisible);
   }
+  
   private getRandomSongs(songs: any[], count: number): any[] {
     const shuffled = songs.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, Math.min(count, songs.length));
   }
 
   ngOnInit() {
-    // Lấy dữ liệu từ localStorage
+    // Load user data from localStorage
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
+    this.language = parseInt(localStorage.getItem('language') || '0');
+    
+    // Load translations
+    this.translations = {
+      ...this.translationsService.getPageTranslations('myPlaylist', this.language),
+      ...this.translationsService.getPageTranslations('general', this.language)
+    };
+    
     this.isLoading = true;
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe({
@@ -46,7 +60,6 @@ export class MyPlayListComponent {
           this.songs = data;
           this.myplaylist = data; 
           this.sharedService.updateSharedData(this.songs); 
-          
         },
         error: (error) => {
           console.error('Error fetching playlist:', error);
@@ -56,12 +69,12 @@ export class MyPlayListComponent {
       this.songsService.getMyplayListAll(this.userId).subscribe({
         next: (data: any) => {
           this.myplaylistAll = data;
-         console.log(this.myplaylistAll);
+          console.log(this.myplaylistAll);
         },
         error: (error) => {
           console.error('Error fetching playlist:', error);
         }
-      })
+      });
       
       this.songsService.getTrack().subscribe((data: any) => {
         this.randomSongs = this.getRandomSongs(data, 5); 
@@ -73,6 +86,7 @@ export class MyPlayListComponent {
       this.router.navigate(['/login']); 
     }
   }
+  
   addNewPlaylist(songId: string): void {
     if (!songId) {
       console.error('Không có bài hát được chọn');
@@ -91,9 +105,9 @@ export class MyPlayListComponent {
         console.error('Error adding playlist:', error);
       }
     });
-}
-  deleteMyplaylist(Id:string){
-
+  }
+  
+  deleteMyplaylist(Id: string) {
     this.songsService.deletePlaylist(Id).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -129,5 +143,10 @@ export class MyPlayListComponent {
     } else {
       console.error('FooterComponent chưa được khởi tạo');
     }
+  }
+  
+  // Helper method to get translations
+  getTranslation(key: string): string {
+    return this.translations[key] || key;
   }
 }

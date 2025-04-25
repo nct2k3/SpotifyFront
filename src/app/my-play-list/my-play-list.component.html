@@ -1,169 +1,160 @@
-<body class=" text-white bg-black font-sans pt-[70px]">
-    <div class="flex lg:flex-row h-auto">
-      <app-sidebar
-        [sidebarVisible]="sidebarVisible"
-        [myplaylist]="myplaylist"
-        (toggleSidebarEvent)="toggleSidebar()"
-        (nextTrackEvent)="nextTrack($event)"
-      ></app-sidebar>
-  
-      <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
-      <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
-  
-      <main class="flex-1 bg-gradient-to-l  rounded-xl m-1">
+<body class="text-white bg-black font-sans pt-[70px]">
+  <div class="flex lg:flex-row h-auto">
+    <app-sidebar
+      [sidebarVisible]="sidebarVisible"
+      [myplaylist]="myplaylist"
+      (toggleSidebarEvent)="toggleSidebar()"
+      (nextTrackEvent)="nextTrack($event)"
+    ></app-sidebar>
 
-        <div class="max-full">
-          <!-- Playlist Header -->
-           <div
-        *ngIf="isLoading"
-        class="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-yellow-950 to-black bg-opacity-75 z-50 rounded-xl"
-      >
-        <div class="flex flex-col items-center">
-          <svg
-            class="w-12 h-12 text-green-500 animate-spin"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <p class="text-white mt-4">Loading content...</p>
+    <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
+    <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
+
+    <main class="flex-1 bg-gradient-to-l rounded-xl m-1">
+      <div class="max-full">
+        <!-- Loading spinner -->
+        <div
+          *ngIf="isLoading"
+          class="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-yellow-950 to-black bg-opacity-75 z-50 rounded-xl"
+        >
+          <div class="flex flex-col items-center">
+            <svg
+              class="w-12 h-12 text-green-500 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <p class="text-white mt-4">{{ getTranslation('admin.loading') }}</p>
+          </div>
         </div>
-      </div>
-          <div
-            class="flex w-full items-center space-x-4 p-6 bg-gradient-to-l from-gray-900 to-gray-950 rounded-t-2xl"
-          >
-            <div class="w-32 h-32 relative flex-shrink-0">
-              <img
-                [src]="songs[0]?.image_location || 'assets/default-album-art.jpg'"
-                alt="Playlist Cover"
-                class="w-full h-full rounded-full object-cover shadow-xl"
-              />
-            </div>
-            <div>
-              <h1 class="text-gray-400 m-2">Playlist</h1>
-              <h1 class="text-5xl font-bold">My Playlist! #1</h1>
-              <p class="text-gray-400 m-2">{{username }}</p>
-            </div>
+        
+        <!-- Playlist Header -->
+        <div
+          class="flex w-full items-center space-x-4 p-6 bg-gradient-to-l from-gray-900 to-gray-950 rounded-t-2xl"
+        >
+          <div class="w-32 h-32 relative flex-shrink-0">
+            <img
+              [src]="songs[0]?.image_location || 'assets/default-album-art.jpg'"
+              alt="Playlist Cover"
+              class="w-full h-full rounded-full object-cover shadow-xl"
+            />
           </div>
-  
-          <!-- Controls -->
-          <div class="flex items-center justify-between p-4">
-            <div class="flex items-center space-x-4">
-              <img
-                src="https://img.icons8.com/?size=100&id=59862&format=png&color=ffffff"
-                (click)="nextTrack(songs[0])"
-                alt="Play"
-                class="h-12 w-12 p-3 bg-green-500 rounded-full hover:scale-110 cursor-pointer"
-              />
-              
-            </div>
-            <div class="text-white flex items-center space-x-2">
-              <span>Danh sách</span>
-              <span class="text-xl">☰</span>
-            </div>
+          <div>
+            <h1 class="text-gray-400 m-2">{{ getTranslation('myplaylist.playlist') }}</h1>
+            <h1 class="text-5xl font-bold">{{ getTranslation('myplaylist.playlist') }}! #1</h1>
+            <p class="text-gray-400 m-2">{{ username }}</p>
           </div>
-  
-          <!-- Song List Table -->
-          <div class="px-6 pb-6">
-            <table class="w-full text-left">
-              <thead>
-                <tr class="border-b border-gray-700 text-gray-400">
-                  <th class="py-3 px-4 w-12">#</th>
-                  <th class="py-3 px-4">Song</th>
-              
-                  <th class="py-3 px-4">Duration</th>
-                  <th class="py-3 px-4">Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                <ng-container *ngFor="let playlist of myplaylistAll; let i = index">
-                  <tr
-                    *ngFor="let item of playlist.songs"
-                    (click)="nextTrack(item)"
-                    class="hover:bg-gray-800/50 transition-colors duration-200 rounded-xl cursor-pointer"
-                  >
-                    <td class="py-3 px-4 rounded-l-xl">#{{ i + 1 }}</td>
-                    <td class="py-3 px-4 flex items-center space-x-3">
-                      <div class="w-12 h-12">
-                        <img
-                          [src]="item.image_location || 'assets/default-album-art.jpg'"
-                          class="w-full h-full rounded-md object-cover"
-                        />
-                      </div>
-                      <span class="font-medium">{{ item.title || 'Unknown Title' }}</span>
-                    </td>
-                   
-                    <td class="py-3 px-4 text-gray-400">{{ item.duration || 'N/A' }}</td>
-                    <td class="py-3 px-4">
-                      <button
-                        (click)="deleteMyplaylist(playlist.id); $event.stopPropagation()"
-                        class="bg-green-500 text-black hover:scale-110 transition-transform duration-200 text-sm rounded px-3 py-1 text-white"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                </ng-container>
-                <tr *ngIf="myplaylistAll.length === 0 || myplaylistAll[0].songs.length === 0">
-                  <td colspan="5" class="py-4 text-center text-gray-400">
-                    Không có bài hát nào
+        </div>
+
+        <!-- Controls -->
+        <div class="flex items-center justify-between p-4">
+          <div class="flex items-center space-x-4">
+            <img
+              src="https://img.icons8.com/?size=100&id=59862&format=png&color=ffffff"
+              (click)="nextTrack(songs[0])"
+              alt="Play"
+              class="h-12 w-12 p-3 bg-green-500 rounded-full hover:scale-110 cursor-pointer"
+            />
+          </div>
+        </div>
+
+        <!-- Song List Table -->
+        <div class="px-6 pb-6">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="border-b border-gray-700 text-gray-400">
+                <th class="py-3 px-4 w-12">#</th>
+                <th class="py-3 px-4">{{ getTranslation('myplaylist.song') }}</th>
+                <th class="py-3 px-4">{{ getTranslation('myplaylist.duration') }}</th>
+                <th class="py-3 px-4">{{ getTranslation('myplaylist.delete') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let playlist of myplaylistAll; let i = index">
+                <tr
+                  *ngFor="let item of playlist.songs"
+                  (click)="nextTrack(item)"
+                  class="hover:bg-gray-800/50 transition-colors duration-200 rounded-xl cursor-pointer"
+                >
+                  <td class="py-3 px-4 rounded-l-xl">#{{ i + 1 }}</td>
+                  <td class="py-3 px-4 flex items-center space-x-3">
+                    <div class="w-12 h-12">
+                      <img
+                        [src]="item.image_location || 'assets/default-album-art.jpg'"
+                        class="w-full h-full rounded-md object-cover"
+                      />
+                    </div>
+                    <span class="font-medium">{{ item.title || getTranslation('general.unknownTitle') }}</span>
+                  </td>
+                  <td class="py-3 px-4 text-gray-400">{{ item.duration || 'N/A' }}</td>
+                  <td class="py-3 px-4">
+                    <button
+                      (click)="deleteMyplaylist(playlist.id); $event.stopPropagation()"
+                      class="border border-white rounded-full px-4 py-1 text-white hover:bg-green-500 hover:text-black transition-colors duration-200"
+                    >
+                      {{ getTranslation('myplaylist.delete') }}
+                    </button>
                   </td>
                 </tr>
-              </tbody>
-            </table>
-          </div>
-  
-          <!-- Recommendations Section -->
-          <div class="p-6">
-            <h2 class="text-xl font-bold">Đề xuất</h2>
-            <p class="text-gray-400 text-sm">
-              Dựa trên nội dung có trong danh sách phát này
-            </p>
-            <div class="mt-4 space-y-4" *ngFor="let item of randomSongs">
-              <div
-                class="flex items-center justify-between border-b border-gray-800 pb-2"
-              >
-                <div class="flex items-center space-x-4">
-                  <div class="w-12 h-12 relative">
-                    <img
-                      [src]="item.image_location"
-                      alt="Song Cover"
-                      class="w-full h-full rounded-lg object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p class="text-white">{{item.title}}</p>
-                    <p class="text-gray-400 text-sm">AMEE, RPT MCK</p>
-                  </div>
+              </ng-container>
+              <tr *ngIf="myplaylistAll.length === 0 || myplaylistAll[0].songs.length === 0">
+                <td colspan="5" class="py-4 text-center text-gray-400">
+                  {{ getTranslation('myplaylist.nosongs') }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="p-6">
+          <h2 class="text-xl font-bold">{{ getTranslation('myplaylist.recommendations') }}</h2>
+          <p class="text-gray-400 text-sm">
+            {{ getTranslation('myplaylist.basedon') }}
+          </p>
+          <div class="mt-4 space-y-4" *ngFor="let item of randomSongs">
+            <div
+              class="flex items-center justify-between border-b border-gray-800 pb-2"
+            >
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 relative">
+                  <img
+                    [src]="item.image_location"
+                    alt="Song Cover"
+                    class="w-full h-full rounded-lg object-cover"
+                  />
                 </div>
-                <button
-                (click)="addNewPlaylist(item.id)"
-                  class="border border-white rounded-full px-4 py-1 text-white hover:bg-green-500 hover:text-black transition-colors duration-200"  
-                >
-                  Thêm
-                </button>
+                <div>
+                  <p class="text-white">{{ item.title }}</p>
+                  <p class="text-gray-400 text-sm">{{ item.artists?.[0]?.name || getTranslation('general.unknownArtist') }}</p>
+                </div>
               </div>
-             
+              <button
+                (click)="addNewPlaylist(item.id)"
+                class="border border-white rounded-full px-4 py-1 text-white hover:bg-green-500 hover:text-black transition-colors duration-200"  
+              >
+                {{ getTranslation('myplaylist.add') }}
+              </button>
             </div>
           </div>
-          
         </div>
-        <div class="h-[70px]"></div>
-      </main>
+      </div>
 
-      
-    </div>
-  </body>
-  <app-footer></app-footer>
+      <div class="h-[70px]"></div>
+    </main>
+  </div>
+</body>
+<app-footer></app-footer>

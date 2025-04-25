@@ -1,4 +1,4 @@
-<!-- Sidebar đầy đủ -->
+<!-- Sidebar đầy đủ --> 
 <aside
   *ngIf="sidebarVisible"
   class="fixed top-[70px] z-40 w-1/4 h-[calc(100vh-5rem)] bg-[#070707] px-6 py-4 flex flex-col gap-6 rounded-2xl mt-1 shadow-lg transition-all duration-300"
@@ -18,15 +18,12 @@
         </div>
         <span
           [routerLink]="'/myplaylist'"
-          class="font-bold text-gray-300 hover:text-green-500 text-sm  transition-all duration-300 hover:underline cursor-pointer "
+          class="font-bold text-gray-300 hover:text-green-500 text-sm transition-all duration-300 hover:underline cursor-pointer"
         >
-          Your Library
+          {{ getTranslation('sidebar.library') }}
         </span>
       </a>
     </div>
-  
-  
-    
   </nav>
 
   <!-- Playlist -->
@@ -40,23 +37,23 @@
       <div class="w-12 h-12 relative flex-shrink-0">
         <img
           [src]="item.image_location || 'assets/default-album-art.jpg'"
-          alt="{{ item.title || 'Unknown Title' }}"
+          alt="{{ item.title || getTranslation('general.unknownTitle') }}"
           class="w-full h-full rounded-md object-cover hover:scale-105 transition-transform duration-200"
         />
       </div>
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-white hover:underline truncate">
-          {{ item.title || 'Unknown Title' }}
+          {{ item.title || getTranslation('general.unknownTitle') }}
         </div>
         <div class="text-sm text-gray-400 hover:text-gray-200 transition-colors duration-200 truncate">
-          Playlist • {{username}}
+          {{ getTranslation('sidebar.playlist') }}{{username}}
         </div>
       </div>
     </div>
   </div>
 </aside>
 
-<!-- Sidebar mini -->
+<!-- Sidebar mini --> 
 <div
   *ngIf="!sidebarVisible"
   id="sidebarMini"
@@ -86,7 +83,7 @@
       >
         <img
           [src]="item.image_location || 'assets/default-album-art.jpg'"
-          alt="{{ item.title || 'Unknown Title' }}"
+          alt="{{ item.title || getTranslation('general.unknownTitle') }}"
           class="w-full h-full rounded-md object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
         />
       </div>

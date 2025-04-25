@@ -51,12 +51,12 @@
           </div>
           
           <div class="z-10 transform transition-transform duration-500 group-hover:translate-x-2">
-            <h1 class="text-gray-400 m-2 text-sm uppercase tracking-wider font-semibold">Bài hát</h1>
-            <h1 class="text-5xl font-bold transition-all duration-300 group-hover:text-green-400 group-hover:text-shadow">{{ song.title || 'Unknown Title' }}</h1>
+            <h1 class="text-gray-400 m-2 text-sm uppercase tracking-wider font-semibold">{{ getTranslation('detail.song') }}</h1>
+            <h1 class="text-5xl font-bold transition-all duration-300 group-hover:text-green-400 group-hover:text-shadow">{{ song.title || getTranslation('general.unknownTitle') }}</h1>
             <p class="text-gray-400 m-2 flex items-center">
-              <span class="hover:text-white transition-colors duration-200 cursor-pointer">{{ song.artists?.[0]?.name || 'Unknown Artist' }}</span>
+              <span class="hover:text-white transition-colors duration-200 cursor-pointer">{{ song.artists?.[0]?.name || getTranslation('general.unknownArtist') }}</span>
               <span class="mx-2">•</span>
-              <span>{{ song.duration || 0 | number:'1.0-2' }} min</span>
+              <span>{{ song.duration || 0 | number:'1.0-2' }} {{ getTranslation('general.minutes') }}</span>
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@
         <div *ngIf="!song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-800 to-black rounded-t-2xl">
           <div class="w-36 h-36 bg-gray-800 rounded-lg skeleton-wave"></div>
           <div>
-            <h1 class="text-gray-400 m-2">Bài hát</h1>
+            <h1 class="text-gray-400 m-2">{{ getTranslation('detail.song') }}</h1>
             <h1 class="bg-gray-800 h-12 w-64 rounded skeleton-wave"></h1>
             <p class="m-2 bg-gray-800 h-6 w-48 rounded skeleton-wave"></p>
           </div>
@@ -92,7 +92,7 @@
             <div class="relative group hover:scale-105 transition-all duration-200">
               <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30">
                 <div class="bg-gray-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap border border-gray-700 backdrop-blur-sm animate-fade-in">
-                  Add to your playlist
+                  {{ getTranslation('detail.addtoplaylist') }}
                   <!-- Tooltip arrow -->
                   <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 border-r border-b border-gray-700 rotate-45"></div>
                 </div>
@@ -113,7 +113,7 @@
             <div class="relative group hover:scale-105 transition-all duration-200">
               <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30">
                 <div class="bg-gray-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap border border-gray-700 backdrop-blur-sm animate-fade-in">
-                  Download song
+                  {{ getTranslation('detail.download') }}
                   <!-- Tooltip arrow -->
                   <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 border-r border-b border-gray-700 rotate-45"></div>
                 </div>
@@ -129,10 +129,6 @@
               </a>
             </div>
           </div>
-          <div class="text-white flex items-center space-x-2">
-            <span class="opacity-70 hover:opacity-100 transition-opacity duration-200">Danh sách</span>
-            <span class="text-xl hover:text-green-400 transition-colors duration-200 cursor-pointer">☰</span>
-          </div>
         </div>
 
         <!-- Lyrics and Artist Section with glass-morphism design -->
@@ -145,7 +141,7 @@
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
               </span>
-              Lời bài hát
+              {{ getTranslation('detail.lyrics') }}
             </div>
             <div class="h-[250px] overflow-y-auto custom-scrollbar relative">
               <div class="pr-4 whitespace-pre-line leading-relaxed text-gray-300">
@@ -164,7 +160,7 @@
                   <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                 </svg>
               </span>
-              Nghệ sĩ
+              {{ getTranslation('detail.artist') }}
             </div>
             <div *ngIf="song?.artists?.length" class="flex items-center hover:bg-black/20 p-3 rounded-lg transition-all duration-200 cursor-pointer transform hover:translate-x-1">
               <div class="relative h-12 w-12 rounded-full overflow-hidden mr-3">
@@ -177,9 +173,9 @@
               </div>
               <div>
                 <div class="text-sm font-bold text-white hover:text-green-400 transition-colors duration-200">
-                  {{ song.artists[0]?.name || 'Unknown Artist' }}
+                  {{ song.artists[0]?.name || getTranslation('general.unknownArtist') }}
                 </div>
-                <div class="text-xs text-gray-400">Artist</div>
+                <div class="text-xs text-gray-400">{{ getTranslation('detail.artist') }}</div>
               </div>
             </div>
             <div *ngIf="!song?.artists?.length" class="flex">
@@ -197,16 +193,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </span>
-            Đề xuất
+            {{ getTranslation('detail.recommendations') }}
           </h2>
-          <p class="text-gray-400 text-sm mb-4">Dựa trên nội dung có trong danh sách phát này</p>
+          <p class="text-gray-400 text-sm mb-4">{{ getTranslation('detail.basedon') }}</p>
           
           <!-- Recommendations Section -->
           <div class="p-6">
-            <h2 class="text-xl font-bold">Đề xuất</h2>
-            <p class="text-gray-400 text-sm">
-              Dựa trên nội dung có trong danh sách phát này
-            </p>
             <div class="mt-4 space-y-4" *ngFor="let item of randomSongs">
               <div
                 class="flex items-center justify-between border-b border-gray-800 pb-2"
@@ -221,20 +213,18 @@
                   </div>
                   <div>
                     <p class="text-white">{{item.title}}</p>
-                    <p class="text-gray-400 text-sm">AMEE, RPT MCK</p>
+                    <p class="text-gray-400 text-sm">{{ item.artists?.[0]?.name || getTranslation('general.unknownArtist') }}</p>
                   </div>
                 </div>
                 <button
-                (click)="addNewPlaylist(item.id)"
+                  (click)="addNewPlaylist(item.id)"
                   class="border border-white rounded-full px-4 py-1 text-white hover:bg-green-500 hover:text-black transition-colors duration-200"  
                 >
-                  Thêm
+                  {{ getTranslation('detail.add') }}
                 </button>
               </div>
-             
             </div>
           </div>
-          
         </div>
       </div>
     </main>

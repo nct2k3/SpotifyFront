@@ -5,6 +5,7 @@ import { AlbumService } from '../services/album/album.service';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { SharedService } from '../services/shared/shared.service';
+import { TranslationsService } from '../services/Translations/TranslationsService';
 
 @Component({
   selector: 'app-home',
@@ -14,80 +15,98 @@ import { SharedService } from '../services/shared/shared.service';
 export class HomeComponent implements OnInit {
   songs: any[] = [];
   album: any[] = [];
-  myplaylist : any[] = [];  
+  myplaylist: any[] = [];
+  
   username: string | null = '';
   email: string | null = '';
-  userId: string | null = ''; 
-  albumcustom: any[] = [];
+  userId: string | null = '';
   
-  isLoading: boolean = false; 
-
-  constructor(private songsService: SongsService, private albumService: AlbumService,
-    private router: Router , private SharedService:SharedService
-
+  albumcustom: any[] = [];
+  language: number = 1;
+  isLoading: boolean = false;
+  translations: { [key: string]: string } = {};
+  
+  constructor(
+    private songsService: SongsService, 
+    private albumService: AlbumService,
+    private router: Router, 
+    private sharedService: SharedService,
+    private translationsService: TranslationsService
   ) {}
-
-  sidebarVisible = true; 
-
+  
+  sidebarVisible = true;
+  
   toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible; 
+    this.sidebarVisible = !this.sidebarVisible;
     console.log('Sidebar visibility:', this.sidebarVisible);
   }
+  
   ngOnInit() {
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
+    this.language = parseInt(localStorage.getItem('language') || '0');
+    
+    // Load translations
+    this.translations = this.translationsService.getPageTranslations('home', this.language);
+    
     this.isLoading = true;
     this.songsService.getTrack().subscribe((data: any) => {
       this.songs = data;
-      this.SharedService.updateSharedData(this.songs)
+      this.sharedService.updateSharedData(this.songs);
     });
+    
     this.albumService.getAlbum().subscribe((data: any) => {
       this.album = data;
       this.albumcustom = data.filter((item: any) => item.Album_type === 1);
       this.isLoading = false;
     });
+    
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe((data: any) => {
         this.myplaylist = data;
       });
     }
-  
-
   }
-  navigateToDetail(Id:any) {
+  
+  navigateToDetail(Id: any) {
     this.router.navigate(['/detail'], {
-      queryParams: { Id:Id }
+      queryParams: { Id: Id }
     });
   }
-   navigateToListSong(){
+  
+  navigateToListSong() {
     this.router.navigate(['/product']);
-   }
-   navigateToMylistalbum(){
+  }
+  
+  navigateToMylistalbum() {
     this.router.navigate(['/allAlbum']);
-   }
-  navigateToAlbum(Id:any) {
+  }
+  
+  navigateToAlbum(Id: any) {
     this.router.navigate(['/album'], {
       queryParams: { Id: Id }
     });
   }
-
-
-  @ViewChild(FooterComponent, { static: false }) footerComponent!: FooterComponent;
-
-    ngAfterViewInit() {
-      if (!this.footerComponent) {
-        console.error('FooterComponent chưa được khởi tạo');
-      }
-    }
-
-    nextTrack(data: any): void {
-      if (this.footerComponent) {
-        this.footerComponent.setTrackData(data, true);
-      } else {
-        console.error('FooterComponent chưa được khởi tạo');
-      }
-    }
-
   
+  @ViewChild(FooterComponent, { static: false }) footerComponent!: FooterComponent;
+  
+  ngAfterViewInit() {
+    if (!this.footerComponent) {
+      console.error('FooterComponent chưa được khởi tạo');
+    }
+  }
+  
+  nextTrack(data: any): void {
+    if (this.footerComponent) {
+      this.footerComponent.setTrackData(data, true);
+    } else {
+      console.error('FooterComponent chưa được khởi tạo');
+    }
+  }
+  
+  // Helper method to get translations
+  getTranslation(key: string): string {
+    return this.translations[key] || key;
+  }
 }

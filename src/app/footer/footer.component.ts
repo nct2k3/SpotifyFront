@@ -20,6 +20,7 @@ export class FooterComponent implements OnInit {
   progress: number = 0;
   volume: number = 50;
   sharedData: any[] = [];
+  isLooping: boolean = false; // Thêm trạng thái lặp lại
 
   constructor(
     private songsService: SongsService,
@@ -45,6 +46,7 @@ export class FooterComponent implements OnInit {
   ngOnInit(): void {
     this.fetchTrackData();
     this.audioPlayer.nativeElement.volume = this.volume / 100;
+    this.audioPlayer.nativeElement.loop = this.isLooping; // Áp dụng trạng thái lặp lại
 
     this.sharedService.sharedData$.subscribe((data) => {
       this.sharedData = data;
@@ -77,7 +79,6 @@ export class FooterComponent implements OnInit {
 
       if (autoPlay) {
         this.isPlaying = true;
-        // Đợi âm thanh sẵn sàng trước khi phát
         const playAudio = () => {
           this.audioPlayer.nativeElement.play().then(() => {
             console.log('Phát nhạc thành công:', this.currentTrack.name);
@@ -87,7 +88,6 @@ export class FooterComponent implements OnInit {
           });
         };
 
-        // Kiểm tra nếu âm thanh đã sẵn sàng
         if (this.audioPlayer.nativeElement.readyState >= 2) {
           playAudio();
         } else {
@@ -137,7 +137,18 @@ export class FooterComponent implements OnInit {
   }
 
   onTrackEnded(): void {
-    this.nextTrack();
+    if (this.isLooping) {
+      // Nếu đang bật lặp lại, phát lại bài hát hiện tại
+      this.audioPlayer.nativeElement.currentTime = 0;
+      this.audioPlayer.nativeElement.play().then(() => {
+        console.log('Phát lại bài hát:', this.currentTrack.name);
+      }).catch(err => {
+        console.error('Lỗi phát lại bài hát:', err);
+      });
+    } else {
+      // Nếu không bật lặp lại, chuyển sang bài tiếp theo
+      this.nextTrack();
+    }
   }
 
   updateProgress(event: Event): void {
@@ -191,6 +202,12 @@ export class FooterComponent implements OnInit {
 
   toggleLyrics(): void {
     this.showLyrics = !this.showLyrics;
+  }
+
+  toggleLoop(): void {
+    this.isLooping = !this.isLooping;
+    this.audioPlayer.nativeElement.loop = this.isLooping; // Cập nhật thuộc tính loop của audio
+    console.log('Chế độ lặp lại:', this.isLooping ? 'Bật' : 'Tắt');
   }
 
   goToVideo(name: any, image: any, artist: any, link: any): void {

@@ -1,5 +1,5 @@
 <body class="bg-black text-white font-sans">
-  <div class="flex  h-auto mt-[70px]">
+  <div class="flex h-auto mt-[70px]">
     <app-sidebar
       [sidebarVisible]="sidebarVisible"
       [myplaylist]="myplaylist"
@@ -30,23 +30,21 @@
         </div>
       </div>
 
-      <header class="flex items-center gap-4 mb-6 sticky z-40  py-2 ">
-        <div
-          class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
-        >
-          Home
+      <header class="flex items-center gap-4 mb-6 sticky z-40 py-2">
+        <div class="opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200">
+          {{ getTranslation('home.all') }}
         </div>
         <div
-        (click)="navigateToListSong()"
-          class=" opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+          (click)="navigateToListSong()"
+          class="opacity-50 py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
-          Song
+          {{ getTranslation('home.song') }}
         </div>
         <div
-        (click)="navigateToMylistalbum()"
+          (click)="navigateToMylistalbum()"
           class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
         >
-          Album
+          {{ getTranslation('home.album') }}
         </div>
       </header>
 
@@ -59,12 +57,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
             </span>
-            Recommended for you
+            {{ getTranslation('home.recommended') }}
           </h2>
           <a (click)="navigateToListSong()"
              class="p-2 text-sm font-semibold text-gray-400 hover:text-green-400 hover:underline cursor-pointer transition-colors duration-200 flex items-center"
              [class.pointer-events-none]="isLoading">
-            Show All
+            {{ getTranslation('home.showall') }}
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -78,21 +76,18 @@
             [ngStyle]="{'animation-delay': i * 0.1 + 's'}"
           >
             <div class="w-44 h-44 relative overflow-hidden rounded-xl shadow-lg hover:shadow-green-500/20 transition-all duration-300">
-              <!-- Fixed: Using (click) directly on the container div instead of the img -->
               <div 
                 class="w-full h-full cursor-pointer"
                 (click)="navigateToDetail(item.id)"
               >
                 <img
                   [src]="item.image_location || 'https://static1.anpoimages.com/wordpress/wp-content/uploads/2024/04/spotify-feature-image.jpg'"
-                  [alt]="item.title || 'No title available'"
+                  [alt]="item.title || getTranslation('general.unknownTitle')"
                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <!-- Dark overlay on hover -->
                 <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
               </div>
               
-              <!-- Play button with animation - Fixed: stopPropagation to prevent navigation -->
               <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
                 <button
                   (click)="nextTrack(item); $event.stopPropagation();"
@@ -110,7 +105,7 @@
               class="text-sm text-gray-200 text-center mt-3 group-hover:text-green-400 transition-colors duration-200 w-full truncate px-2 cursor-pointer"
               (click)="navigateToDetail(item.id)"
             >
-              {{ item.title || 'Unknown Title' }}
+              {{ item.title || getTranslation('general.unknownTitle') }}
             </div>
           </div>
         </div>
@@ -125,14 +120,14 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </span>
-            Artist albums
+            {{ getTranslation('home.artistalbums') }}
           </h2>
           <a
             (click)="navigateToMylistalbum()"
             class="p-2 text-sm font-semibold text-gray-400 hover:text-green-400 hover:underline cursor-pointer transition-colors duration-200 flex items-center"
             [class.pointer-events-none]="isLoading"
           >
-            Show All
+            {{ getTranslation('home.showall') }}
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -156,13 +151,11 @@
                   [alt]="item.title"
                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <!-- Dark overlay on hover -->
                 <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
                 
-                <!-- Info overlay on hover -->
                 <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                   <div class="text-sm font-bold text-white">{{ item.title }}</div>
-                  <div class="text-xs text-gray-300">Album</div>
+                  <div class="text-xs text-gray-300">{{ getTranslation('home.album') }}</div>
                 </div>
               </div>
               <div class="text-sm text-gray-200 text-center mt-3 group-hover:text-green-400 transition-colors duration-200 w-full truncate px-2">
@@ -182,13 +175,13 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
               </svg>
             </span>
-            Popular music
+            {{ getTranslation('home.popularmusic') }}
           </h2>
           <a
             class="p-2 text-sm font-semibold text-gray-400 hover:text-green-400 hover:underline cursor-pointer transition-colors duration-200 flex items-center"
             [class.pointer-events-none]="isLoading"
           >
-            Show All
+            {{ getTranslation('home.showall') }}
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
