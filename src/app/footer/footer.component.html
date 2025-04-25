@@ -1,4 +1,4 @@
-<!-- Same HTML as provided, with minor adjustments -->
+<!-- Same HTML as provided, with minor adjustments
 <footer class="fixed bottom-0 z-50 w-full h-[80px] bg-gradient-to-r bg-[#000000] to-gray-800 px-4 py-2 flex items-center shadow-lg">
   <audio
     #audioPlayer
@@ -116,6 +116,193 @@
       {{ currentTrack?.lyrics || 'No lyrics available' }}
     </div>
     
+  </div>
+</div>
+
+<style>
+  .scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  .animate-spin-slow {
+    animation: spin 4s linear infinite;
+  }
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style> -->
+
+```html
+<!-- footer.component.html -->
+<footer class="fixed bottom-0 z-50 w-full h-[80px] bg-gradient-to-r from-black via-gray-900 to-black px-4 py-2 flex items-center shadow-lg backdrop-blur-sm bg-opacity-95">
+  <audio
+    #audioPlayer
+    [src]="currentTrack?.url"
+    (timeupdate)="updateProgress($event)"
+    (loadedmetadata)="onLoadedMetadata()"
+    (ended)="onTrackEnded()"
+  ></audio>
+
+  <!-- Song info section with animations -->
+  <div class="w-1/4 flex items-center">
+    <div class="flex items-center gap-3 p-2 rounded-lg group cursor-pointer transition-all duration-200 hover:bg-gray-800/30" (click)="togglePlay()">
+      <div class="relative h-12 w-12 rounded-full overflow-hidden shadow-md flex-shrink-0">
+        <img
+          [src]="currentTrack?.image_location || 'default-image.jpg'"
+          [alt]="currentTrack?.name || 'No track'"
+          [ngClass]="isPlaying ? 'animate-spin-slow' : ''"
+          class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <!-- Overlay with play/pause icon on hover -->
+        <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <img
+            [src]="isPlaying ? 'https://img.icons8.com/?size=100&id=byJkZbWndgQ9&format=png&color=ffffff' : 'https://img.icons8.com/?size=100&id=9978&format=png&color=ffffff'"
+            [alt]="isPlaying ? 'Pause' : 'Play'"
+            class="h-6 w-6"
+          />
+        </div>
+      </div>
+      <div class="text-white min-w-0 flex-1">
+        <div class="font-semibold text-sm group-hover:text-green-400 transition-colors duration-200 truncate">
+          {{ currentTrack?.name || 'No track selected' }}
+        </div>
+        <div class="text-xs text-gray-400 group-hover:text-gray-200 transition-colors duration-200 truncate">
+          {{ currentTrack?.artist || 'Unknown Artist' }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Player controls section with enhanced animations -->
+  <div class="w-2/4 flex flex-col items-center justify-center gap-2">
+    <div class="flex items-center gap-6">
+      <button class="p-2 hover:bg-gray-800 rounded-full transition-all duration-200 opacity-80 hover:opacity-100" (click)="previousTrack()">
+        <img
+          src="https://img.icons8.com/?size=100&id=91627&format=png&color=ffffff"
+          alt="Previous"
+          class="h-5 w-5 hover:scale-110 transition-transform duration-200"
+        />
+      </button>
+      <button 
+        class="p-3 bg-white rounded-full hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-white/20" 
+        (click)="togglePlay()">
+        <img
+          [src]="isPlaying ? 'https://img.icons8.com/?size=100&id=byJkZbWndgQ9&format=png&color=000000' : 'https://img.icons8.com/?size=100&id=9978&format=png&color=000000'"
+          [alt]="isPlaying ? 'Pause' : 'Play'"
+          class="h-5 w-5"
+        />
+      </button>
+      <button class="p-2 hover:bg-gray-800 rounded-full transition-all duration-200 opacity-80 hover:opacity-100" (click)="nextTrack()">
+        <img
+          src="https://img.icons8.com/?size=100&id=91632&format=png&color=ffffff"
+          alt="Next"
+          class="h-5 w-5 hover:scale-110 transition-transform duration-200"
+        />
+      </button>
+    </div>
+    <div class="flex items-center gap-2 w-full">
+      <span class="text-xs text-gray-400 tabular-nums">{{ currentTime | timeFormat }}</span>
+      <div class="h-1.5 flex-1 bg-gray-700 rounded-full cursor-pointer relative group" (click)="seekTo($event)">
+        <div class="h-1.5 bg-green-500 rounded-full transition-all duration-200" [style.width.%]="progress"></div>
+        <!-- Interactive hover effect for progress bar -->
+        <div class="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
+             [style.left.%]="progress" 
+             style="pointer-events: none;"></div>
+      </div>
+      <span class="text-xs text-gray-400 tabular-nums">{{ duration | timeFormat }}</span>
+    </div>
+  </div>
+
+  <!-- Volume and additional controls with improved styling -->
+  <div class="w-1/5 flex items-center justify-end gap-3">
+    <button class="p-2 hover:bg-gray-800 rounded-full transition-all duration-200 opacity-80 hover:opacity-100" (click)="toggleMute()">
+      <img
+        [src]="isMuted ? 'https://img.icons8.com/?size=100&id=101468&format=png&color=ffffff' : 'https://img.icons8.com/?size=100&id=22778&format=png&color=ffffff'"
+        alt="Volume"
+        class="h-5 w-5 hover:scale-110 transition-transform duration-200"
+      />
+    </button>
+    <div class="w-20 h-1.5 bg-gray-700 rounded-full cursor-pointer relative group" (click)="adjustVolume($event)">
+      <div class="h-1.5 bg-green-400 rounded-full transition-all duration-200" [style.width.%]="volume"></div>
+      <!-- Interactive hover effect for volume bar -->
+      <div class="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
+           [style.left.%]="volume" 
+           style="pointer-events: none;"></div>
+    </div>
+    <button class="p-2 hover:bg-gray-800 rounded-full transition-all duration-200 opacity-80 hover:opacity-100" (click)="toggleLyrics()">
+      <img
+        src="https://img.icons8.com/?size=100&id=91450&format=png&color=ffffff"
+        alt="Lyrics"
+        class="h-5 w-5 hover:scale-110 transition-transform duration-200"
+      />
+    </button>
+    <button class="p-2 hover:bg-gray-800 rounded-full transition-all duration-200 opacity-80 hover:opacity-100" (click)="goToVideo(currentTrack?.name, currentTrack?.image_location, currentTrack?.artist, currentTrack?.url)">
+      <img
+        src="https://img.icons8.com/?size=100&id=38034&format=png&color=ffffff"
+        alt="Queue"
+        class="h-5 w-5 hover:scale-110 transition-transform duration-200"
+      />
+    </button>
+  </div>
+</footer>
+
+<!-- Enhanced Lyrics Modal with animation and styling -->
+<div
+  *ngIf="showLyrics"
+  class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300"
+  (click)="toggleLyrics()"
+>
+  <div
+    class="bg-gray-900 rounded-lg p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto scrollbar shadow-2xl transform transition-all duration-300 scale-100"
+    [ngClass]="{'scale-100 opacity-100': showLyrics, 'scale-95 opacity-0': !showLyrics}"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-white flex items-center">
+        <span class="text-green-400 mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
+          </svg>
+        </span>
+        {{ currentTrack?.name || 'No track selected' }} - Lyrics
+      </h2>
+      <button 
+        class="p-2 hover:bg-gray-700 rounded-full transition-all duration-200" 
+        (click)="toggleLyrics()"
+      >
+        <img
+          src="https://img.icons8.com/?size=100&id=23537&format=png&color=ffffff"
+          alt="Close"
+          class="h-6 w-6 rounded-full hover:scale-110 transition-transform duration-200"
+        />
+      </button>
+    </div>
+    <!-- Lyrics content with enhanced typography -->
+    <div class="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+      <ng-container *ngIf="currentTrack?.lyrics; else noLyrics">
+        {{ currentTrack?.lyrics }}
+      </ng-container>
+      <ng-template #noLyrics>
+        <div class="flex flex-col items-center justify-center py-10">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
+          </svg>
+          <p class="text-gray-500 text-center">No lyrics available for this track</p>
+        </div>
+      </ng-template>
+    </div>
   </div>
 </div>
 

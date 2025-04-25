@@ -16,6 +16,7 @@ export class MyPlayListComponent {
   sidebarVisible = true;
   songs: any[] = [];
   myplaylist: any[] = [];
+  randomSongs: any[] = [];
 
   myplaylistAll: any[] = [];
   
@@ -27,6 +28,10 @@ export class MyPlayListComponent {
   toggleSidebar() {
     this.sidebarVisible = !this.sidebarVisible;
     console.log('Sidebar visibility:', this.sidebarVisible);
+  }
+  private getRandomSongs(songs: any[], count: number): any[] {
+    const shuffled = songs.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, Math.min(count, songs.length));
   }
 
   ngOnInit() {
@@ -41,6 +46,7 @@ export class MyPlayListComponent {
           this.songs = data;
           this.myplaylist = data; 
           this.sharedService.updateSharedData(this.songs); 
+          
         },
         error: (error) => {
           console.error('Error fetching playlist:', error);
@@ -56,12 +62,36 @@ export class MyPlayListComponent {
           console.error('Error fetching playlist:', error);
         }
       })
+      
+      this.songsService.getTrack().subscribe((data: any) => {
+        this.randomSongs = this.getRandomSongs(data, 5); 
+      });
+
       this.isLoading = false;
       
     } else {
       this.router.navigate(['/login']); 
     }
   }
+  addNewPlaylist(songId: string): void {
+    if (!songId) {
+      console.error('Không có bài hát được chọn');
+      return;
+    }
+    const playlistData = {
+      title: "Test Playlist",
+      song_ids: [songId] 
+    };
+    this.songsService.addPlaylist(playlistData).subscribe({
+      next: (response) => {
+        console.log('Playlist added:', response);
+        window.location.reload();
+      },
+      error: (error) => {
+        console.error('Error adding playlist:', error);
+      }
+    });
+}
   deleteMyplaylist(Id:string){
 
     this.songsService.deletePlaylist(Id).subscribe({

@@ -14,9 +14,9 @@ export class DetailComponent {
   username: string | null = '';
   email: string | null = '';
   userId: string | null = '';
-  song: any = null; // Lưu bài hát từ getTrackById
+  song: any = null; 
   myplaylist: any[] = [];
-
+  randomSongs: any[] = []; 
   constructor(
     private songsService: SongsService,
     private route: ActivatedRoute
@@ -24,7 +24,7 @@ export class DetailComponent {
   ) {}
 
   ngOnInit() {
-    // Lấy thông tin user từ localStorage
+
     this.username = localStorage.getItem('user');
     this.email = localStorage.getItem('email');
     this.userId = localStorage.getItem('user_id');
@@ -37,19 +37,25 @@ export class DetailComponent {
       });
     }
 
-    // Lấy Id từ query params và gọi getTrackById
     this.route.queryParams.subscribe((params) => {
-      const id = params['Id'] || params['id']; // Hỗ trợ cả 'Id' và 'id'
+      const id = params['Id'] || params['id'];
       if (id) {
         this.songsService.getTrackById(id).subscribe({
           next: (data: any) => {
-            this.song = data; // Lưu bài hát
-            console.log('Song:', this.song); // Debug
+            this.song = data; 
+            console.log('Song:', this.song);
           },
           error: (error) => console.error('Error fetching track:', error)
         });
       }
     });
+    this.songsService.getTrack().subscribe((data: any) => {
+      this.randomSongs = this.getRandomSongs(data, 5); 
+    });
+  }
+  private getRandomSongs(songs: any[], count: number): any[] {
+    const shuffled = songs.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, Math.min(count, songs.length));
   }
   addNewPlaylist(songId: string): void {
     if (!songId) {

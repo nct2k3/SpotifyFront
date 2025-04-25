@@ -1,4 +1,4 @@
-<!-- <app-header></app-header> -->
+<!-- <app-header></app-header>
 
 <body class="bg-black text-white font-sans pt-20">
     <div class="flex lg:flex-row h-auto">
@@ -6,7 +6,7 @@
 
         <main class="flex-1 p-6 bg-gradient-to-r from-green-900 to-black rounded-xl m-1 min-h-screen">
             <div class="w-full h-full">
-                <!-- Video Player Container -->
+            
                 <div class="relative w-full max-w-5xl mx-auto shadow-2xl">
                     <video 
                         src="{{link}}" 
@@ -16,7 +16,7 @@
                     </video>
                 </div>
 
-                <!-- Video Information Section -->
+        
                 <div class="mt-8 flex justify-between items-center max-w-5xl mx-auto p-4 bg-black bg-opacity-30 rounded-xl backdrop-blur-sm">
                     <div class="flex-1">
                         <h1 class="text-3xl font-bold text-white hover:text-amber-400 transition-colors duration-300">{{name}}</h1>
@@ -34,4 +34,184 @@
         </main>
 
     </div>
+</body> -->
+```html
+<!-- <app-header></app-header> -->
+
+<body class="bg-black text-white font-sans pt-20">
+    <div class="flex lg:flex-row h-auto">
+        <app-sidebar
+            [sidebarVisible]="sidebarVisible"
+            [myplaylist]="myplaylist"
+            (toggleSidebarEvent)="toggleSidebar()"
+            (nextTrackEvent)="nextTrack($event)"
+        ></app-sidebar>
+        
+        <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
+        <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
+
+        <main class="flex-1 p-6 bg-gradient-to-r from-green-900 to-black rounded-xl m-1 min-h-screen relative">
+            <!-- Background particles effect -->
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:30px_30px] opacity-30"></div>
+            </div>
+            
+            <div class="w-full h-full relative z-10">
+                <!-- Enhanced Video Player Container -->
+                <div class="relative w-full max-w-5xl mx-auto shadow-2xl group">
+                    <!-- Video gradient border effect -->
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-amber-500 rounded-xl blur opacity-20 group-hover:opacity-50 transition-all duration-500"></div>
+                    
+                    <video 
+                        src="{{link}}" 
+                        controls 
+                        class="w-full rounded-xl hover:shadow-lg transition-all duration-300 relative z-10 group-hover:scale-[1.005] transform">
+                        Your browser does not support the video tag.
+                    </video>
+                    
+                    <!-- Play button overlay (shows on hover) -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+                        <div class="bg-amber-500 rounded-full p-4 shadow-lg shadow-amber-500/30 transform scale-0 group-hover:scale-100 transition-transform duration-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Video Information Section -->
+                <div class="mt-8 flex justify-between items-center max-w-5xl mx-auto p-4 bg-black bg-opacity-30 rounded-xl backdrop-blur-sm hover:bg-opacity-40 transition-all duration-300 shadow-lg group">
+                    <div class="flex-1">
+                        <h1 class="text-3xl font-bold text-white hover:text-amber-400 transition-colors duration-300 transform group-hover:translate-x-1 transition-transform">{{name}}</h1>
+                        <p class="text-gray-300 mt-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
+                            </svg>
+                            Vietnamese Concert Edition
+                        </p>
+                        
+                        <!-- Video interaction buttons -->
+                        <div class="mt-4 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <button class="bg-amber-600 hover:bg-amber-500 text-white py-1.5 px-3 rounded-full flex items-center transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/20 transform hover:-translate-y-0.5 text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                Like
+                            </button>
+                            <button class="bg-gray-800 hover:bg-gray-700 text-white py-1.5 px-3 rounded-full flex items-center transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5 text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                </svg>
+                                Share
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="relative h-24 w-24 overflow-hidden">
+                            <img 
+                                class="h-24 w-24 rounded-full object-cover object-center border-2 border-amber-500 hover:border-amber-400 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-amber-500/30 transform group-hover:rotate-3" 
+                                [src]="image" 
+                                alt="Artist Image">
+                            <!-- Overlay on hover -->
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+                        </div>
+                        <p class="text-sm text-gray-300 mt-2 font-medium group-hover:text-amber-400 transition-colors duration-300">{{NameArtiest}}</p>
+                    </div>
+                </div>
+                
+                <!-- Music recommendations section -->
+                <div class="mt-10 max-w-5xl mx-auto">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <span class="text-amber-500 mr-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
+                            </svg>
+                        </span>
+                        More from {{NameArtiest || 'this artist'}}
+                    </h2>
+                    
+                    <!-- Grid of related tracks -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Track 1 -->
+                        <div class="bg-black/40 backdrop-blur-sm rounded-lg overflow-hidden hover:bg-gray-900/50 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer group">
+                            <div class="relative aspect-square overflow-hidden">
+                                <img 
+                                    [src]="image || 'https://via.placeholder.com/300'" 
+                                    alt="Album cover" 
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-40 transition-opacity duration-300 flex items-center justify-center">
+                                    <div class="bg-amber-500 rounded-full p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="text-sm font-semibold text-white group-hover:text-amber-400 transition-colors duration-300">Popular Song</h3>
+                                <p class="text-gray-400 text-xs mt-1">{{NameArtiest}} • Music Album</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Track 2 -->
+                        <div class="bg-black/40 backdrop-blur-sm rounded-lg overflow-hidden hover:bg-gray-900/50 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer group">
+                            <div class="relative aspect-square overflow-hidden">
+                                <img 
+                                    [src]="image || 'https://via.placeholder.com/300'" 
+                                    alt="Album cover" 
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-40 transition-opacity duration-300 flex items-center justify-center">
+                                    <div class="bg-amber-500 rounded-full p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="text-sm font-semibold text-white group-hover:text-amber-400 transition-colors duration-300">Latest Release</h3>
+                                <p class="text-gray-400 text-xs mt-1">{{NameArtiest}} • New Album</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Track 3 -->
+                        <div class="bg-black/40 backdrop-blur-sm rounded-lg overflow-hidden hover:bg-gray-900/50 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer group">
+                            <div class="relative aspect-square overflow-hidden">
+                                <img 
+                                    [src]="image || 'https://via.placeholder.com/300'" 
+                                    alt="Album cover" 
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-40 transition-opacity duration-300 flex items-center justify-center">
+                                    <div class="bg-amber-500 rounded-full p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="text-sm font-semibold text-white group-hover:text-amber-400 transition-colors duration-300">Classic Hit</h3>
+                                <p class="text-gray-400 text-xs mt-1">{{NameArtiest}} • Best Of</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Spacer for bottom padding -->
+                <div class="h-[100px]"></div>
+            </div>
+        </main>
+    </div>
 </body>
+<app-footer></app-footer>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+</style>
+

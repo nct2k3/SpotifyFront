@@ -1,4 +1,4 @@
-<div class="bg-black text-white font-sans">
+<!-- <div class="bg-black text-white font-sans">
   <header class="fixed top-0 z-50 h-[70px] bg-black w-full px-6 py-3 flex items-center shadow-lg">
     <div class="w-4/5 flex items-center gap-6">
       <img [routerLink]="'/home'" src="https://img.icons8.com/?size=100&id=11116&format=png&color=ffffff" alt="Logo"
@@ -48,6 +48,123 @@
       <ng-template #loginButton>
         <button class="bg-green-500 text-black font-bold py-2 px-4 rounded hover:bg-green-600 transition-all duration-200"
           (click)="navigateToLogin()">
+          Đăng nhập
+        </button>
+      </ng-template>
+    </div>
+  </header>
+</div> -->
+
+<!-- header.component.html -->
+<div class="bg-black text-white font-sans">
+  <header class="fixed top-0 z-50 h-[70px] bg-black/95 backdrop-blur-md w-full px-6 py-3 flex items-center justify-between shadow-lg transition-all duration-300">
+    <!-- Left section with logo and nav -->
+    <div class="flex items-center gap-6">
+      <!-- Spotify Logo with subtle animation -->
+      <img [routerLink]="'/home'" 
+           src="https://img.icons8.com/?size=100&id=11116&format=png&color=ffffff" 
+           alt="Logo"
+           class="ml-4 h-10 w-10 object-contain hover:scale-110 transition-transform duration-300 cursor-pointer" />
+
+      <!-- Home button with hover effects -->
+      <button [routerLink]="'/home'" 
+              class="text-white hover:text-green-400 transition-colors duration-300 ml-[23%] relative group">
+        <img src="https://img.icons8.com/?size=100&id=UEFsnIx21N69&format=png&color=ffffff" 
+             alt="Home"
+             class="h-10 w-10 hover:scale-105 transition-transform duration-300" />
+        <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-green-500 group-hover:w-full transition-all duration-300"></span>
+      </button>
+
+      <!-- Enhanced search bar with animations -->
+      <div class="ml-2 relative flex items-center w-2/4 h-8 group">
+        <span class="absolute left-3 text-gray-500 group-focus-within:text-green-500 transition-colors duration-300">
+          <img src="https://img.icons8.com/?size=100&id=7695&format=png&color=ffffff" 
+               alt="Search"
+               class="h-8 w-8 hover:scale-110 transition-transform duration-300 cursor-pointer"
+               (click)="performSearch()" />
+        </span>
+        <input type="text" 
+               placeholder="Bạn muốn phát nội dung gì?" 
+               [(ngModel)]="searchQuery"
+               (keydown.enter)="performSearch()"
+               class="h-12 w-full bg-[#121212] text-gray-300 font-semibold rounded-full pl-12 pr-12 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-[#181818] transition-all duration-300" />
+        
+        <!-- Voice search button with tooltip -->
+        <div class="absolute right-3 text-gray-400 group">
+          <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+            Voice Search
+          </div>
+          <img src="https://img.icons8.com/?size=100&id=82870&format=png&color=ffffff" 
+               alt="Voice Search"
+               class="h-6 w-6 hover:bg-gray-800 rounded-full p-1 transition-all duration-300 cursor-pointer hover:scale-110" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Right section with notifications and profile -->
+    <div class="flex items-center justify-end gap-4">
+      <!-- Notification button with animation -->
+      <button *ngIf="isLoggedIn" 
+              [routerLink]="'/notifications'"
+              class="p-1 rounded-full hover:bg-gray-800 transition-all duration-300 relative group">
+        <img src="https://img.icons8.com/?size=100&id=gnsB3xE8Q5Et&format=png&color=ffffff" 
+             alt="Notifications"
+             class="h-8 w-8 hover:scale-110 transition-transform duration-300" />
+        
+        <!-- Notification indicator dot -->
+        <div class="absolute top-0 right-0 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+        
+        <!-- Tooltip -->
+        <div class="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+          Notifications
+        </div>
+      </button>
+
+      <!-- Profile section with dropdown -->
+      <div *ngIf="isLoggedIn; else loginButton" class="relative">
+        <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 text-white flex items-center justify-center rounded-full font-bold text-lg hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300 cursor-pointer"
+             (click)="toggleMenu()">
+          {{ userInitial }}
+        </div>
+        
+        <!-- Dropdown menu with animation -->
+        <div *ngIf="isMenuOpen" 
+             class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-lg shadow-lg z-50 overflow-hidden transform transition-all duration-300 origin-top-right scale-100">
+          <div class="p-2 border-b border-gray-700 text-center">
+            <span class="text-sm text-gray-400">Logged in as</span>
+            <p class="font-semibold truncate">{{ userName }}</p>
+          </div>
+          <ul>
+            <li class="px-4 py-2 hover:bg-gray-700 cursor-pointer transition-colors duration-200 flex items-center" 
+                (click)="navigateToProfile()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Hồ sơ
+            </li>
+            <li class="px-4 py-2 hover:bg-gray-700 cursor-pointer transition-colors duration-200 flex items-center" 
+                (click)="navigateToSettings()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Cài đặt
+            </li>
+            <li class="px-4 py-2 hover:bg-gray-700 cursor-pointer transition-colors duration-200 flex items-center" 
+                (click)="logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Đăng xuất
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Login button for non-logged in users -->
+      <ng-template #loginButton>
+        <button class="bg-gradient-to-r from-green-500 to-green-600 text-black font-bold py-2 px-4 rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-green-500/20"
+                (click)="navigateToLogin()">
           Đăng nhập
         </button>
       </ng-template>
