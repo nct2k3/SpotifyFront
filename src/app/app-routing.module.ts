@@ -20,6 +20,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 const routes: Routes = [
   
   { path: 'register', component: RegisterComponent },
+  { path: 'reset', component: ResetPasswordComponent },
   { path: 'login', component:LoginComponent  },
   {path:'home',component:HomeComponent},
   {path:'myplaylist',component:MyPlayListComponent},
@@ -35,8 +36,7 @@ const routes: Routes = [
   { path: 'verify', component: VerifyComponent },
   { path: 'profile', component: ProfileComponent },
   { path: '**', redirectTo: 'home' },
-  { path: 'register', component: RegisterComponent },
-  { path: 'resetPassword', component: ResetPasswordComponent },
+ 
   
 ];
 

@@ -9,7 +9,7 @@ import { User, UserReponse, UserCreate } from 'src/app/Models/user.model';
 export class UsersService {
   private apiUrl = 'http://127.0.0.1:8000/api/auth/users/';
   private createUrl = 'http://127.0.0.1:8000/api/auth/register/';
-  private apiUrlss = 'http://127.0.0.1:8000/api'
+  private apiUrlss = 'http://127.0.0.1:8000/api/auth'
 
   constructor(private http: HttpClient) {}
   getTrack(): Observable<any[]> {
