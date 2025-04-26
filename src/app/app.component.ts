@@ -17,7 +17,8 @@ export class AppComponent {
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       const currentUrl = this.router.url;
-      this.showHeaderFooter = !currentUrl.includes('/login') && !currentUrl.includes('/admin')&&!currentUrl.includes('/login')&&!currentUrl.includes('/register');
+      this.showHeaderFooter = !currentUrl.includes('/login') && !currentUrl.includes('/admin')&&!currentUrl.includes('/login')&&!currentUrl.includes('/register')
+      &&!currentUrl.includes('/reset');
     });
   }
 

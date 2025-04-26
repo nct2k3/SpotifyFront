@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsersService } from '../services/users/users.service';
 import { ToastMessageComponent } from '../shared/toast-message/toast-message.component';
 import { ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
@@ -20,7 +21,8 @@ export class ResetPasswordComponent {
   
   constructor(
     private fb: FormBuilder,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private router: Router
   ) {
     this.requestForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
@@ -47,7 +49,6 @@ export class ResetPasswordComponent {
       next: () => {
         this.isLoading = false;
         this.toast.showMessage('Reset code sent to your email!', 'success');
-        // Move to next step and pre-fill email
         this.step = 'verify';
         this.verifyForm.patchValue({ email: email });
       },
@@ -71,8 +72,9 @@ export class ResetPasswordComponent {
       next: () => {
         this.isLoading = false;
         this.toast.showMessage('Password reset successful!', 'success');
-        // Redirect to login or other appropriate page
-        // this.router.navigate(['/login']);
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
       },
       error: (err) => {
         this.isLoading = false;
@@ -87,7 +89,6 @@ export class ResetPasswordComponent {
     });
   }
   
-  // Password match validator
   passwordMatchValidator(group: FormGroup): { passwordMismatch: boolean } | null {
     const password = group.get('new_password')?.value;
     const password2 = group.get('new_password2')?.value;
@@ -97,7 +98,6 @@ export class ResetPasswordComponent {
       : null;
   }
   
-  // Helper to check if a field has an error
   hasError(form: FormGroup, controlName: string): boolean {
     const control = form.get(controlName);
     return !!(control && control.invalid && (control.dirty || control.touched));
