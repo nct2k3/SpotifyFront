@@ -34,19 +34,15 @@ ngOnInit() {
     this.myplaylist = data;
   });
 }
-
   toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible; // Toggle state
+    this.sidebarVisible = !this.sidebarVisible;
     console.log('Sidebar visibility:', this.sidebarVisible); 
   }
-
-
     ngAfterViewInit() {
       if (!this.footerComponent) {
         console.error('FooterComponent chưa được khởi tạo');
       }
     }
-
     nextTrack(data: any): void {
       if (this.footerComponent) {
         this.footerComponent.setTrackData(data);

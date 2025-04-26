@@ -11,9 +11,9 @@
       <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
       <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
 
-        <main class="flex-1 bg-gradient-to-b from-green-900 to-black rounded-xl m-1">
+        <main class="flex-1 bg-gradient-to-b from-green-950 to-black rounded-xl m-1">
             <div class="max-full">
-                <div class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-800 to-black rounded-t-2xl">
+                <div class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-950 to-black rounded-t-2xl">
                     <img [src]="image" alt="Playlist Cover" class="w-24 h-24 rounded-lg">
                     <div>
                         <h1 class="text-gray-400 m-2">{{ getTranslation('album.album') }}</h1>
@@ -73,7 +73,7 @@
                                 </div>
                                 <div>
                                   <p class="text-white">{{ item.title }}</p>
-                                  <p class="text-gray-400 text-sm">{{ item.artists?.[0]?.name || getTranslation('general.unknownArtist') }}</p>
+                                  <!-- <p class="text-gray-400 text-sm">{{ item.artists?.[0]?.name || getTranslation('general.unknownArtist') }}</p> -->
                                 </div>
                               </div>
                               <button

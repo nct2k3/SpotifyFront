@@ -9,7 +9,7 @@
     <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
     <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
 
-    <main class="flex-1 bg-gradient-to-b from-green-900 to-black rounded-xl m-1 transition-all duration-500 relative overflow-hidden">
+    <main class="flex-1 bg-gradient-to-b from-blue-900 to-black rounded-xl m-1 transition-all duration-500 relative overflow-hidden">
       <div class="absolute inset-0 pointer-events-none">
         <div class="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] [background-size:40px_40px] opacity-30"></div>
         <div class="particle-container">
@@ -28,15 +28,15 @@
       
       <div class="max-w-full relative z-10">
   
-        <div *ngIf="song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-800 to-black rounded-t-2xl relative overflow-hidden group">
+        <div *ngIf="song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-blue-800 to-black rounded-t-2xl relative overflow-hidden group">
       
           <div class="absolute inset-0 bg-black opacity-20 z-0">
             <div class="absolute inset-0 bg-[radial-gradient(#ffffff33_1px,transparent_1px)] [background-size:16px_16px] z-0 animate-pulse-slow"></div>
           </div>
           
-          <div class="absolute left-[67px] top-[45px] w-24 h-24 rounded-full bg-green-500/20 blur-xl animate-pulse-slow z-0"></div>
+          <div class="absolute left-[67px] top-[45px] w-24 h-24 rounded-full bg-blue-500/20 blur-xl animate-pulse-slow z-0"></div>
           
-          <div class="relative w-36 h-36 flex-shrink-0 z-10 transition-all duration-300 group-hover:scale-105 rounded-lg shadow-xl shadow-green-900/30 overflow-hidden">
+          <div class="relative w-36 h-36 flex-shrink-0 z-10 transition-all duration-300 group-hover:scale-105 rounded-lg shadow-xl shadow-blue-900/30 overflow-hidden">
             <img
               [src]="song.image_location || 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg'"
               [alt]="song.title || 'Song Cover'"
@@ -48,9 +48,9 @@
           </div>
           
           <div class="z-10 transform transition-transform duration-500 group-hover:translate-x-2">
-            <h1 class="text-gray-400 m-2 text-sm uppercase tracking-wider font-semibold">{{ getTranslation('detail.song') }}</h1>
-            <h1 class="text-5xl font-bold transition-all duration-300 group-hover:text-green-400 group-hover:text-shadow">{{ song.title || getTranslation('general.unknownTitle') }}</h1>
-            <p class="text-gray-400 m-2 flex items-center">
+            <h1 class="text-blue-400 m-2 text-sm uppercase tracking-wider font-semibold">{{ getTranslation('detail.song') }}</h1>
+            <h1 class="text-5xl font-bold transition-all duration-300 group-hover:text-blue-400 group-hover:text-shadow">{{ song.title || getTranslation('general.unknownTitle') }}</h1>
+            <p class="text-blue-400 m-2 flex items-center">
               <span class="hover:text-white transition-colors duration-200 cursor-pointer">{{ artist.name || getTranslation('general.unknownArtist') }}</span>
               <span class="mx-2">•</span>
               <span>{{ song.duration || 0 | number:'1.0-2' }} {{ getTranslation('general.minutes') }}</span>
@@ -58,12 +58,12 @@
           </div>
         </div>
 
-        <div *ngIf="!song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-800 to-black rounded-t-2xl">
-          <div class="w-36 h-36 bg-gray-800 rounded-lg skeleton-wave"></div>
+        <div *ngIf="!song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-blue-800 to-black rounded-t-2xl">
+          <div class="w-36 h-36 bg-blue-800 rounded-lg skeleton-wave"></div>
           <div>
-            <h1 class="text-gray-400 m-2">{{ getTranslation('detail.song') }}</h1>
-            <h1 class="bg-gray-800 h-12 w-64 rounded skeleton-wave"></h1>
-            <p class="m-2 bg-gray-800 h-6 w-48 rounded skeleton-wave"></p>
+            <h1 class="text-blue-400 m-2">{{ getTranslation('detail.song') }}</h1>
+            <h1 class="bg-blue-800 h-12 w-64 rounded skeleton-wave"></h1>
+            <p class="m-2 bg-blue-800 h-6 w-48 rounded skeleton-wave"></p>
           </div>
         </div>
 
@@ -73,12 +73,12 @@
         
             <button 
               (click)="nextTrack(song)"
-              class="h-14 w-14 p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-full hover:scale-110 hover:from-green-400 hover:to-green-500 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-green-500/50 flex items-center justify-center relative overflow-hidden transform hover:-rotate-12 active:scale-95"
+              class="h-14 w-14 p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-full hover:scale-110 hover:from-blue-400 hover:to-blue-500 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-blue-500/50 flex items-center justify-center relative overflow-hidden transform hover:-rotate-12 active:scale-95"
             >
     
               <div class="absolute inset-0 bg-green-400/30 rounded-full scale-0 animate-ping-slow opacity-0 group-hover:opacity-100"></div>
               <img 
-                src="https://img.icons8.com/?size=100&id=59862&format=png&color=000000" 
+                src="https://img.icons8.com/?size=100&id=59862&format=png&color=ffffff" 
                 alt="Play" 
                 class="h-8 w-8 relative z-10"
               >
@@ -87,15 +87,15 @@
           
             <div class="relative group hover:scale-105 transition-all duration-200">
               <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30">
-                <div class="bg-gray-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap border border-gray-700 backdrop-blur-sm animate-fade-in">
+                <div class="bg-gren-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap border border-green-700 backdrop-blur-sm animate-fade-in">
                   {{ getTranslation('detail.addtoplaylist') }}
           
-                  <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 border-r border-b border-gray-700 rotate-45"></div>
+                  <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-green-800 border-r border-b border-blue-700 rotate-45"></div>
                 </div>
               </div>
               <button
                 (click)="addNewPlaylist(song.id)"
-                class="border-2 border-gray-600 h-8 w-8 p-1 rounded-full hover:bg-green-500 hover:border-green-500 transition-all duration-300 flex items-center justify-center active:scale-90"
+                class="border-2 border-green-600 h-8 w-8 p-1 rounded-full hover:bg-blue-500 hover:border-green-500 transition-all duration-300 flex items-center justify-center active:scale-90"
               >
                 <img
                   src="https://img.icons8.com/?size=100&id=3220&format=png&color=ffffff"
@@ -108,14 +108,14 @@
 
             <div class="relative group hover:scale-105 transition-all duration-200">
               <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30">
-                <div class="bg-gray-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap border border-gray-700 backdrop-blur-sm animate-fade-in">
+                <div class="bg-blue-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap border border-blue-700 backdrop-blur-sm animate-fade-in">
                   {{ getTranslation('detail.download') }}
         
-                  <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 border-r border-b border-gray-700 rotate-45"></div>
+                  <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-blue-800 border-r border-b border-blue-700 rotate-45"></div>
                 </div>
               </div>
               <a [href]="song?.file_location" download class="block">
-                <button class="border-2 border-gray-600 h-8 w-8 p-1 rounded-full hover:bg-green-500 hover:border-green-500 transition-all duration-300 flex items-center justify-center active:scale-90">
+                <button class="border-2 border-green-600 h-8 w-8 p-1 rounded-full hover:bg-green-500 hover:border-green-500 transition-all duration-300 flex items-center justify-center active:scale-90">
                   <img
                     src="https://img.icons8.com/?size=100&id=26193&format=png&color=ffffff"
                     alt="Download Song"
@@ -130,9 +130,9 @@
  
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
    
-          <div class="p-4 bg-gray-900/30 rounded-xl border border-gray-800/30 hover:border-green-800/40 hover:bg-gray-900/50 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-green-900/20 transform hover:-translate-y-1">
+          <div class="p-4 bg-blue-900/30 rounded-xl border border-blue-800/30 hover:border-blue-800/40 hover:bg-blue-900/50 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-blue-900/20 transform hover:-translate-y-1">
             <div class="text-lg font-bold mb-4 flex items-center">
-              <span class="text-green-400 mr-2">
+              <span class="text-blue-400 mr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                 </svg>
@@ -140,18 +140,18 @@
               {{ getTranslation('detail.lyrics') }}
             </div>
             <div class="h-[250px] overflow-y-auto custom-scrollbar relative">
-              <div class="pr-4 whitespace-pre-line leading-relaxed text-gray-300">
+              <div class="pr-4 whitespace-pre-line leading-relaxed text-blue-300">
                 {{ song?.lyrics || 'No lyrics available' }}
               </div>
             
-              <div class="absolute left-0 right-0 bottom-0 h-16 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none"></div>
+              <div class="absolute left-0 right-0 bottom-0 h-16 bg-gradient-to-t from-blue-900 to-transparent pointer-events-none"></div>
             </div>
           </div>
           
      
-          <div class="p-4 bg-gray-900/30 rounded-xl border border-gray-800/30 hover:border-green-800/40 hover:bg-gray-900/50 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-green-900/20 transform hover:-translate-y-1">
+          <div class="p-4 bg-blue-900/30 rounded-xl border border-blue-800/30 hover:border-blue-800/40 hover:bg-blue-900/50 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-blue-900/20 transform hover:-translate-y-1">
             <div class="text-lg font-bold mb-4 flex items-center">
-              <span class="text-green-400 mr-2">
+              <span class="text-blue-400 mr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                 </svg>
@@ -161,22 +161,22 @@
             <div *ngIf="song?.artists?.length" class="flex items-center hover:bg-black/20 p-3 rounded-lg transition-all duration-200 cursor-pointer transform hover:translate-x-1">
               <div class="relative h-12 w-12 rounded-full overflow-hidden mr-3">
                 <!-- Enhanced circular border with animated glow -->
-                <div class="absolute inset-0 border-2 border-green-500/30 rounded-full z-20 animate-pulse-slow"></div>
+                <div class="absolute inset-0 border-2 border-blue-500/30 rounded-full z-20 animate-pulse-slow"></div>
                 <img
                   [src]="artist.artist_photo || 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg'"
                   class="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
                 />
               </div>
               <div>
-                <div class="text-sm font-bold text-white hover:text-green-400 transition-colors duration-200">
+                <div class="text-sm font-bold text-white hover:text-blue-400 transition-colors duration-200">
                   {{artist.name || getTranslation('general.unknownArtist') }}
                 </div>
-                <div class="text-xs text-gray-400">{{ getTranslation('detail.artist') }}</div>
+                <div class="text-xs text-blue-400">{{ getTranslation('detail.artist') }}</div>
               </div>
             </div>
             <div *ngIf="!song?.artists?.length" class="flex">
-              <div class="h-12 w-12 bg-gray-800 rounded-full skeleton-wave"></div>
-              <div class="text-sm font-bold m-3 bg-gray-800 h-6 w-24 rounded skeleton-wave"></div>
+              <div class="h-12 w-12 bg-blue-800 rounded-full skeleton-wave"></div>
+              <div class="text-sm font-bold m-3 bg-blue-800 h-6 w-24 rounded skeleton-wave"></div>
             </div>
           </div>
         </div>
@@ -184,21 +184,21 @@
         <!-- Enhanced Recommendations section with interactive cards -->
         <div class="p-6 bg-gradient-to-t from-black to-transparent">
           <h2 class="text-xl font-bold mb-1 flex items-center">
-            <span class="text-green-400 mr-2">
+            <span class="text-blue-400 mr-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </span>
             {{ getTranslation('detail.recommendations') }}
           </h2>
-          <p class="text-gray-400 text-sm mb-4">{{ getTranslation('detail.basedon') }}</p>
+          <p class="text-blue-400 text-sm mb-4">{{ getTranslation('detail.basedon') }}</p>
           
           <!-- Recommendations Section -->
           <div class="p-6">
             <div class="mt-4 space-y-4" *ngFor="let item of randomSongs">
               <div
               (click)="nextTrack(item)"
-                class="flex items-center justify-between border-b border-gray-800 pb-2 hover:cursor-pointer"
+                class="flex items-center justify-between border-b border-blue-800 pb-2 hover:cursor-pointer"
               >
                 <div class="flex items-center space-x-4">
                   <div class="w-12 h-12 relative">
@@ -210,12 +210,12 @@
                   </div>
                   <div>
                     <p class="text-white">{{item.title}}</p>
-                    <p class="text-gray-400 text-sm">{{ item.artists?.[0]?.name || getTranslation('general.unknownArtist') }}</p>
+                    <!-- <p class="text-blue-400 text-sm">{{ item.artists?.[0]?.name || getTranslation('general.unknownArtist') }}</p> -->
                   </div>
                 </div>
                 <button
                   (click)="addNewPlaylist(item.id)"
-                  class="border border-white rounded-full px-4 py-1 text-white hover:bg-green-500 hover:text-black transition-colors duration-200"  
+                  class="border border-white rounded-full px-4 py-1 text-white hover:bg-blue-500 hover:text-black transition-colors duration-200"  
                 >
                   {{ getTranslation('detail.add') }}
                 </button>
