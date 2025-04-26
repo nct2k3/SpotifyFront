@@ -1,112 +1,112 @@
 <body class="bg-black text-white font-sans pt-[70px]">
-    <div class="flex lg:flex-row h-auto">
-        <app-sidebar
-        [sidebarVisible]="sidebarVisible"
-        [myplaylist]="myplaylist"
-        (toggleSidebarEvent)="toggleSidebar()"
-        (nextTrackEvent)="nextTrack($event)"
-      ></app-sidebar>
-  
-      <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
-      <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
-  
-  
-      <!-- Main Content -->
-      <main class="flex-1 px-6 bg-gradient-to-r from-blue-950 to-black rounded-xl m-1 relative">
-        <!-- Spinner loading -->
-        <div
-          *ngIf="isLoading"
-          class="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-blue-950 to-black bg-opacity-75 z-50 rounded-xl"
-        >
-          <div class="flex flex-col items-center">
-            <svg
-              class="w-12 h-12 text-purple-500 animate-spin"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              ></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            <p class="text-white mt-4">Loading...</p>
-          </div>
-        </div>
-  
-        <!-- Header -->
-        <header class="flex items-center gap-4 mb-6 mt-2 sticky top-[70px] z-40 bg-gradient-to-r py-2">
-          <div
-            class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+  <div class="flex lg:flex-row h-auto">
+    <app-sidebar
+      [sidebarVisible]="sidebarVisible"
+      [myplaylist]="myplaylist"
+      (toggleSidebarEvent)="toggleSidebar()"
+      (nextTrackEvent)="nextTrack($event)"
+    ></app-sidebar>
+
+    <div *ngIf="sidebarVisible" class="w-1/4 h-full" id="asideBehind"></div>
+    <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
+
+
+    <!-- Main Content -->
+    <main class="flex-1 px-6 bg-gradient-to-r from-blue-950 to-black rounded-xl m-1 relative">
+      <!-- Spinner loading -->
+      <div
+        *ngIf="isLoading"
+        class="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-blue-950 to-black bg-opacity-75 z-50 rounded-xl"
+      >
+        <div class="flex flex-col items-center">
+          <svg
+            class="w-12 h-12 text-purple-500 animate-spin"
+            fill="none"
+            viewBox="0 0 24 24"
           >
-            Notifications
-          </div>
-        </header>
-  
-        <!-- Notifications Section -->
-        <section class="mt-8" [ngClass]="{ 'opacity-50': isLoading }">
-          <div class="flex justify-between items-center mb-4">
-            <h2
-              class="p-2 text-2xl font-bold text-gray-100 transition-colors duration-200"
-            >
-              Your Notifications
-            </h2>
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p class="text-white mt-4">{{ getTranslation('admin.loading') }}</p>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <header class="flex items-center gap-4 mb-6 mt-2 sticky top-[70px] z-40 bg-gradient-to-r py-2">
+        <div
+          class="py-2 px-6 text-gray-300 bg-gray-800 rounded-full font-semibold hover:bg-gray-700 hover:text-white cursor-pointer transition-colors duration-200"
+        >
+          {{ getTranslation('notifications.title') }}
+        </div>
+      </header>
+
+      <!-- Notifications Section -->
+      <section class="mt-8" [ngClass]="{ 'opacity-50': isLoading }">
+        <div class="flex justify-between items-center mb-4">
+          <h2
+            class="p-2 text-2xl font-bold text-gray-100 transition-colors duration-200"
+          >
+            {{ getTranslation('notifications.title') }}
+          </h2>
+          <button
+            *ngIf="notifications.length > 0"
+            (click)="clearAllNotifications()"
+            class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+            [disabled]="isLoading"
+          >
+            {{ getTranslation('notifications.clearall') }}
+          </button>
+        </div>
+
+
+        <!-- Notification list -->
+        <div class="flex flex-col gap-4">
+          <div
+            *ngFor="let notification of notifications"
+            class="bg-gray-800 p-4 rounded-xl flex items-center justify-between transition-colors duration-200 hover:bg-gray-700"
+            [class.pointer-events-none]="isLoading"
+          >
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+                <i class="fa fa-bell text-gray-300 text-2xl"></i>
+              </div>
+              <div>
+                <p class="text-gray-200 font-semibold">{{ notification.title }}</p>
+                <p class="text-gray-400 text-sm">
+                  {{ notification.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                </p>
+              </div>
+            </div>
             <button
-              *ngIf="notifications.length > 0"
-              (click)="clearAllNotifications()"
-              class="p-2 text-sm font-semibold text-gray-400 hover:text-white hover:underline cursor-pointer transition-colors duration-200"
+              (click)="deleteNotification(notification.id)"
+              class="bg-red-600 text-white rounded-full hover:bg-red-700 p-2 transition-colors h-8 w-8"
               [disabled]="isLoading"
             >
-              Clear All
+              <i class="fa fa-trash"></i>
             </button>
           </div>
-  
-  
-          <!-- Danh sách thông báo -->
-          <div class="flex flex-col gap-4">
-            <div
-              *ngFor="let notification of notifications"
-              class="bg-gray-800 p-4 rounded-xl flex items-center justify-between transition-colors duration-200 hover:bg-gray-700"
-              [class.pointer-events-none]="isLoading"
-            >
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
-                  <i class="fa fa-bell text-gray-300 text-2xl"></i>
-                </div>
-                <div>
-                  <p class="text-gray-200 font-semibold">{{ notification.title }}</p>
-                  <p class="text-gray-400 text-sm">
-                    {{ notification.created_at | date: 'dd/MM/yyyy HH:mm' }}
-                  </p>
-                </div>
-              </div>
-              <button
-                (click)="deleteNotification(notification.id)"
-                class="bg-red-600 text-white rounded-full hover:bg-red-700 p-2 transition-colors h-8 w-8"
-                [disabled]="isLoading"
-              >
-                <i class="fa fa-trash"></i>
-              </button>
-            </div>
-            <div *ngIf="notifications.length === 0" class="text-gray-400 p-4">
-              No notifications found.
-            </div>
+          <div *ngIf="notifications.length === 0" class="text-gray-400 p-4">
+            {{ getTranslation('notifications.empty') }}
           </div>
-        </section>
-  
-        <!-- Spacer -->
-        <div class="h-[100px]"></div>
-      </main>
-    </div>
-  </body>
-  
-  <app-footer></app-footer>
-  <app-toast-message #toast></app-toast-message>
+        </div>
+      </section>
+
+      <!-- Spacer -->
+      <div class="h-[100px]"></div>
+    </main>
+  </div>
+</body>
+
+<app-footer></app-footer>
+<app-toast-message #toast></app-toast-message>

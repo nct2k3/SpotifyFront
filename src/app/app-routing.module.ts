@@ -17,8 +17,9 @@ import { ProfileComponent } from './profile/profile.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 const routes: Routes = [
-  { path: 'login', component:LoginComponent  },
+  
   { path: 'register', component: RegisterComponent },
+  { path: 'login', component:LoginComponent  },
   {path:'home',component:HomeComponent},
   {path:'myplaylist',component:MyPlayListComponent},
   {path:'product',component:ProductComponent},

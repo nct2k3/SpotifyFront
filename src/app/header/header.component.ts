@@ -18,7 +18,7 @@ export class HeaderComponent implements OnInit {
   
   // Language dropdown properties
   isLanguageDropdownOpen: boolean = false;
-  flagSrc: string = 'https://tgl-sol.com/images/header/en.png'; // Default to English
+  flagSrc: string = 'https://tgl-sol.com/images/header/en.png'
 
   constructor(
     private router: Router,
@@ -71,13 +71,20 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
+    console.log('Logging out...');
+    
+    
     localStorage.removeItem('user');
     localStorage.removeItem('email');
     localStorage.removeItem('user_id');
-    this.isLoggedIn = false;
-    this.isMenuOpen = false;
-    this.router.navigate(['/login']);
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('expiresAt');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('role');
+     window.location.reload();
   }
+
 
   performSearch(): void {
     if (this.searchQuery.trim()) {
@@ -112,8 +119,6 @@ export class HeaderComponent implements OnInit {
     };
     
     this.isLanguageDropdownOpen = false;
-    
-    // Refresh the page to update all component translations
     window.location.reload();
   }
 
@@ -123,7 +128,6 @@ export class HeaderComponent implements OnInit {
       : 'https://tgl-sol.com/images/header/vn.png';
   }
 
-  // Helper method to get translations
   getTranslation(key: string): string {
     return this.translations[key] || key;
   }

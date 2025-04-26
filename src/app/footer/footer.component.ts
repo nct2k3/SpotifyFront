@@ -46,14 +46,14 @@ export class FooterComponent implements OnInit {
   ngOnInit(): void {
     this.fetchTrackData();
     this.audioPlayer.nativeElement.volume = this.volume / 100;
-    this.audioPlayer.nativeElement.loop = this.isLooping; // Áp dụng trạng thái lặp lại
+    this.audioPlayer.nativeElement.loop = this.isLooping; 
 
     this.sharedService.sharedData$.subscribe((data) => {
       this.sharedData = data;
       if (this.sharedData.length === 0) {
-        //console.log('Không có dữ liệu trong sharedData');
       }
     });
+    
   }
 
   fetchTrackData(): void {
@@ -138,7 +138,6 @@ export class FooterComponent implements OnInit {
 
   onTrackEnded(): void {
     if (this.isLooping) {
-      // Nếu đang bật lặp lại, phát lại bài hát hiện tại
       this.audioPlayer.nativeElement.currentTime = 0;
       this.audioPlayer.nativeElement.play().then(() => {
         console.log('Phát lại bài hát:', this.currentTrack.name);
@@ -146,7 +145,6 @@ export class FooterComponent implements OnInit {
         console.error('Lỗi phát lại bài hát:', err);
       });
     } else {
-      // Nếu không bật lặp lại, chuyển sang bài tiếp theo
       this.nextTrack();
     }
   }
@@ -206,7 +204,7 @@ export class FooterComponent implements OnInit {
 
   toggleLoop(): void {
     this.isLooping = !this.isLooping;
-    this.audioPlayer.nativeElement.loop = this.isLooping; // Cập nhật thuộc tính loop của audio
+    this.audioPlayer.nativeElement.loop = this.isLooping; 
     console.log('Chế độ lặp lại:', this.isLooping ? 'Bật' : 'Tắt');
   }
 

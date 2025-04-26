@@ -3,7 +3,8 @@ import { SongsService } from '../services/Songs/songs.service';
 import { FooterComponent } from '../footer/footer.component';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { TranslationsService } from '../services/Translations/TranslationsService';
+import { TranslationsService } from  '../services/Translations/TranslationsService';
+import { ArtistsService } from '../services/artists/artists.service';
 
 @Component({
   selector: 'app-detail',
@@ -20,12 +21,14 @@ export class DetailComponent {
   randomSongs: any[] = []; 
   language: number = 0;
   translations: { [key: string]: string } = {};
+  artist: any = null;
   
   constructor(
     private songsService: SongsService,
     private route: ActivatedRoute,
     private router: Router,
-    private translationsService: TranslationsService
+    private translationsService: TranslationsService,
+    private artistsService: ArtistsService
   ) {}
 
   ngOnInit() {
@@ -34,8 +37,10 @@ export class DetailComponent {
     this.userId = localStorage.getItem('user_id');
     this.language = parseInt(localStorage.getItem('language') || '0');
     
-    // Load translations
-    this.translations = this.translationsService.getPageTranslations('detail', this.language);
+    this.translations = {
+      ...this.translationsService.getPageTranslations('detail', this.language),
+      ...this.translationsService.getPageTranslations('general', this.language)
+    };
     
     if (this.userId) {
       this.songsService.getMyplayList(this.userId).subscribe({
@@ -45,19 +50,38 @@ export class DetailComponent {
         error: (error) => console.error('Error fetching playlist:', error)
       });
     }
+this.route.queryParams.subscribe((params) => {
+  const id = params['Id'] || params['id'];
+  if (id) {
+    this.songsService.getTrackById(id).subscribe({
+      next: (data: any) => {
+        this.song = data; 
+        console.log('Song:', this.song);
+        
 
-    this.route.queryParams.subscribe((params) => {
-      const id = params['Id'] || params['id'];
-      if (id) {
-        this.songsService.getTrackById(id).subscribe({
-          next: (data: any) => {
-            this.song = data; 
-            console.log('Song:', this.song);
-          },
-          error: (error) => console.error('Error fetching track:', error)
-        });
-      }
+        if (this.song && this.song.artists && this.song.artists.length > 0) {
+
+          const artistId = typeof this.song.artists[0] === 'object' && this.song.artists[0].id 
+            ? this.song.artists[0].id  
+            : this.song.artists[0];    
+          
+          if (artistId) {
+            this.artistsService.getArtistById(artistId).subscribe({
+              next: (artistData: any) => {
+                this.artist = artistData;
+                console.log('Artist found:', this.artist);
+              },
+              error: (error) => {
+                console.error('Error fetching artist:', error);
+              }
+            });
+          }
+        }
+      },
+      error: (error) => console.error('Error fetching track:', error)
     });
+  }
+});
     
     this.songsService.getTrack().subscribe((data: any) => {
       this.randomSongs = this.getRandomSongs(data, 5); 
@@ -71,7 +95,7 @@ export class DetailComponent {
   
   addNewPlaylist(songId: string): void {
     if (!songId) {
-      console.error('Không có bài hát được chọn');
+      console.error('No song selected');
       return;
     }
     const playlistData = {
@@ -106,11 +130,10 @@ export class DetailComponent {
     if (this.footerComponent) {
       this.footerComponent.setTrackData(data, true);
     } else {
-      console.error('FooterComponent chưa được khởi tạo');
+      console.error('FooterComponent not initialized');
     }
   }
   
-  // Helper method to get translations
   getTranslation(key: string): string {
     return this.translations[key] || key;
   }

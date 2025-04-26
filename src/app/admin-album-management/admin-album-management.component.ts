@@ -161,14 +161,19 @@ export class AdminAlbumManagementComponent implements OnInit {
   }
 
   searchAlbums(): void {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.albums = this.originalAlbums;
+    // If no search term or empty after trimming, show all albums
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
+      this.albums = [...this.originalAlbums];
       return;
     }
-    this.albums = this.originalAlbums.filter((album) =>
-      album.title.toLowerCase().includes(term)
-    );
+    
+    const term = this.searchTerm.toLowerCase().trim();
+    
+    // Filter albums based on title
+    this.albums = this.originalAlbums.filter((album) => {
+      // Safely check if album and title exist
+      return album && album.title && album.title.toLowerCase().includes(term);
+    });
   }
 
   closeModal() {

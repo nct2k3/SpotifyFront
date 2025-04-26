@@ -145,14 +145,34 @@ export class AdminSongsManagementComponent implements OnInit {
   }
 
   filteredSongs() {
-    return this.songs.filter(
-      (song) =>
-        song.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        song.artists.some((artist: Artist) =>
-          artist.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-        ) ||
-        song.genre.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+    if (!this.songs || this.songs.length === 0) {
+      return [];
+    }
+    
+    const term = this.searchTerm?.toLowerCase().trim();
+    if (!term) {
+      return this.songs;
+    }
+    
+    return this.songs.filter((song) => {
+      // Check if title exists and includes search term
+      const titleMatch = song.title && 
+        song.title.toLowerCase().includes(term);
+      
+      // Check if artists array exists and any artist name includes search term
+      const artistMatch = song.artists && 
+        Array.isArray(song.artists) && 
+        song.artists.some((artist: Artist) => 
+          artist && artist.name && 
+          artist.name.toLowerCase().includes(term)
+        );
+      
+      // Check if genre exists and includes search term
+      const genreMatch = song.genre && 
+        song.genre.toLowerCase().includes(term);
+      
+      return titleMatch || artistMatch || genreMatch;
+    });
   }
 
   toggleArtistDropdown() {

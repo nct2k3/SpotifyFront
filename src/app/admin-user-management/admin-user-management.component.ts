@@ -55,19 +55,42 @@ export class AdminUserManagementComponent {
   }
 
   loadUsers(): void {
-    this.usersService.getTrack().subscribe((data) => {
-      this.users = data;
+    this.usersService.getTrack().subscribe({
+      next: (data) => {
+        this.users = data;
+        console.log('Users loaded:', this.users);
+      },
+      error: (err) => {
+        console.error('Error loading users:', err);
+        this.toast.showMessage('Failed to load users!', 'error');
+      }
     });
   }
 
   // Hàm lọc người dùng theo từ khóa tìm kiếm
   filteredUsers(): UserReponse[] {
-    const term = this.searchTerm.toLowerCase();
-    return this.users.filter((user) =>
-      `${user.username} ${user.email} ${user.first_name} ${user.last_name} ${user.role}`
-        .toLowerCase()
-        .includes(term)
-    );
+    if (!this.users || this.users.length === 0) {
+      return [];
+    }
+    
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
+      return this.users;
+    }
+    
+    const term = this.searchTerm.toLowerCase().trim();
+    
+    return this.users.filter((user) => {
+      // Check for null or undefined properties before using them
+      const username = user.username ? user.username.toLowerCase() : '';
+      const email = user.email ? user.email.toLowerCase() : '';
+      const firstName = user.first_name ? user.first_name.toLowerCase() : '';
+      const lastName = user.last_name ? user.last_name.toLowerCase() : '';
+      
+      return username.includes(term) || 
+             email.includes(term) || 
+             firstName.includes(term) || 
+             lastName.includes(term);
+    });
   }
 
   openCreateModal() {
@@ -167,8 +190,6 @@ export class AdminUserManagementComponent {
 
     return null;
   }
-
-  // Custom validator để kiểm tra password và password2 có giống nhau không
   passwordMatchValidator: ValidatorFn = (
     group: AbstractControl
   ): ValidationErrors | null => {

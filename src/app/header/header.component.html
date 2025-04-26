@@ -50,16 +50,13 @@
              alt="Notifications"
              class="h-8 w-8 hover:scale-110 transition-transform duration-300" />
         
-        <!-- Notification indicator dot -->
         <div class="absolute top-0 right-0 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
         
-        <!-- Tooltip -->
         <div class="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
           {{ getTranslation('notifications.title') }}
         </div>
       </button>
 
-      <!-- Language selector dropdown -->
       <div class="relative">
         <button 
           (click)="toggleLanguageDropdown()" 

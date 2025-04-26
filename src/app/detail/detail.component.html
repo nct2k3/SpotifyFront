@@ -10,7 +10,6 @@
     <div *ngIf="!sidebarVisible" class="w-24 h-full" id="sidebarMiniBehind"></div>
 
     <main class="flex-1 bg-gradient-to-b from-green-900 to-black rounded-xl m-1 transition-all duration-500 relative overflow-hidden">
-      <!-- Background floating particles effect -->
       <div class="absolute inset-0 pointer-events-none">
         <div class="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] [background-size:40px_40px] opacity-30"></div>
         <div class="particle-container">
@@ -28,17 +27,15 @@
       </div>
       
       <div class="max-w-full relative z-10">
-        <!-- Enhanced Song Header with Glowing Effect -->
+  
         <div *ngIf="song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-800 to-black rounded-t-2xl relative overflow-hidden group">
-          <!-- Background animation dot pattern with pulse effect -->
+      
           <div class="absolute inset-0 bg-black opacity-20 z-0">
             <div class="absolute inset-0 bg-[radial-gradient(#ffffff33_1px,transparent_1px)] [background-size:16px_16px] z-0 animate-pulse-slow"></div>
           </div>
           
-          <!-- Glow effect behind the cover image -->
           <div class="absolute left-[67px] top-[45px] w-24 h-24 rounded-full bg-green-500/20 blur-xl animate-pulse-slow z-0"></div>
           
-          <!-- Album cover with enhanced hover effects -->
           <div class="relative w-36 h-36 flex-shrink-0 z-10 transition-all duration-300 group-hover:scale-105 rounded-lg shadow-xl shadow-green-900/30 overflow-hidden">
             <img
               [src]="song.image_location || 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg'"
@@ -54,14 +51,13 @@
             <h1 class="text-gray-400 m-2 text-sm uppercase tracking-wider font-semibold">{{ getTranslation('detail.song') }}</h1>
             <h1 class="text-5xl font-bold transition-all duration-300 group-hover:text-green-400 group-hover:text-shadow">{{ song.title || getTranslation('general.unknownTitle') }}</h1>
             <p class="text-gray-400 m-2 flex items-center">
-              <span class="hover:text-white transition-colors duration-200 cursor-pointer">{{ song.artists?.[0]?.name || getTranslation('general.unknownArtist') }}</span>
+              <span class="hover:text-white transition-colors duration-200 cursor-pointer">{{ artist.name || getTranslation('general.unknownArtist') }}</span>
               <span class="mx-2">•</span>
               <span>{{ song.duration || 0 | number:'1.0-2' }} {{ getTranslation('general.minutes') }}</span>
             </p>
           </div>
         </div>
 
-        <!-- Enhanced skeleton loader with wave animation -->
         <div *ngIf="!song" class="flex w-full items-center space-x-4 p-6 bg-gradient-to-r from-green-800 to-black rounded-t-2xl">
           <div class="w-36 h-36 bg-gray-800 rounded-lg skeleton-wave"></div>
           <div>
@@ -71,15 +67,15 @@
           </div>
         </div>
 
-        <!-- Controls with improved styling and animations -->
+
         <div class="flex items-center justify-between p-4 bg-black bg-opacity-40 backdrop-blur-sm">
           <div class="flex items-center space-x-4">
-            <!-- Play button with enhanced effects -->
+        
             <button 
               (click)="nextTrack(song)"
               class="h-14 w-14 p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-full hover:scale-110 hover:from-green-400 hover:to-green-500 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-green-500/50 flex items-center justify-center relative overflow-hidden transform hover:-rotate-12 active:scale-95"
             >
-              <!-- Animated pulse background -->
+    
               <div class="absolute inset-0 bg-green-400/30 rounded-full scale-0 animate-ping-slow opacity-0 group-hover:opacity-100"></div>
               <img 
                 src="https://img.icons8.com/?size=100&id=59862&format=png&color=000000" 
@@ -88,12 +84,12 @@
               >
             </button>
 
-            <!-- Add to playlist button with enhanced tooltip -->
+          
             <div class="relative group hover:scale-105 transition-all duration-200">
               <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30">
                 <div class="bg-gray-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap border border-gray-700 backdrop-blur-sm animate-fade-in">
                   {{ getTranslation('detail.addtoplaylist') }}
-                  <!-- Tooltip arrow -->
+          
                   <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 border-r border-b border-gray-700 rotate-45"></div>
                 </div>
               </div>
@@ -109,12 +105,12 @@
               </button>
             </div>
 
-            <!-- Download button with enhanced tooltip -->
+
             <div class="relative group hover:scale-105 transition-all duration-200">
               <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30">
                 <div class="bg-gray-800 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap border border-gray-700 backdrop-blur-sm animate-fade-in">
                   {{ getTranslation('detail.download') }}
-                  <!-- Tooltip arrow -->
+        
                   <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 border-r border-b border-gray-700 rotate-45"></div>
                 </div>
               </div>
@@ -131,9 +127,9 @@
           </div>
         </div>
 
-        <!-- Lyrics and Artist Section with glass-morphism design -->
+ 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-          <!-- Lyrics card with enhanced styling -->
+   
           <div class="p-4 bg-gray-900/30 rounded-xl border border-gray-800/30 hover:border-green-800/40 hover:bg-gray-900/50 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-green-900/20 transform hover:-translate-y-1">
             <div class="text-lg font-bold mb-4 flex items-center">
               <span class="text-green-400 mr-2">
@@ -147,12 +143,12 @@
               <div class="pr-4 whitespace-pre-line leading-relaxed text-gray-300">
                 {{ song?.lyrics || 'No lyrics available' }}
               </div>
-              <!-- Enhanced gradient overlay with animation -->
+            
               <div class="absolute left-0 right-0 bottom-0 h-16 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none"></div>
             </div>
           </div>
           
-          <!-- Artist card with enhanced styling -->
+     
           <div class="p-4 bg-gray-900/30 rounded-xl border border-gray-800/30 hover:border-green-800/40 hover:bg-gray-900/50 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-green-900/20 transform hover:-translate-y-1">
             <div class="text-lg font-bold mb-4 flex items-center">
               <span class="text-green-400 mr-2">
@@ -167,13 +163,13 @@
                 <!-- Enhanced circular border with animated glow -->
                 <div class="absolute inset-0 border-2 border-green-500/30 rounded-full z-20 animate-pulse-slow"></div>
                 <img
-                  [src]="song.artists[0]?.artist_photo || 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg'"
+                  [src]="artist.artist_photo || 'https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/8/c/1/6/8c166e2b9a0e45ca9a6c7bef40a81f74.jpg'"
                   class="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
                 />
               </div>
               <div>
                 <div class="text-sm font-bold text-white hover:text-green-400 transition-colors duration-200">
-                  {{ song.artists[0]?.name || getTranslation('general.unknownArtist') }}
+                  {{artist.name || getTranslation('general.unknownArtist') }}
                 </div>
                 <div class="text-xs text-gray-400">{{ getTranslation('detail.artist') }}</div>
               </div>

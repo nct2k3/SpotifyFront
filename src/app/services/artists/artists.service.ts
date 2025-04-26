@@ -17,6 +17,18 @@ export class ArtistsService {
     );
   }
 
+  getArtistById(id: string): Observable<ArtistResponse> {
+    return this.http.get<ApiResponseArtist>(this.apiUrl).pipe(
+      map(response => {
+        const artist = response.results.find(artist => artist.id === id);
+        if (!artist) {
+          throw new Error('Artist not found');
+        }
+        return artist;
+      })
+    );
+  }
+
   createArtist(formData: FormData): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
