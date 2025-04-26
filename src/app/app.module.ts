@@ -37,6 +37,7 @@ import { ListAlbumComponent } from './list-album/list-album.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AdminDashboardManagementComponent } from './admin-dashboard-management/admin-dashboard-management.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { NotificationsComponent } from './notifications/notifications.component'
     ProfileComponent,
     ListAlbumComponent,
     AdminDashboardManagementComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,

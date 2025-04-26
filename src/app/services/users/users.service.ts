@@ -9,6 +9,7 @@ import { User, UserReponse, UserCreate } from 'src/app/Models/user.model';
 export class UsersService {
   private apiUrl = 'http://127.0.0.1:8000/api/auth/users/';
   private createUrl = 'http://127.0.0.1:8000/api/auth/register/';
+  private apiUrlss = 'http://127.0.0.1:8000/api'
 
   constructor(private http: HttpClient) {}
   getTrack(): Observable<any[]> {
@@ -37,5 +38,16 @@ export class UsersService {
     });
 
     return this.http.put<User>(`${this.apiUrl}/users/${id}`, user, {headers});
+  }
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrlss}/password-reset/request/`, { email });
+  }
+  verifyPasswordReset(data: {
+    email: string,
+    code: string,
+    new_password: string,
+    new_password2: string
+  }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrlss}/password-reset/verify/`, data);
   }
 }

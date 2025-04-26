@@ -16,6 +16,7 @@ import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 const routes: Routes = [
   
   { path: 'register', component: RegisterComponent },
@@ -35,6 +36,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: '**', redirectTo: 'home' },
   { path: 'register', component: RegisterComponent },
+  { path: 'resetPassword', component: ResetPasswordComponent },
   
 ];
 
