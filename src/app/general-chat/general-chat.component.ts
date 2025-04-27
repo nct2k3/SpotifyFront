@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewChecked, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewChecked, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnInit, OnDestroy, ChangeDetectorRef, NgZone, ChangeDetectionStrategy } from '@angular/core';
 import { GeminiApiService } from '../services/Gemini-chat/gemini-api.service';
 import { Conversation, ChatMessage } from '../Models/chat.model';
 import { WebSocketService } from '../services/Websocket/web-socket.service';
@@ -13,7 +13,9 @@ interface Message {
 @Component({
   selector: 'app-general-chat',
   templateUrl: './general-chat.component.html',
-  styleUrls: ['./general-chat.component.css']
+  styleUrls: ['./general-chat.component.css'],
+  // Use OnPush change detection for better performance
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit, OnDestroy {
   @Input() selectedConversation: Conversation | null = null;
@@ -29,69 +31,108 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
   userId: string | null = '';
   chatId: string | null = null;
   private messageSubscription: Subscription | null = null;
+  private activeChatSubscription: Subscription | null = null;
+  private connectionCheckInterval: any = null;
 
   @ViewChild('messagesEnd') messagesEndRef!: ElementRef;
   @ViewChild('inputField') inputRef!: ElementRef;
 
   constructor(
     private geminiApiService: GeminiApiService,
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {
     this.userId = localStorage.getItem('user_id');
   }
 
   ngOnInit() {
+    console.log('General chat component initialized');
+    
     // Subscribe to incoming WebSocket messages
     this.messageSubscription = this.webSocketService.getMessages().subscribe(
       (message: ChatMessage) => {
-        console.log('New WebSocket message received in component:', message);
+        console.log('Message received in component:', message);
         
-        // For messages to be displayed, either:
-        // 1. The chat_id must match our current chatId, or
-        // 2. For new conversations, our userId must be among participants
-        
-        // Skip messages for other chats
-        if (this.chatId && message.chat_id !== this.chatId) {
-          console.log('Message is for a different chat, ignoring');
-          return;
-        }
-        
-        // Prevent duplicate messages by checking if it already exists
-        const messageExists = this.messages.some(m => 
-          m.isUser === (message.sender === this.userId) && 
-          m.text === message.message &&
-          // Allow for small time differences (3 seconds)
-          Math.abs(m.timestamp.getTime() - new Date(message.timestamp).getTime()) < 3000
-        );
-        
-        if (!messageExists) {
-          console.log('Adding new message to chat view');
+        // Run inside NgZone to ensure Angular knows about the update
+        this.zone.run(() => {
+          // Skip messages for other chats
+          if (this.chatId && message.chat_id !== this.chatId) {
+            console.log(`Message is for chat ${message.chat_id}, we're in ${this.chatId} - ignoring`);
+            return;
+          }
           
-          // Convert the WebSocket message to our Message format
-          const newMessage: Message = {
-            text: message.message,
-            isUser: message.sender === this.userId,
-            timestamp: new Date(message.timestamp)
-          };
+          // Simpler duplicate check with better timestamp handling
+          const messageTimestamp = new Date(message.timestamp);
+          const messageExists = this.messages.some(m => 
+            m.isUser === (message.sender === this.userId) && 
+            m.text === message.message &&
+            Math.abs(m.timestamp.getTime() - messageTimestamp.getTime()) < 3000
+          );
           
-          // Add the message to our messages array
-          this.messages = [...this.messages, newMessage];
-          this.scrollToBottom();
-        } else {
-          console.log('Duplicate message detected, not adding to UI');
-        }
+          if (!messageExists) {
+            console.log('Adding new message to chat view');
+            
+            // Convert the WebSocket message to our Message format
+            const newMessage: Message = {
+              text: message.message,
+              isUser: message.sender === this.userId,
+              timestamp: messageTimestamp
+            };
+            
+            // Add the message to our messages array
+            this.messages = [...this.messages, newMessage];
+            
+            // Force change detection cycle
+            this.cdr.detectChanges();
+            
+            // Ensure scrolling happens after view is updated
+            setTimeout(() => this.scrollToBottom(), 0);
+          } else {
+            console.log('Duplicate message detected, not adding to UI');
+          }
+        });
       }
     );
+    
+    // Subscribe to active chat changes
+    this.activeChatSubscription = this.webSocketService.getActiveChat().subscribe(
+      (chatId) => {
+        console.log('Active chat changed in service:', chatId);
+        // We'll handle changes in ngOnChanges
+      }
+    );
+    
+    // Add a periodic connection check
+    this.connectionCheckInterval = setInterval(() => {
+      this.checkConnectionStatus();
+    }, 10000);
   }
 
   ngOnDestroy() {
-    // Clean up subscription when component is destroyed
+    console.log('General chat component destroyed');
+    
+    // Clean up subscriptions
     if (this.messageSubscription) {
       this.messageSubscription.unsubscribe();
     }
     
-    // Disconnect WebSocket
-    this.webSocketService.disconnect();
+    if (this.activeChatSubscription) {
+      this.activeChatSubscription.unsubscribe();
+    }
+    
+    if (this.connectionCheckInterval) {
+      clearInterval(this.connectionCheckInterval);
+    }
+  }
+
+  private checkConnectionStatus() {
+    if (this.chatId && !this.webSocketService.isSocketConnected()) {
+      console.log('WebSocket connection lost. Reconnecting...');
+      if (this.userId) {
+        this.webSocketService.connect(this.userId, this.chatId);
+      }
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -103,8 +144,7 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
       
       console.log('Selected conversation changed:', this.selectedConversation);
       
-      // Check if this is a new conversation that has just been created
-      // The ID should no longer start with 'new-' if it was properly created
+      // Check if this is a new conversation
       if (typeof this.selectedConversation.id === 'string' && this.selectedConversation.id.startsWith('new-')) {
         // This is a new conversation that hasn't been properly created yet
         this.messages = [
@@ -115,9 +155,10 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
           }
         ];
         this.isLoading = false;
+        this.cdr.detectChanges();
       } else {
         // This is an existing conversation with a valid MongoDB ID
-        // Set this as the active chat in the WebSocketService
+        // Make sure we're connected to the correct WebSocket and set as active chat
         this.webSocketService.setActiveChat(this.selectedConversation.id);
         
         // Load chat history
@@ -151,6 +192,8 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
           ];
         }
         this.isLoading = false;
+        this.cdr.detectChanges();
+        this.scrollToBottom();
       },
       error: (error) => {
         console.error('Error loading chat history:', error);
@@ -162,6 +205,7 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
           }
         ];
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -175,8 +219,6 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
 
   toggleChat() {
     this.close.emit(); // Close chat
-    // Disconnect WebSocket when closing chat
-    this.webSocketService.disconnect();
   }
 
   handleInputChange(event: Event) {
@@ -193,21 +235,29 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
     // Clear input immediately to prevent double-sending
     this.inputValue = '';
     
+    // Add message to UI immediately for better user experience
+    const userMessage: Message = {
+      text: userPrompt,
+      isUser: true,
+      timestamp: new Date()
+    };
+    
+    // Only add if not a duplicate
+    const isDuplicate = this.messages.some(m => 
+      m.isUser && m.text === userPrompt && 
+      (new Date().getTime() - m.timestamp.getTime()) < 3000
+    );
+    
+    if (!isDuplicate) {
+      this.messages = [...this.messages, userMessage];
+      this.cdr.detectChanges();
+      this.scrollToBottom();
+    }
+    
     // If we have a valid chat ID, send the message through the API
-    // Don't add it to UI - it will come through WebSocket
     if (this.chatId && !this.chatId.startsWith('new-')) {
       this.sendMessageToChat(this.chatId, userPrompt);
     } else {
-      // For new conversations, show message right away and then create chat
-      // This is because new chats don't have WebSocket yet
-      const userMessage: Message = {
-        text: userPrompt,
-        isUser: true,
-        timestamp: new Date()
-      };
-      
-      this.messages = [...this.messages, userMessage];
-      
       // For new conversations, we need to create the chat first
       if (this.selectedConversation && typeof this.selectedConversation.id === 'string' && 
           this.selectedConversation.id.startsWith('new-')) {
@@ -241,6 +291,7 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
                 timestamp: new Date()
               };
               this.messages = [...this.messages, errorMessage];
+              this.cdr.detectChanges();
             }
           });
         }
@@ -251,13 +302,23 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
   private sendMessageToChat(chatId: string, message: string): void {
     console.log(`Sending message to chat ${chatId}: ${message}`);
     
+    // Try sending via WebSocket first (if connected)
+    if (this.webSocketService.isSocketConnected()) {
+      this.webSocketService.sendMessage(message);
+    } else {
+      // Fallback to HTTP API
+      this.sendMessageViaHttp(chatId, message);
+    }
+  }
+
+  private sendMessageViaHttp(chatId: string, message: string): void {
     this.webSocketService.sendMessageHttp(chatId, message).subscribe({
       next: (response) => {
-        console.log('Message sent successfully:', response);
-        // No need to add to UI here, message will come through WebSocket
+        console.log('Message sent successfully via HTTP:', response);
+        // Message should be added through the WebSocket broadcast or local feedback
       },
       error: (error) => {
-        console.error('Error sending message:', error);
+        console.error('Error sending message via HTTP:', error);
         
         const errorMessage: Message = {
           text: 'Could not send message. Please try again later.',
@@ -265,13 +326,18 @@ export class GeneralChatComponent implements AfterViewChecked, OnChanges, OnInit
           timestamp: new Date()
         };
         this.messages = [...this.messages, errorMessage];
+        this.cdr.detectChanges();
       }
     });
   }
 
   private scrollToBottom() {
     if (this.messagesEndRef) {
-      this.messagesEndRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      try {
+        this.messagesEndRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      } catch (err) {
+        console.error('Error scrolling to bottom:', err);
+      }
     }
   }
 
