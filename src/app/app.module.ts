@@ -38,6 +38,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AdminDashboardManagementComponent } from './admin-dashboard-management/admin-dashboard-management.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     ListAlbumComponent,
     AdminDashboardManagementComponent,
     NotificationsComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,

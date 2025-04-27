@@ -1,0 +1,136 @@
+
+<div class="flex h-full bg-[#18191a] text-[#e4e6eb] pt-16">
+    <div class="w-[360px] bg-[#36373a] border-r border-[#393a3b] flex flex-col ">
+      <div class="flex items-center p-3 border-b border-[#393a3b]">
+        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center font-bold mr-3 text-white">
+          {{ userId.charAt(0).toUpperCase() }}
+        </div>
+        <div class="text-[15px] font-semibold flex-grow">{{ userId }}</div>
+      </div>
+      
+      <div class="flex px-4 border-b border-[#393a3b]">
+        <div class="flex-1 py-4 px-2 text-center text-[15px] font-semibold
+         text-green-500 cursor-pointer relative after:content-[''] after:absolute 
+         after:bottom-0 after:left-0 after:right-0 after:h-[3px] after:bg-green-500 after:rounded-t">Hộp thư</div>
+      </div>
+      
+      <div class="flex-1 overflow-y-auto p-2">
+      
+        <div 
+          class="flex items-center p-2 rounded-lg cursor-pointer mb-1 hover:bg-[#3a3b3c]"
+          [class.bg-[#3e4042]]="!selectedUser"
+          (click)="selectedUser = ''">
+          <div class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center font-bold mr-3 text-white">
+            <img src="https://img.icons8.com/?size=100&id=4r3xdsxcmOTJ&format=png&color=ffffffff" class="w-8 h-8">
+          </div>
+          <div class="flex-grow">
+            <div class="text-[15px] font-medium mb-1">Trò chuyện cùng mọi người</div>
+            <div class="text-[13px] text-[#b0b3b8]">Mọi người đều có thể trò chuyện</div>
+          </div>
+        </div>
+        <div *ngIf="activeUsers.length === 0" class="p-4 text-[#b0b3b8] text-center italic">
+          Không có người dùng trực tuyến
+        </div>
+        
+        <div 
+          *ngFor="let user of activeUsers" 
+          [class.bg-[#3e4042]]="selectedUser === user"
+          
+          class="flex items-center p-2 rounded-lg cursor-pointer mb-1">
+          
+          <div class="flex justify-between w-full p-2">
+            <div class="text-[15px] font-medium mb-1">{{ user }}</div>
+            <div class="text-[13px] text-[#b0b3b8] flex">
+              <div class="w-2 h-2 bg-green-500 rounded-full mx-1 mt-[6px] "></div>
+              Đang hoạt động</div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  
+    <div class="flex-1 flex flex-col bg-[#36373a]">
+      <div class="flex items-center justify-between p-2 border-b border-[#393a3b]">
+        <div class="flex items-center">
+          <div *ngIf="selectedUser" class="w-10 h-10 bg-[#3e4042] rounded-full flex items-center justify-center font-bold mr-3 text-white">
+            {{ selectedUser.charAt(0).toUpperCase() }}
+          </div>
+          <div *ngIf="!selectedUser" class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center font-bold mr-3 text-white">
+            <img src="https://img.icons8.com/?size=100&id=4r3xdsxcmOTJ&format=png&color=ffffffff" class="w-6 h-6">
+          </div>
+          <div>
+            <div class="text-base font-semibold">{{ selectedUser ? selectedUser : 'Chat chung' }}</div>
+            <div class="text-[13px] text-[#b0b3b8]">{{ selectedUser ? 'Đang hoạt động' : 'Mọi người đều có thể thấy' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 p-4 overflow-y-auto bg-[#242526] flex flex-col">
+        <div 
+          *ngFor="let message of messages" 
+          [class.self-end]="isMyMessage(message)"
+          [class.self-start]="!isMyMessage(message)"
+          [class.flex-row-reverse]="isMyMessage(message)"
+          [class.flex]="true"
+          [class.mb-2]="true"
+          [class.max-w-[80%]]="true"
+          [style.display]="isRelevantMessage(message) ? 'flex' : 'none'">
+          
+          <div *ngIf="!isMyMessage(message)" class="w-7 h-7 bg-[#3e4042] rounded-full flex items-center justify-center font-bold mx-2 text-xs text-white self-end">
+            {{ message.sender_id.charAt(0).toUpperCase() }}
+          </div>
+          
+          <div class="relative">
+            <div 
+              [class.bg-green-500]="isMyMessage(message)" 
+              [class.bg-[#3a3b3c]]="!isMyMessage(message)"
+              [class.text-white]="isMyMessage(message)"
+              [class.rounded-[18px]]="true"
+              [class.p-2]="true"
+              [class.px-3]="true"
+              [class.text-[15px]]="true"
+              [class.leading-relaxed]="true"
+              [class.break-words]="true"
+              [class.rounded-br-sm]="isMyMessage(message)"
+              [class.rounded-bl-sm]="!isMyMessage(message)">
+              {{ message.content }}
+              <span class="text-[11px] opacity-70 ml-1 hidden group-hover:inline">{{ message.timestamp | date:'shortTime' }}</span>
+            </div>
+          </div>
+          
+          <div *ngIf="isMyMessage(message)" class="absolute bottom-[-15px] right-0 flex bg-[#242526] rounded-[20px] shadow opacity-0 translate-y-[10px] transition-all duration-200 ease-in-out group-hover:opacity-100 group-hover:translate-y-0">
+            <button class="bg-transparent border-0 text-[#b0b3b8] w-[30px] h-[30px] flex items-center justify-center cursor-pointer hover:text-[#e4e6eb]">
+              <svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M8.58 9.74c.2-.04.35-.08.46-.13.31-.15.43-.38.43-.78 0-.6-.29-.99-.88-1.2a2.58 2.58 0 00-2.3.37c-.4.3-.62.8-.62 1.5 0 .9.46 1.59 1.3 2 .15.07.32.12.5.16-.18.25-.33.53-.46.82-.27.6-.34 1.22-.34 2.16v.22h.9v-.26c0-.78.07-1.35.3-1.85.23-.5.56-.88.98-1.14a2.9 2.9 0 01.65-.38zm-.58-4.68h-.22l-.17.28c-.14.22-.34.38-.71.4-.37.01-.59-.15-.72-.4l-.17-.28h-.22v1.8h2.21V5.06zM7.21 14a.7.7 0 000 1.4.7.7 0 000-1.4zm0-12.6a2.8 2.8 0 100 5.6 2.8 2.8 0 000-5.6zm0 1a1.8 1.8 0 110 3.6 1.8 1.8 0 010-3.6z"></path></svg>
+            </button>
+            <button class="bg-transparent border-0 text-[#b0b3b8] w-[30px] h-[30px] flex items-center justify-center cursor-pointer hover:text-[#e4e6eb]">
+              <svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M10.59 1.41L8 4 5.41 1.41 4 2.83l3 3V12h2V5.83l3-3z"></path></svg>
+            </button>
+            <button class="bg-transparent border-0 text-[#b0b3b8] w-[30px] h-[30px] flex items-center justify-center cursor-pointer hover:text-[#e4e6eb]">
+              <svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M2 7h10v2H2V7zm12 3H2v2h12v-2z"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center p-2.5  bg-[#36373a] border-t border-[#393a3b] px-24">
+        
+        <div class="flex-1 mx-2 bg-[#3a3b3c] rounded-[20px] px-3 py-2">
+          <input 
+            type="text" 
+            [(ngModel)]="newMessage" 
+            placeholder="Aa"
+            (keyup.enter)="sendMessage()"
+            class="w-full bg-transparent border-0 text-[#e4e6eb] outline-none text-[15px] placeholder-[#b0b3b8]">
+        </div>
+        
+        <button 
+          class="bg-transparent p-2 border-0 text-[#b0b3b8] w-12 h-12 flex items-center justify-center cursor-pointer rounded-full hover:bg-green-500 transition-all duration-300 ease-in-out transform hover:scale-110 active:scale-95" 
+          (click)="sendMessage()" 
+          [disabled]="!newMessage.trim()">
+          <img 
+            src="https://img.icons8.com/?size=100&id=86032&format=png&color=ffffff"
+            class="w-10 h-10 transition-transform duration-300 hover:rotate-12">
+        </button>
+      </div>
+    </div>
+  </div>

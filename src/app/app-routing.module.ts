@@ -17,6 +17,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ChatComponent } from './chat/chat.component';
 const routes: Routes = [
   
   { path: 'register', component: RegisterComponent },
@@ -32,6 +33,7 @@ const routes: Routes = [
   {path:'search',component:SearchComponent},
   {path:'allAlbum', component:ListAlbumComponent},
   { path: 'notifications', component: NotificationsComponent },
+  { path: 'chat', component: ChatComponent },
   // { path: '**', redirectTo: 'home' },
   { path: 'verify', component: VerifyComponent },
   { path: 'profile', component: ProfileComponent },
