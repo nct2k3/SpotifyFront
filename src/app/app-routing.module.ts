@@ -11,8 +11,6 @@ import { VideoComponent } from './video/video.component';
 import { SearchComponent } from './search/search.component';
 import { RegisterComponent } from './register/register.component';
 import { VerifyComponent } from './verify/verify.component';
-import { GeneralChatComponent } from './general-chat/general-chat.component';
-import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ListAlbumComponent } from './list-album/list-album.component';
 import { NotificationsComponent } from './notifications/notifications.component';

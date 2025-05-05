@@ -2,14 +2,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators'; // Import map cùng với tap
+import { environment } from 'src/app/environment.prod';
 import { User, UserReponse, UserCreate } from 'src/app/Models/user.model';
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  private apiUrl = 'http://127.0.0.1:8000/api/auth/users/';
-  private createUrl = 'http://127.0.0.1:8000/api/auth/register/';
-  private apiUrlss = 'http://127.0.0.1:8000/api'
+  private apiUrl = `${environment.apiUrl}/api/auth/users/`;
+  private createUrl = `${environment.apiUrl}/api/auth/register/`;
+  private apiUrlss = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) {}
   getTrack(): Observable<any[]> {

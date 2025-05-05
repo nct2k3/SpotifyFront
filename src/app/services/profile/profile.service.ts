@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import { environment } from 'src/app/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileService {
-  private baseUrl = 'http://127.0.0.1:8000/api/auth/users/';
+  private baseUrl =  `${environment.apiUrl}/api/auth/users/`;
   private userId: string = '';
   private token: string = 'd1f5240d67f8550f4872697af9455c06afafd128';
 
   constructor(private http: HttpClient) {
     this.userId = localStorage.getItem('user_id') || '';
-   // this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';
   }
 
   private getHeaders(): HttpHeaders {

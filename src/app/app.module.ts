@@ -27,9 +27,7 @@ import { GeminiChatComponent } from './gemini-chat/gemini-chat.component';
 import { RegisterComponent } from './register/register.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { AdminAlbumManagementComponent } from './admin-album-management/admin-album-management.component';
-import { ProfileComponent } from './profile/profile.component'; // Thêm import này
-import { GeneralChatComponent } from './general-chat/general-chat.component';
-import { SideBarChatComponent } from './side-bar-chat/side-bar-chat.component'; // Thêm import này
+import { ProfileComponent } from './profile/profile.component';
 import { RouterModule } from '@angular/router';
 import { ToastMessageComponent } from './shared/toast-message/toast-message.component';
 import { AdminArtistManagementComponent } from './admin-artist-management/admin-artist-management.component';
@@ -62,8 +60,6 @@ import { ChatComponent } from './chat/chat.component';
     GeminiChatComponent,
     RegisterComponent,
     SidebarComponent,
-    GeneralChatComponent,
-    SideBarChatComponent,
     SidebarComponent,
     AdminAlbumManagementComponent,
     ProfileComponent,

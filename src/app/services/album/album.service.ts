@@ -2,12 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { environment } from 'src/app/environment.prod';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class AlbumService {
-  private apiUrl = 'http://127.0.0.1:8000/api/albums/';
+  private apiUrl =  `${environment.apiUrl}/api/albums/`;
 
   constructor(private http: HttpClient) {}
 

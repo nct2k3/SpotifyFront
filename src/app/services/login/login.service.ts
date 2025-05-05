@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/app/environment.prod';
+
 
 @Injectable({
   providedIn: 'root', // Service có thể dùng ở mọi nơi
 })
 export class LoginService {
-  private baseUrl = 'http://127.0.0.1:8000/api/auth'; // URL của API
+  private baseUrl = `${environment.apiUrl}/api/auth `; // URL của API
 
   constructor(private http: HttpClient) {}
 

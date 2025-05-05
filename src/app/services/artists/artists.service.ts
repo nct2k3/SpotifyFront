@@ -1,13 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { environment } from 'src/app/environment.prod';
+
 import { ApiResponseArtist, ArtistResponse } from 'src/app/Models/artists.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ArtistsService {
-  private apiUrl = 'http://127.0.0.1:8000/api/artists/';
+  private apiUrl =  `${environment.apiUrl}/api/artists/`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/app/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegisterService {
-  private baseUrl = 'http://127.0.0.1:8000/api/auth/register/';
+  private baseUrl = `${environment.apiUrl}/api/auth/register/`;
 
   constructor(private http: HttpClient) {}
 

@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from 'src/app/environment.prod';
 export interface Notification {
   id: string;
   title: string;
@@ -13,10 +14,13 @@ export interface Notification {
 })
 
 export class SongsService {
-  private apiUrl = 'http://127.0.0.1:8000/api/songs/';
+  
+  private apiUrl =  `${environment.apiUrl}/api/songs/`;
   private apiUrlArtist = 'https://f14c4be8-2a85-4630-a08b-e8cde023ae41.mock.pstmn.io/songsArtiest';
-  private apiUrlMyplaylist = 'http://127.0.0.1:8000/api/playlists/';
-  private apiUrls = 'http://127.0.0.1:8000/api/';
+  private apiUrlMyplaylist =  `${environment.apiUrl}/api/playlists/`;
+  private apiUrls =  `${environment.apiUrl}/api/`;
+
+
 
   constructor(private http: HttpClient) {}
 
